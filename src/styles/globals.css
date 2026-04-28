@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@import "./animations.css";
+
+html, body, #root {
+  background: linear-gradient(
+    to right,
+    #1a0b2e,
+    #0b0f14,
+    #2a0a0a
+  );
+  margin: 0;
+  padding: 0;
+  overscroll-behavior-y: none;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: white;
+}
+
+@keyframes charFade {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-text-char {
+  display: inline-block;
+  opacity: 1; /* Default to visible */
+}
+
+.group:hover .animated-text-char {
+  animation: charFade 0.4s ease forwards;
+}
