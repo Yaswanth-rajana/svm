@@ -2,6 +2,45 @@ import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import Input from './Input';
 
+const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
+
+function ExperienceDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen(prev => !prev)}
+        className="w-full flex items-center justify-between py-3 px-4 bg-white/5 border border-white/10 text-white rounded-xl focus:outline-none focus:border-pink-500/50 transition-all text-sm"
+      >
+        <span className={value ? 'text-white' : 'text-gray-500'}>
+          {value || 'Select experience'}
+        </span>
+        <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {open && (
+        <div className="absolute z-[200] w-full mt-1 bg-[#11161d] border border-white/10 rounded-xl overflow-hidden shadow-xl shadow-black/50">
+          {EXPERIENCE_OPTIONS.map((opt) => (
+            <div
+              key={opt}
+              onClick={() => { onChange(opt); setOpen(false); }}
+              className={`px-4 py-3 text-sm cursor-pointer transition-colors
+                ${value === opt
+                  ? 'bg-gradient-to-r from-pink-500/20 to-orange-500/20 text-white font-bold border-l-2 border-pink-500'
+                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                }`}
+            >
+              {opt}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export const openLeadModal = (type) => {
   window.dispatchEvent(new CustomEvent('open-lead-modal', { detail: { type } }));
 };
@@ -108,14 +147,14 @@ const LeadModal = () => {
 
       {/* Modal Content */}
       <div
-        className={`relative w-full max-w-[500px] bg-[#0b0f14] rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-300 transform ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+        className={`relative w-full max-w-[500px] bg-[#0b0f14] rounded-[2.5rem] overflow-visible shadow-2xl transition-all duration-300 transform ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
         style={{
           boxShadow: '0 0 60px rgba(0, 0, 0, 0.8)',
         }}
       >
         {/* Top Header Strip - Only for Webinar */}
         {type === 'webinar' && (
-          <div className="bg-gradient-to-r from-pink-600 to-orange-500 text-white text-center py-3.5">
+          <div className="bg-gradient-to-r from-pink-600 to-orange-500 text-white text-center py-3.5 rounded-t-[2.5rem]">
             <p className="font-bold tracking-wide text-sm">
               Limited seats — Register Now
             </p>
@@ -206,14 +245,9 @@ const LeadModal = () => {
 
                 <div className="space-y-1.5 text-left">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Years of Experience</label>
-                  <Input
-                    as="select"
-                    name="experience"
+                  <ExperienceDropdown
                     value={formData.experience}
-                    onChange={handleChange}
-                    options={["Fresher", "1–3 years", "3–5 years", "5+ years"]}
-                    required
-                    className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                    onChange={(val) => setFormData(prev => ({ ...prev, experience: val }))}
                   />
                 </div>
 
