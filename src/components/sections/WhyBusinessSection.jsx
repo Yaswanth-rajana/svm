@@ -12,7 +12,7 @@ const iconMap = {
 function WhyBusinessSection() {
   return (
     <section className="bg-gradient-to-b from-white to-gray-50 py-24 lg:py-32 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight max-w-[700px] mx-auto leading-tight">

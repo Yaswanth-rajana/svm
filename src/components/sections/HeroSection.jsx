@@ -40,7 +40,7 @@ function HeroSection() {
   }
 
   return (
-    <div id="hero-section" className="relative bg-[#050505] text-white flex items-center pt-12 pb-24 lg:pt-20 lg:pb-32 overflow-hidden min-h-screen">
+    <div id="hero-section" className="relative bg-[#050505] text-white flex items-center pt-12 pb-24 lg:pt-20 lg:pb-32 min-h-screen">
       {/* Background Gradients */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 blur-[120px] rounded-full"></div>

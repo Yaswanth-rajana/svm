@@ -4,16 +4,16 @@ import { content } from '../../data/content'
 function InfrastructureSection() {
   return (
     <section className="bg-gradient-to-b from-black via-[#050d10] to-black py-20 lg:py-28 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
+      <div className="max-w-6xl mx-auto px-4 md:px-8 lg:px-2">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
-          
+
           {/* Left Content */}
           <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg">
               {content.infrastructure.title}
             </h2>
             <div className="w-20 h-1.5 bg-gradient-to-r from-pink-500 to-orange-400 rounded-full lg:mx-0"></div>
-            
+
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-xl">
               {content.infrastructure.description}
             </p>
@@ -30,11 +30,11 @@ function InfrastructureSection() {
 
           {/* Right Image */}
           <div className="w-full lg:w-1/2 flex justify-center">
-            <div className="relative group max-w-md lg:max-w-lg p-6">
-              <img 
-                src={content.infrastructure.image} 
-                alt="IT Infrastructure Diagram" 
-                className="relative w-full h-auto transition-transform duration-700 ease-out hover:scale-[1.04] cursor-pointer"
+            <div className="relative group">
+              <img
+                src={content.infrastructure.image}
+                alt="IT Infrastructure Diagram"
+                className="w-[360px] lg:w-[420px] h-auto mx-auto transition-transform duration-700 ease-out hover:scale-105 cursor-pointer"
               />
             </div>
           </div>

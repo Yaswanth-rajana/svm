@@ -14,7 +14,7 @@ function WebinarSection() {
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-orange-500/5 blur-[120px] rounded-full -z-10"></div>
       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[40%] h-[60%] bg-radial-gradient from-orange-500/10 to-transparent blur-[80px] -z-10"></div>
 
-      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
+      <div className="max-w-6xl mx-auto px-4 md:px-8 lg:px-2">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-[48px]">
           
           {/* Left Side: Content Block */}
