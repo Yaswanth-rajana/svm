@@ -40,7 +40,7 @@ function HeroSection() {
   }
 
   return (
-    <div id="hero" className="relative bg-[#050505] text-white overflow-x-hidden min-h-screen flex items-center pt-6 pb-6 lg:pt-0 lg:pb-0">
+    <div id="hero-section" className="relative bg-[#050505] text-white flex items-center py-12 lg:py-24">
       {/* Background Gradients */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 blur-[120px] rounded-full"></div>
@@ -48,7 +48,7 @@ function HeroSection() {
       </div>
 
       <Container>
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-16 max-w-7xl mx-auto min-h-[80vh]">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-16 max-w-7xl mx-auto py-12 lg:py-20">
           {/* Left Content */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-[55%]">
             
