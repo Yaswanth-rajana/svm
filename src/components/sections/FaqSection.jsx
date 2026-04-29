@@ -2,35 +2,39 @@ import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { content } from '../../data/content';
 
-const FaqItem = ({ question, answer, isOpen, onClick }) => {
+const FaqItem = ({ question, answer, list, isOpen, onClick }) => {
   return (
     <div 
-      className={`group bg-white border transition-all duration-500 rounded-3xl overflow-hidden ${
+      className={`group bg-white border transition-all duration-300 ease-in-out rounded-2xl overflow-hidden ${
         isOpen 
-        ? 'shadow-[0_2px_6px_rgba(0,0,0,0.04),0_20px_40px_rgba(0,0,0,0.08)] border-pink-200/60 scale-[1.02] z-10' 
-        : 'shadow-[0_2px_6px_rgba(0,0,0,0.02),0_8px_20px_rgba(0,0,0,0.04)] border-gray-100/80 hover:border-pink-100 hover:-translate-y-1'
+        ? 'shadow-md border-pink-200 bg-white' 
+        : 'shadow-sm border-gray-100 hover:shadow-md hover:border-pink-100 hover:-translate-y-0.5'
       }`}
     >
       <button
         onClick={onClick}
-        className={`w-full flex items-center justify-between p-7 md:p-8 text-left focus:outline-none transition-all duration-300 ${isOpen ? 'bg-white' : 'bg-white'}`}
+        className="w-full flex items-center justify-between p-5 sm:p-6 text-left focus:outline-none"
       >
-        <span className={`text-lg md:text-xl font-bold transition-all duration-300 pr-8 ${isOpen ? 'bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent' : 'text-gray-900 group-hover:text-pink-500'}`}>
+        <span className={`text-base sm:text-lg font-medium sm:font-semibold transition-colors duration-300 pr-4 ${isOpen ? 'text-pink-600' : 'text-gray-900 group-hover:text-pink-600'}`}>
           {question}
         </span>
         <ChevronDown 
-          className={`w-6 h-6 flex-shrink-0 transition-all duration-500 ${isOpen ? 'rotate-180 text-pink-500' : 'text-gray-400 group-hover:text-pink-500'}`} 
+          className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ease-in-out ${isOpen ? 'rotate-180 text-pink-500' : 'text-gray-400 group-hover:text-pink-500'}`} 
         />
       </button>
       
       <div 
-        className={`transition-all duration-500 ease-in-out overflow-hidden ${isOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
       >
-        <div className="px-7 md:px-8 pb-7 md:pb-8 text-gray-600 leading-relaxed text-[16px] md:text-[17px]">
-          <div className="w-full h-px bg-gray-50 mb-7"></div>
-          <div className="pt-2">
-            {answer}
-          </div>
+        <div className="px-5 sm:px-6 pb-5 sm:pb-6 text-gray-600 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+          <p>{answer}</p>
+          {list && list.length > 0 && (
+            <ul className="mt-3 space-y-2 list-disc list-inside">
+              {list.map((item, idx) => (
+                <li key={idx} className="text-gray-600">{item}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
@@ -46,31 +50,38 @@ const FaqSection = () => {
   };
 
   return (
-    <section className="relative bg-[#f8fafc] py-28 px-6 overflow-hidden" id="faq">
-      {/* Premium Background Glows */}
-      <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-pink-500/10 blur-[140px] rounded-full -z-10 opacity-60"></div>
-      <div className="absolute bottom-0 left-1/4 w-[600px] h-[600px] bg-orange-500/10 blur-[140px] rounded-full -z-10 opacity-60"></div>
-
-      <div className="max-w-4xl mx-auto relative">
-        <div className="text-center mb-24">
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 tracking-tight text-gray-900">
+    <section className="bg-[#f8fafc] py-20 px-4 sm:px-6 lg:px-8" id="faq">
+      <div className="max-w-3xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight">
             {faq.title}
           </h2>
-          <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-medium">
+          <div className="h-1.5 w-24 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full mx-auto mt-6 mb-6"></div>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
             {faq.subtitle}
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-5">
           {faq.questions.map((item, index) => (
             <FaqItem
               key={index}
               question={item.question}
               answer={item.answer}
+              list={item.list}
               isOpen={openIndex === index}
               onClick={() => handleToggle(index)}
             />
           ))}
+        </div>
+
+        <div className="text-center mt-12 sm:mt-16">
+          <p className="text-gray-600">
+            Still have questions?{' '}
+            <a href="#contact" className="text-pink-600 font-semibold hover:text-pink-700 hover:underline transition-colors">
+              Contact us
+            </a>
+          </p>
         </div>
       </div>
     </section>
@@ -78,3 +89,4 @@ const FaqSection = () => {
 };
 
 export default FaqSection;
+

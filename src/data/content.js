@@ -1,43 +1,53 @@
 export const content = {
   // Hero Section
   hero: {
-    badge: "Join World's Largest FDE Community",
+    badge: "AI-Proof Career Path",
     title: "Start Your Career in IT Infrastructure",
-    subtitle: "AI Proof Job Roles | Understand How IT Infrastructure Works",
-    addonBadge: "IIT Roorkee Certification Add-On",
+    subtitle: "Understand how IT Infrastructure actually works in real-world systems",
+    addonBadge: "AI-Proof Career Path",
     ctaPrimary: "Download Pdf",
     stats: [
       { text: "₹75 LPA + Avg Salary" },
       { text: "FDE Lab Partner" },
       { text: "Duration: 8 Months" }
     ],
-    formHeader: "Applications closing soon. Apply Now!"
+    formHeader: "Limited seats — Register Now"
   },
 
   // Demand Section
   demand: {
     title: "Top IT Infrastructure Job Roles",
-    subtitle: "Explore high-demand roles with strong career growth",
+    subtitle: "Explore high-demand roles with strong career growth.",
     jobRoles: [
       {
-        title: "Cloud Administrator",
+        title: "Cloud Engineer",
         description: "Manage and oversee cloud-based systems and services.",
-        salary: "₹8-15 LPA"
-      },
-      {
-        title: "Network Engineer",
-        description: "Design, implement, and maintain computer networks.",
         salary: "₹6-10 LPA"
       },
       {
         title: "DevOps Engineer",
-        description: "Bridge the gap between development and IT operations.",
-        salary: "₹10-20 LPA"
+        description: "Design, implement, and maintain computer networks.",
+        salary: "₹8-15 LPA"
       },
       {
-        title: "Security Analyst",
-        description: "Protect systems and networks from cyber threats.",
-        salary: "₹7-14 LPA"
+        title: "Virtualization Engineer",
+        description: "Bridge the gap between development and IT operations.",
+        salary: "₹15-18 LPA"
+      },
+      {
+        title: "Server Engineer",
+        description: "deploy, optimize, and support enterprise server infrastructure.",
+        salary: "₹8-12 LPA"
+      },
+      {
+        title: "Storage Engineer",
+        description: "Manages and maintains enterprise storage systems to ensure data availability.",
+        salary: "₹10-12 LPA"
+      },
+      {
+        title: "Backup Engineer",
+        description: "Protects and restores business data through backup and disaster recovery solutions.",
+        salary: "₹12-15 LPA"
       }
     ]
   },
@@ -97,78 +107,110 @@ export const content = {
     title: "Job Roles and Payscale in IT Infrastructure",
     subtitle: "Based on industry averages across India and global markets",
     roles: [
-      { name: "Network Engineer", india: "₹6–10 LPA", global: "$70k–$120k", tag: "Core Role", icon: "🌐" },
-      { name: "Cloud Administrator", india: "₹8–15 LPA", global: "$90k–$140k", tag: "High Demand", icon: "☁️" },
-      { name: "DevOps Engineer", india: "₹10–20 LPA", global: "$110k–$160k", tag: "Mid–Senior", icon: "⚙️" },
-      { name: "Security Analyst", india: "₹7–14 LPA", global: "$90k–$150k", tag: "High Demand", icon: "🔒" },
-      { name: "System Administrator", india: "₹5–9 LPA", global: "$60k–$100k", tag: "Entry Level", icon: "🖥️" },
-      { name: "Platform Engineer", india: "₹12–25 LPA", global: "$120k–$180k", tag: "Specialized", icon: "🧩" }
+      { name: "Cloud Engineer", india: "₹6–10 LPA", global: "$70k–$120k", tag: "Core Role", icon: "🌐" },
+      { name: "DevOps Engineer", india: "₹8–15 LPA", global: "$90k–$140k", tag: "High Demand", icon: "☁️" },
+      { name: "Virtualization Engineer", india: "₹15–18 LPA", global: "$110k–$160k", tag: "Mid–Senior", icon: "⚙️" },
+      { name: "Server Engineer", india: "₹8–12 LPA", global: "$90k–$150k", tag: "High Demand", icon: "🔒" },
+      { name: "Storage Engineer", india: "₹10–12 LPA", global: "$60k–$100k", tag: "Entry Level", icon: "🖥️" },
+      { name: "Backup Engineer", india: "₹12–15 LPA", global: "$120k–$180k", tag: "Specialized", icon: "🧩" }
     ]
   },
 
-  // Roadmap
   roadmap: {
     title: "How You Can Start or Switch Your Career into IT Infra",
-    subtitle: "A clear, step-by-step path to becoming a cloud professional",
+    subtitle: "A clear roadmap to become an IT Infra Engineer",
     steps: [
       {
-        title: "Learn Networking Basics",
-        duration: "2–4 weeks",
-        description: "Understand IP, DNS, TCP/UDP, subnets, and firewalls — the core foundations of all infrastructure.",
-        tags: ["TCP/IP", "DNS & DHCP", "OSI Model", "Subnetting"]
+        title: "Understand the IT Infrastructure",
+        duration: "2–4 Weeks",
+        description: "IT Infrastructure includes:",
+        tags: ["Servers", "Virtualization", "Storage", "Backup & Disaster Recovery", "Cloud Platforms", "Networking & Security"]
       },
       {
-        title: "Get Cloud Certified (AWS/Azure)",
-        duration: "6–8 weeks",
-        description: "Obtain AWS SAA or Azure AZ-900. These are the most employer-recognized entry points for junior roles.",
-        tags: ["EC2/VMs", "S3/Blob", "IAM", "VPC/VNet", "AWS/Azure Cert"]
+        title: "Build Basic IT Foundation",
+        duration: "4–8 Weeks",
+        description: "Start with core fundamentals:",
+        tags: ["Computer Hardware & OS basics", "Windows & Linux fundamentals", "Networking basics (IP, DNS, VLAN, Routing)", "Active Directory concepts"]
       },
       {
-        title: "Build Hands-on Projects",
-        duration: "4–6 weeks",
-        description: "Deploy a CI/CD pipeline, automate infrastructure with Terraform, and showcase your work on GitHub.",
-        tags: ["Terraform", "Docker", "CI/CD", "GitHub Actions", "Linux"]
+        title: "Learn Server Administration",
+        duration: "4–8 Weeks",
+        description: "Core skills every Infra Engineer must know:",
+        tags: ["Windows Server installation & configuration", "Active Directory & Group Policy", "User & Access Management", "File Servers & Permissions", "System monitoring & troubleshooting"]
       },
       {
-        title: "Apply for Entry-Level Roles",
-        duration: "Ongoing",
-        description: "Target Cloud Support Engineer, Junior DevOps, or Infra Analyst roles with your new portfolio.",
-        tags: ["Cloud Support", "Junior DevOps", "Infra Analyst", "SRE Intern"]
+        title: "Learn Virtualization",
+        duration: "8–12 Weeks",
+        description: "This is where real IT Infra careers begin.",
+        tags: ["Hypervisor concepts", "Virtual Machine deployment", "Resource allocation", "High Availability & Failover", "Snapshot & VM management"]
+      },
+      {
+        title: "Learn Storage & Backup",
+        duration: "8–12 Weeks",
+        description: "Enterprise companies highly value this skill.",
+        tags: ["SAN & NAS storage concepts", "RAID & Datastore management", "Backup strategies", "Disaster Recovery planning", "Data protection concepts"]
+      },
+      {
+        title: "Add Cloud Skills",
+        duration: "8–12 Weeks",
+        description: "Modern Infra = On-Prem + Cloud",
+        tags: ["Cloud Fundamentals", "Virtual machines in cloud", "Storage & networking in cloud", "Identity & access management", "Hybrid infrastructure"]
+      },
+      {
+        title: "Learn Automation",
+        duration: "8–12 Weeks",
+        description: "This step separates average engineers from high-paid engineers.",
+        tags: ["PowerShell or Python basics", "Infrastructure automation", "Monitoring & reporting automation"]
+      },
+      {
+        title: "Build Hands-On Lab",
+        duration: "Hands-on",
+        description: "Create: ",
+        tags: ["Home lab using virtualization", "Practice server deployment", "Simulate real company environment"]
+      },
+      {
+        title: "Gain Experience",
+        duration: "Flexible",
+        description: "You can start by:",
+        tags: ["Internships", "Freelance IT support", "Helping small businesses", "Personal infrastructure projects"]
+      },
+      {
+        title: "Target Job Roles",
+        duration: "Career",
+        description: "Start applying for:",
+        tags: ["IT Support Engineer", "System Administrator", "Cloud Engineer", "Data Centre Engineer", "Infrastructure Engineer"]
       }
     ]
   },
 
   // Mentor
   mentors: {
-    title: "Meet Your Mentors",
-    subtitle: "Learn from experts who built world-leading systems",
+    title: "Meet Your Mentor",
+    subtitle: "Learn from experts who design enterprise-grade systems",
     list: [
       {
-        name: "Rahul Sharma",
-        role: "Senior Cloud Architect",
-        company: "AWS",
-        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200",
-        bio: "10+ years in Cloud & DevOps"
-      },
-      {
-        name: "Sneha Kapoor",
-        role: "DevOps Engineer",
-        company: "Google Cloud",
-        photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200",
-        bio: "Expert in Kubernetes & CI/CD"
+        name: "Saurabh Singh",
+        role: "Senior IT Engineer",
+        credibility: "10+ Years Experience in Enterprise Systems",
+        linkedin: "https://www.linkedin.com/",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200"
       }
     ]
   },
 
   webinar: {
     title: "🚀 Join Our Free Webinar",
-    subtitle: "Learn Cloud & DevOps from industry experts",
-    dateTime: "📅 April 30 | ⏰ 7:00 PM IST | ⏳ 90 mins",
-    cta: "Claim My Spot",
-    trustLine: "🔒 Free • Limited seats • No spam",
+    subtitle: "Learn IT Infrastructure from Industry Experts",
+    dateTime: "📅 June 7 \u00A0|\u00A0 ⏰ 10:00 AM IST \u00A0|\u00A0 ⏳ 90 mins",
+    cta: "Claim Your Spot",
+    trustLine: "Hurry Up, Seats are limited",
+    urgencyLine: "Limited seats available – Filling fast!",
+    socialProof: "100+ Professionals already registered",
+    alreadyJoined: "Professionals already registered",
     benefits: [
-      "Build a real AWS deployment pipeline",
-      "Step-by-step DevOps roadmap",
+      "Understand What is IT Infrastructure and How it Works",
+      "How it is AI Proof",
+      "Job Opportunities and Salaries in IT Infrastructure Domain",
     ]
   },
 
@@ -177,28 +219,67 @@ export const content = {
     subtitle: "We know you might have some questions before getting started in our platform",
     questions: [
       {
-        question: "What is the PGP in Forward Deployed Engineering & Applied AI Solutions?",
-        answer: "This program is designed to equip you with the practical skills needed to deploy, manage, and scale AI solutions in real-world environments. You'll learn to bridge the gap between software engineering and AI models."
+        question: "What is IT Infrastructure?",
+        answer: "IT Infrastructure refers to the systems that run business technology, including servers, virtualization, storage, backup solutions, cloud platforms, networking, and data centres."
       },
       {
-        question: "Who is a Forward Deployed Engineer (FDE)?",
-        answer: "An FDE is a specialized software engineer who works directly with clients or internal stakeholders to integrate, customize, and deploy complex software or AI systems into their existing infrastructure."
+        question: "What job roles are available in IT Infrastructure?",
+        answer: "Common IT Infra roles include:",
+        list: [
+          "System Administrator",
+          "Server Engineer",
+          "Virtualization Engineer",
+          "Storage Engineer",
+          "Backup & Disaster Recovery Engineer",
+          "Cloud Infrastructure Engineer",
+          "Data Centre Engineer",
+          "DevOps / Platform Engineer"
+        ]
       },
       {
-        question: "Why is this role in demand right now?",
-        answer: "As companies adopt AI, they realize building models is only half the battle. The real challenge is deploying them reliably at scale. FDEs possess the rare mix of systems engineering, cloud architecture, and AI knowledge required to solve this."
+        question: "Is IT Infrastructure a good career in 2026 and beyond?",
+        answer: "Yes. Every organization depends on IT systems, cloud platforms, and data centres. Demand for skilled infrastructure engineers continues to grow with cloud computing, AI, and digital transformation."
       },
       {
-        question: "What makes FDE Academy different from typical AI programs?",
-        answer: "We focus heavily on the deployment and infrastructure side (Cloud, DevOps, MLOps), rather than just model training. Our hands-on approach ensures you can build production-ready systems."
+        question: "Do I need coding skills to start an IT Infrastructure career?",
+        answer: "No. Programming is not mandatory at the beginning. Basic scripting and automation skills can be learned later for faster career growth."
       },
       {
-        question: "How was the curriculum built?",
-        answer: "The curriculum was designed in collaboration with industry experts from top tech companies. It focuses strictly on the modern tech stack and tools currently used in production environments."
+        question: "Can non-IT or career switchers enter IT Infrastructure?",
+        answer: "Absolutely. Many professionals from non-IT backgrounds successfully transition into IT Infrastructure by learning fundamentals and gaining hands-on practical experience."
       },
       {
-        question: "What is FDE Lab™?",
-        answer: "FDE Lab™ is our proprietary hands-on environment where you get to practice deploying complex systems in realistic, sandboxed cloud environments without worrying about breaking production systems or incurring costs."
+        question: "What is the salary range in IT Infrastructure roles?",
+        answer: "Salary depends on skills and experience:",
+        list: [
+          "Entry Level: ₹3–6 LPA",
+          "Mid-Level: ₹8–18 LPA",
+          "Senior / Cloud Engineers: ₹20+ LPA"
+        ]
+      },
+      {
+        question: "Which skills are most in demand for IT Infrastructure jobs?",
+        answer: "High-demand skills include:",
+        list: [
+          "Server Administration",
+          "Virtualization",
+          "Cloud Infrastructure",
+          "Storage & Backup",
+          "Automation & Monitoring",
+          "Disaster Recovery Planning"
+        ]
+      },
+      {
+        question: "How long does it take to become job-ready in IT Infrastructure?",
+        answer: "With structured learning and hands-on practice, most candidates become job-ready within 6–9 months."
+      },
+      {
+        question: "What career growth opportunities exist in IT Infrastructure?",
+        answer: "Career progression typically follows:\nIT Support → System Administrator → Virtualization/Cloud Engineer → Infrastructure Architect → IT Consultant or Cloud Specialist."
+      },
+      {
+        question: "Are certifications required for IT Infrastructure jobs?",
+        answer: "Certifications help to get into interviews but practical skills matter more. Real-world lab experience and problem-solving ability significantly improve job opportunities."
       }
     ]
   }

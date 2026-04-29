@@ -18,13 +18,18 @@ function WebinarSection() {
           
           {/* Left Side: Content Block */}
           <div className="w-full lg:w-1/2 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-pink-400 font-bold text-xs uppercase tracking-[0.2em] mb-3">
-              <Calendar size={14} />
-              Limited Seats Available
+            <div className="relative inline-block mb-6 group cursor-default mt-2">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-pink-500 to-orange-500 blur opacity-50 group-hover:opacity-80 transition-opacity duration-300 animate-[pulse_3s_ease-in-out_infinite]"></div>
+              <div className="relative flex items-center gap-2 px-5 py-2 rounded-full bg-[#11161d] border border-pink-500/50 group-hover:border-pink-400/80 transition-colors duration-300">
+                <Calendar size={14} className="text-pink-400" />
+                <span className="text-pink-300 font-bold text-xs uppercase tracking-[0.2em]">
+                  Limited Seats Available
+                </span>
+              </div>
             </div>
             
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-5 tracking-tight">
-              Join Our Free <br className="hidden md:block" /> Live Webinar <span className="inline-block align-middle -translate-y-[2px]">🚀</span>
+              Join Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-400">FREE</span> <br className="hidden md:block" /> Live Webinar <span className="inline-block align-middle -translate-y-[2px]">🚀</span>
               <div className="w-20 h-1.5 bg-gradient-to-r from-pink-500 to-orange-400 mt-5 rounded-full hidden lg:block opacity-90"></div>
             </h2>
             
@@ -33,7 +38,7 @@ function WebinarSection() {
                 {webinar.subtitle}
               </p>
               {/* Refined Date & Time Line (Inline) */}
-              <div className="text-orange-400/90 font-bold text-sm md:text-base tracking-wide py-1">
+              <div className="inline-flex items-center justify-center lg:justify-start gap-4 text-orange-400 font-bold text-sm md:text-base tracking-wide py-2.5 px-5 rounded-xl bg-orange-500/10 border border-orange-500/20 shadow-[0_0_15px_rgba(255,165,0,0.1)]">
                 {webinar.dateTime}
               </div>
             </div>
@@ -48,10 +53,7 @@ function WebinarSection() {
               ))}
             </div>
 
-            {/* Urgency Line */}
-            <p className="text-orange-400/90 font-bold flex items-center gap-2 justify-center lg:justify-start text-sm md:text-base">
-              <span>⏳</span> Limited seats available – Filling fast!
-            </p>
+
           </div>
 
           {/* Right Side: CTA Card */}
@@ -80,42 +82,31 @@ function WebinarSection() {
                 {/* Real-time Urgency Tag */}
                 <div className="mb-8 px-5 py-2 rounded-xl bg-orange-500/10 border border-orange-500/20 shadow-inner">
                   <p className="text-orange-400 text-[11px] font-bold uppercase tracking-[0.1em]">
-                    🔥 500+ developers registered this week
+                    🔥 {webinar.socialProof || "100+ Professionals already registered"}
                   </p>
                 </div>
 
                 {/* Primary Button */}
-                <button className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-4.5 px-6 rounded-2xl 
-                                 shadow-[0_10px_20px_rgba(255,77,141,0.15)] 
-                                 hover:shadow-[0_10px_30px_rgba(255,100,50,0.3)] 
-                                 hover:-translate-y-[2px]
+                <button className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-5 px-8 rounded-2xl 
+                                 shadow-[0_0_20px_rgba(255,77,141,0.4)] 
+                                 hover:shadow-[0_0_35px_rgba(255,100,50,0.6)] 
+                                 hover:-translate-y-1 hover:scale-[1.02]
+                                 animate-[ctaPulse_3s_ease-in-out_infinite]
                                  transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 group">
-                  <span className="text-base uppercase tracking-wider">
+                  <span className="text-lg uppercase tracking-wider">
                     <AnimatedText text={webinar.cta} />
                   </span>
                   <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                 </button>
 
-                {/* Social Proof & Trust */}
-                <div className="mt-8 space-y-4 w-full scale-[1.05] brightness-110">
-                  <div className="flex items-center justify-center gap-3">
-                    <div className="flex -space-x-2">
-                      {[1, 2, 3].map(i => (
-                        <div key={i} className="w-7 h-7 rounded-full border-2 border-[#11161d] bg-gray-800 overflow-hidden">
-                          <img src={`https://i.pravatar.cc/100?img=${i + 20}`} alt="User" />
-                        </div>
-                      ))}
-                    </div>
-                    <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                      Already Joined
-                    </p>
-                  </div>
-
-                  {/* Clean Trust Line (No double lock) */}
-                  <div className="flex items-center justify-center gap-2 text-white/65 text-[12px] font-medium leading-none pb-2">
-                    <Lock size={12} className="opacity-80" />
-                    <span>{webinar.trustLine.replace('🔒 ', '')}</span>
-                  </div>
+                {/* Urgency & Trust */}
+                <div className="mt-5 w-full flex flex-col items-center justify-center gap-2">
+                  <p className="text-pink-300/85 drop-shadow-[0_0_8px_rgba(236,72,153,0.4)] text-[10px] font-bold uppercase tracking-widest">
+                    👥 100+ professionals joined this week
+                  </p>
+                  <p className="text-orange-400/90 text-[10px] font-bold uppercase tracking-widest">
+                    ⏳ Limited seats — filling fast
+                  </p>
                 </div>
 
               </div>
@@ -142,6 +133,10 @@ function WebinarSection() {
         }
         .bg-radial-gradient {
           background: radial-gradient(circle, var(--tw-gradient-from), var(--tw-gradient-to));
+        }
+        @keyframes ctaPulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(255,77,141,0.4); }
+          50% { box-shadow: 0 0 35px rgba(255,100,50,0.6); }
         }
       `}</style>
     </section>

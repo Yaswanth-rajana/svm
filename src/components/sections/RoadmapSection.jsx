@@ -1,86 +1,178 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { content } from '../../data/content';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronDown } from 'lucide-react';
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
 function RoadmapSection() {
   const { roadmap } = content;
+  const containerRef = useRef(null);
+  const [showAll, setShowAll] = useState(false);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 70%", "end 70%"]
+  });
+
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  const visibleSteps = showAll ? roadmap.steps : roadmap.steps.slice(0, 4);
+
+  const scrollToForm = () => {
+    const formElement = document.getElementById("form-section");
+    if (formElement) {
+      formElement.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      // Optional: Add a brief focus highlight effect
+      formElement.classList.add('ring-2', 'ring-pink-500', 'ring-offset-4', 'ring-offset-black');
+      setTimeout(() => {
+        formElement.classList.remove('ring-2', 'ring-pink-500', 'ring-offset-4', 'ring-offset-black');
+      }, 2000);
+    }
+  };
 
   return (
-    <section className="bg-[#f8f9fb] py-[72px] overflow-hidden" id="roadmap">
+    <section className="bg-white py-20 md:py-32 overflow-hidden" id="roadmap">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
-        <div className="text-center mb-16">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-widest mb-4">
-            Career Roadmap
-          </span>
-          <h2 className="text-[32px] font-bold text-gray-900 mb-4 tracking-tight">
+        <div className="text-center mb-16 md:mb-24">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight max-w-3xl mx-auto leading-tight">
             {roadmap.title}
           </h2>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
             {roadmap.subtitle}
           </p>
         </div>
 
         {/* Timeline Container */}
-        <div className="max-w-[720px] mx-auto relative px-4">
+        <div ref={containerRef} className="max-w-5xl mx-auto relative px-2 md:px-4">
           
-          {/* Vertical Gradient Line */}
-          <div className="absolute left-[36px] top-0 bottom-0 w-[4px] bg-gradient-to-b from-blue-500 via-purple-500 to-pink-500 rounded-full"></div>
+          {/* Background Track Line */}
+          <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gray-100 rounded-full"></div>
+          
+          {/* Animated Progress Line */}
+          <motion.div 
+            style={{ scaleY, originY: 0 }}
+            className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full z-10"
+          />
 
           {/* Steps */}
-          <div className="space-y-10 relative">
-            {roadmap.steps.map((step, index) => (
-              <div key={index} className="flex gap-8 group">
+          <div className="space-y-12 md:space-y-16 relative">
+            <AnimatePresence mode="popLayout">
+              {visibleSteps.map((step, index) => (
+                <motion.div 
+                  key={index}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className={`flex flex-col md:flex-row gap-8 items-center relative ${
+                    index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                  }`}
+                >
+                  {/* Badge Column */}
+                  <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 flex-shrink-0 z-20">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 border-blue-600 group-hover:scale-110 transition-transform duration-300">
+                      {index + 1}
+                    </div>
+                  </div>
+
+                  {/* Card Column */}
+                  <div className={`w-full md:w-[45%] pl-16 md:pl-0`}>
+                    <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden">
+                      {/* Hover Gradient Background */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 to-purple-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      
+                      <div className="relative z-10">
+                        {/* Title & Duration Pill */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
+                          <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            {step.title}
+                          </h3>
+                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] md:text-xs font-bold whitespace-nowrap uppercase tracking-wider">
+                            {step.duration}
+                          </span>
+                        </div>
+
+                        {/* Description */}
+                        <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
+                          {step.description}
+                        </p>
+
+                        {/* Skill Tags */}
+                        <div className="flex flex-wrap gap-3">
+                          {step.tags.map((tag, tIdx) => (
+                            <div key={tIdx} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 group-hover:bg-white text-gray-600 text-[10px] md:text-[11px] font-semibold border border-gray-100 transition-colors">
+                              <CheckCircle2 size={12} className="text-blue-500" />
+                              {tag}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Empty Space for Alternating Layout */}
+                  <div className="hidden md:block md:w-[45%]"></div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+
+          {/* Show More Button & Mid-Section CTA */}
+          <div className="mt-16 text-center space-y-8 relative z-20">
+            {!showAll && (
+              <>
+                <button 
+                  onClick={() => setShowAll(true)}
+                  className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-gray-900 text-white font-bold hover:bg-gray-800 transition-all shadow-lg group"
+                >
+                  <span>View Full Roadmap</span>
+                  <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform" />
+                </button>
                 
-                {/* Badge Column */}
-                <div className="relative flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-[0_0_15px_rgba(59,130,246,0.2)] border border-gray-100 z-10 relative group-hover:scale-110 transition-transform duration-300">
-                    {index + 1}
-                  </div>
-                  {/* Subtle Glow Ring */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-pink-500 rounded-full blur opacity-10 group-hover:opacity-25 transition-opacity"></div>
+                <div className="pt-8">
+                  <motion.button 
+                    onClick={scrollToForm}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-8 py-4 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 font-bold flex items-center justify-center gap-3 mx-auto hover:bg-blue-100 transition-all"
+                  >
+                    <span>Don't wait! Book your free spot now</span>
+                    <ArrowRight size={20} />
+                  </motion.button>
                 </div>
-
-                {/* Card Column */}
-                <div className="flex-1 bg-white rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-100 hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)] transition-all duration-300">
-                  
-                  {/* Title & Duration Pill */}
-                  <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                      {step.title}
-                    </h3>
-                    <span className="inline-block px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-wider">
-                      {step.duration}
-                    </span>
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-gray-600 text-sm leading-relaxed mb-6">
-                    {step.description}
-                  </p>
-
-                  {/* Skill Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {step.tags.map((tag, tIdx) => (
-                      <span key={tIdx} className="px-2 py-1 rounded bg-gray-50 text-gray-500 text-[10px] font-medium border border-gray-100">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                </div>
-              </div>
-            ))}
+              </>
+            )}
           </div>
         </div>
 
-        {/* Footer CTA */}
-        <div className="text-center mt-20">
-          <button className="px-10 py-4 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2 mx-auto">
-            <span>Start your journey at the free webinar</span>
-            <ArrowRight size={20} />
-          </button>
-        </div>
+        {/* Final CTA (Always visible or only at the very end) */}
+        <AnimatePresence>
+          {showAll && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center mt-24"
+            >
+              <motion.button 
+                onClick={scrollToForm}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-12 py-5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 flex items-center justify-center gap-3 mx-auto"
+              >
+                <span>Start your journey with us</span>
+                <ArrowRight size={24} />
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </section>
