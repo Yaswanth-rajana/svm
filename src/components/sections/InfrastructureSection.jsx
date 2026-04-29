@@ -4,7 +4,7 @@ import { content } from '../../data/content'
 function InfrastructureSection() {
   return (
     <section className="bg-gradient-to-b from-black via-[#050d10] to-black py-20 lg:py-28 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
           
           {/* Left Content */}

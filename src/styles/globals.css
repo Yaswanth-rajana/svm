@@ -11,6 +11,9 @@ html, body, #root {
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 body {
@@ -58,4 +61,25 @@ body {
 @keyframes bounceMobile {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(5px); }
+}
+
+/* Absolute Overflow Protection */
+* {
+  box-sizing: border-box;
+}
+
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Fix for potential horizontal scroll on mobile */
+.container, [class*="max-w-"] {
+  max-width: 100vw !important;
+  overflow-x: hidden;
+}
+
+/* Ensure no negative margins leak out */
+.relative, .flex, .grid {
+  max-width: 100%;
 }

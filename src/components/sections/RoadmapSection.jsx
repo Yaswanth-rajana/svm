@@ -33,7 +33,7 @@ function RoadmapSection() {
 
   return (
     <section className="bg-white py-20 md:py-32 overflow-hidden" id="roadmap">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
         {/* Header */}
         <div className="text-center mb-16 md:mb-24">
           <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight max-w-3xl mx-auto leading-tight">

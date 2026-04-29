@@ -1,6 +1,6 @@
 function Container({ children }) {
   return (
-    <div className="container mx-auto px-4 py-8 md:py-16">
+    <div className="max-w-[1400px] mx-auto px-6 md:px-16 lg:px-24">
       {children}
     </div>
   )

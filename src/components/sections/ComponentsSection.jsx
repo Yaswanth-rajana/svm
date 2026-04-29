@@ -25,7 +25,7 @@ const iconMap = {
 function ComponentsSection() {
   return (
     <section className="bg-gradient-to-b from-white to-gray-50 py-24 lg:py-28">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
         {/* Section Header */}
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">

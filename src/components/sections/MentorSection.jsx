@@ -5,24 +5,24 @@ function MentorSection() {
   const { mentors } = content;
 
   return (
-    <section className="bg-[#0B0F14] py-20 lg:py-28 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6">
+    <section className="bg-[#0B0F14] pt-20 pb-10 lg:pt-28 lg:pb-14">
+      <div className="max-w-5xl mx-auto px-6 md:px-12">
         {/* Section Header */}
         <div className="text-center mb-16 lg:mb-20">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight">
             {mentors.title}
           </h2>
-          <p className="mt-8 text-[#9CA3AF] text-lg max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-8 text-[#9CA3AF] text-lg max-w-xl mx-auto leading-relaxed">
             {mentors.subtitle}
           </p>
         </div>
 
         {/* Mentors Grid - Refined Card Theme */}
-        <div className="flex justify-center items-center w-full">
+        <div className="max-w-[650px] mx-auto w-full">
           {mentors.list.map((mentor, index) => (
             <div 
               key={index} 
-              className="group relative flex flex-col items-center text-center p-10 md:p-12 rounded-2xl bg-[#11161d] border border-pink-500/20 shadow-[0_0_30px_rgba(255,77,141,0.08)] transition-all duration-500 hover:bg-[#161c24] hover:border-pink-500/40 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,100,150,0.25)] w-full max-w-md"
+              className="group relative flex flex-col items-center text-center p-8 md:p-12 rounded-2xl bg-[#11161d] border border-pink-500/20 shadow-[0_0_30px_rgba(255,77,141,0.08)] transition-all duration-500 hover:bg-[#161c24] hover:border-pink-500/40 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,100,150,0.25)] w-full mx-auto"
             >
               {/* Profile Image with Glow & Gradient Border */}
               <div className="relative mb-6 transition-all duration-500">
@@ -75,7 +75,7 @@ function MentorSection() {
 
                 {/* Credibility Hint */}
                 <span className="text-[#9CA3AF] text-sm md:text-base font-medium">
-                  {mentor.credibility}
+                  {mentor.credibility || mentor.experience}
                 </span>
               </div>
             </div>

@@ -8,13 +8,13 @@ function WebinarSection() {
   const { webinar } = content;
 
   return (
-    <section className="relative bg-[#0B0F14] py-24 lg:py-32 overflow-hidden" id="webinar">
+    <section className="relative bg-[#0B0F14] pt-10 pb-24 lg:pt-14 lg:pb-32 overflow-hidden" id="webinar">
       {/* Background Decorative Orbs & Radial Glow */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-pink-500/5 blur-[120px] rounded-full -z-10 animate-pulse-slow"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-orange-500/5 blur-[120px] rounded-full -z-10"></div>
       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[40%] h-[60%] bg-radial-gradient from-orange-500/10 to-transparent blur-[80px] -z-10"></div>
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-[48px]">
           
           {/* Left Side: Content Block */}

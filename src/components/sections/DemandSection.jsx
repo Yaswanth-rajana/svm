@@ -3,8 +3,8 @@ import { content } from '../../data/content'
 
 function DemandSection() {
   return (
-    <div className="bg-gradient-to-b from-black via-[#050d10] to-black py-20 lg:py-28">
-      <div className="max-w-6xl mx-auto px-6">
+    <div className="bg-gradient-to-b from-black via-[#050d10] to-black pt-10 pb-20 lg:pt-14 lg:pb-28 overflow-hidden">
+      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">{content.demand.title}</h2>
           {/* <div className="w-16 h-1.5 bg-gradient-to-r from-pink-500 to-orange-400 mx-auto mt-4 mb-6 rounded-full"></div> */}

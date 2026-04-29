@@ -40,7 +40,7 @@ function HeroSection() {
   }
 
   return (
-    <div id="hero-section" className="relative bg-[#050505] text-white flex items-center py-12 lg:py-24">
+    <div id="hero-section" className="relative bg-[#050505] text-white flex items-center pt-12 pb-24 lg:pt-20 lg:pb-32 overflow-hidden min-h-screen">
       {/* Background Gradients */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 blur-[120px] rounded-full"></div>
@@ -48,12 +48,13 @@ function HeroSection() {
       </div>
 
       <Container>
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-16 max-w-7xl mx-auto py-12 lg:py-20">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 pt-0 lg:pt-0 pb-6 lg:pb-10">
           {/* Left Content */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-[55%]">
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-[65%]">
             
-            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
-              Start Your Career <br /> <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">in IT Infrastructure</span>
+            <h1 className="text-[40px] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
+              <span className="block">Start Your Career</span>
+              <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block lg:inline">in IT Infrastructure</span>
             </h1>
 
             {/* AI-Proof Tag */}
@@ -76,7 +77,7 @@ function HeroSection() {
 
             <div className="mt-1 lg:mt-4 relative">
               {/* Refined Premium SVG Arrow */}
-              <div className="cta-hint hidden lg:block absolute -top-12 -right-32 pointer-events-none z-20 rotate-[-15deg]">
+              <div className="cta-hint hidden lg:block absolute -top-14 -right-32 pointer-events-none z-20 rotate-[-15deg]">
                 <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-bounce-slow">
                   <path
                     d="M160,10 C160,60 80,100 20,80"
