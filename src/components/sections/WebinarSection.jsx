@@ -91,16 +91,16 @@ function WebinarSection() {
                 </div>
 
                 {/* Primary Button */}
-                <button className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-5 px-8 rounded-2xl 
+                <button className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-5 px-6 md:px-8 rounded-2xl 
                                  shadow-[0_0_20px_rgba(255,77,141,0.4)] 
                                  hover:shadow-[0_0_35px_rgba(255,100,50,0.6)] 
                                  hover:-translate-y-1 hover:scale-[1.02]
                                  animate-[ctaPulse_3s_ease-in-out_infinite]
-                                 transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 group">
-                  <span className="text-lg uppercase tracking-wider">
+                                 transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden">
+                  <span className="text-base md:text-lg uppercase tracking-wider whitespace-nowrap">
                     <AnimatedText text={webinar.cta} />
                   </span>
-                  <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
+                  <ArrowRight size={18} className="group-hover/btn:translate-x-1 transition-transform flex-shrink-0" />
                 </button>
 
                 {/* Urgency & Trust */}
