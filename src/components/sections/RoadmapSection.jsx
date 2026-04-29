@@ -52,77 +52,79 @@ function RoadmapSection() {
         {/* Timeline Container */}
         <div ref={containerRef} className="max-w-5xl mx-auto relative px-2 md:px-4">
           
-          {/* Background Track Line */}
-          <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gray-100 rounded-full"></div>
-          
-          {/* Animated Progress Line */}
-          <motion.div 
-            style={{ scaleY, originY: 0 }}
-            className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full z-10"
-          />
+          <div className="relative">
+            {/* Background Track Line */}
+            <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gray-100 rounded-full"></div>
+            
+            {/* Animated Progress Line */}
+            <motion.div 
+              style={{ scaleY, originY: 0 }}
+              className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full z-10"
+            />
 
-          {/* Steps */}
-          <div className="space-y-12 md:space-y-16 relative">
-            <AnimatePresence mode="popLayout">
-              {visibleSteps.map((step, index) => (
-                <motion.div 
-                  key={index}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className={`flex flex-col md:flex-row gap-8 items-center relative ${
-                    index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
-                  }`}
-                >
-                  {/* Badge Column */}
-                  <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 flex-shrink-0 z-20">
-                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 border-blue-600 group-hover:scale-110 transition-transform duration-300">
-                      {index + 1}
+            {/* Steps */}
+            <div className="space-y-12 md:space-y-16 relative">
+              <AnimatePresence mode="popLayout">
+                {visibleSteps.map((step, index) => (
+                  <motion.div 
+                    key={index}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className={`flex flex-col md:flex-row gap-8 items-center relative ${
+                      index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
+                    }`}
+                  >
+                    {/* Badge Column */}
+                    <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 flex-shrink-0 z-20">
+                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 border-blue-600 group-hover:scale-110 transition-transform duration-300">
+                        {index + 1}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Card Column */}
-                  <div className={`w-full md:w-[45%] pl-16 md:pl-0`}>
-                    <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden">
-                      {/* Hover Gradient Background */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 to-purple-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      
-                      <div className="relative z-10">
-                        {/* Title & Duration Pill */}
-                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
-                          <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                            {step.title}
-                          </h3>
-                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] md:text-xs font-bold whitespace-nowrap uppercase tracking-wider">
-                            {step.duration}
-                          </span>
-                        </div>
+                    {/* Card Column */}
+                    <div className={`w-full md:w-[45%] pl-16 md:pl-0`}>
+                      <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden">
+                        {/* Hover Gradient Background */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 to-purple-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        
+                        <div className="relative z-10">
+                          {/* Title & Duration Pill */}
+                          <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
+                            <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                              {step.title}
+                            </h3>
+                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] md:text-xs font-bold whitespace-nowrap uppercase tracking-wider">
+                              {step.duration}
+                            </span>
+                          </div>
 
-                        {/* Description */}
-                        <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
-                          {step.description}
-                        </p>
+                          {/* Description */}
+                          <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6">
+                            {step.description}
+                          </p>
 
-                        {/* Skill Tags */}
-                        <div className="flex flex-wrap gap-3">
-                          {step.tags.map((tag, tIdx) => (
-                            <div key={tIdx} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 group-hover:bg-white text-gray-600 text-[10px] md:text-[11px] font-semibold border border-gray-100 transition-colors">
-                              <CheckCircle2 size={12} className="text-blue-500" />
-                              {tag}
-                            </div>
-                          ))}
+                          {/* Skill Tags */}
+                          <div className="flex flex-wrap gap-3">
+                            {step.tags.map((tag, tIdx) => (
+                              <div key={tIdx} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 group-hover:bg-white text-gray-600 text-[10px] md:text-[11px] font-semibold border border-gray-100 transition-colors">
+                                <CheckCircle2 size={12} className="text-blue-500" />
+                                {tag}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Empty Space for Alternating Layout */}
-                  <div className="hidden md:block md:w-[45%]"></div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                    {/* Empty Space for Alternating Layout */}
+                    <div className="hidden md:block md:w-[45%]"></div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Show More Button & Mid-Section CTA */}
