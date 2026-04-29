@@ -50,20 +50,20 @@ function RoadmapSection() {
         </div>
 
         {/* Timeline Container */}
-        <div ref={containerRef} className="max-w-5xl mx-auto relative px-2 md:px-4">
+        <div ref={containerRef} className="max-w-5xl mx-auto relative px-4">
           
           <div className="relative">
-            {/* Background Track Line */}
-            <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gray-100 rounded-full"></div>
+            {/* Background Track Line - HIDDEN ON MOBILE */}
+            <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-1 bg-gray-100 rounded-full"></div>
             
-            {/* Animated Progress Line */}
+            {/* Animated Progress Line - HIDDEN ON MOBILE */}
             <motion.div 
               style={{ scaleY, originY: 0 }}
-              className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full z-10"
+              className="hidden md:block absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full z-10"
             />
 
             {/* Steps */}
-            <div className="space-y-12 md:space-y-16 relative">
+            <div className="space-y-8 md:space-y-16 relative">
               <AnimatePresence mode="popLayout">
                 {visibleSteps.map((step, index) => (
                   <motion.div 
@@ -73,29 +73,38 @@ function RoadmapSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className={`flex flex-col md:flex-row gap-8 items-center relative ${
+                    className={`flex flex-col md:flex-row gap-6 md:gap-8 items-center relative ${
                       index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
                     }`}
                   >
-                    {/* Badge Column */}
-                    <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 flex-shrink-0 z-20">
-                      <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 border-blue-600 group-hover:scale-110 transition-transform duration-300">
+                    {/* Floating Badge - DESKTOP ONLY */}
+                    <div className="hidden md:flex absolute md:left-1/2 md:-translate-x-1/2 flex-shrink-0 z-20">
+                      <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 border-blue-600 group-hover:scale-110 transition-transform duration-300">
                         {index + 1}
                       </div>
                     </div>
 
                     {/* Card Column */}
-                    <div className={`w-full md:w-[45%] pl-16 md:pl-0`}>
-                      <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden">
+                    <div className="w-full md:w-[45%]">
+                      <motion.div 
+                        whileTap={{ scale: 0.98 }}
+                        className="bg-white rounded-[2rem] px-5 py-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden cursor-pointer"
+                      >
                         {/* Hover Gradient Background */}
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 to-purple-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         
                         <div className="relative z-10">
                           {/* Title & Duration Pill */}
-                          <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
-                            <h3 className="text-lg md:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
-                              {step.title}
-                            </h3>
+                          <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+                            <div className="flex items-center gap-4">
+                              {/* Step Number Badge - MOBILE ONLY */}
+                              <div className="flex md:hidden w-7 h-7 rounded-full bg-blue-600 text-white items-center justify-center text-[13px] font-bold flex-shrink-0 shadow-lg shadow-blue-500/20">
+                                {index + 1}
+                              </div>
+                              <h3 className="text-[18px] md:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
+                                {step.title}
+                              </h3>
+                            </div>
                             <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] md:text-xs font-bold whitespace-nowrap uppercase tracking-wider">
                               {step.duration}
                             </span>
@@ -116,7 +125,7 @@ function RoadmapSection() {
                             ))}
                           </div>
                         </div>
-                      </div>
+                      </motion.div>
                     </div>
 
                     {/* Empty Space for Alternating Layout */}

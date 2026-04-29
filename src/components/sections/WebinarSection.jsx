@@ -44,11 +44,15 @@ function WebinarSection() {
             </div>
 
             {/* Bullet Points - Outcome-based */}
-            <div className="space-y-3 mb-8 mt-5">
+            <div className="space-y-4 mb-10 mt-8 max-w-[95%] md:max-w-none mx-auto lg:mx-0">
               {webinar.benefits.map((benefit, idx) => (
-                <div key={idx} className="flex items-center gap-[10px] text-gray-200 text-lg justify-center lg:justify-start">
-                  <CheckCircle size={22} className="text-pink-500 flex-shrink-0" />
-                  <span className="font-semibold">{benefit}</span>
+                <div key={idx} className="flex items-start gap-[12px] text-left group">
+                  <div className="mt-1 bg-pink-500/10 p-1 rounded-full group-hover:bg-pink-500/20 transition-colors">
+                    <CheckCircle size={18} className="text-pink-500 flex-shrink-0" />
+                  </div>
+                  <p className="text-white text-base md:text-lg leading-relaxed font-bold">
+                    {benefit}
+                  </p>
                 </div>
               ))}
             </div>

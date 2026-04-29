@@ -208,9 +208,9 @@ export const content = {
     socialProof: "100+ Professionals already registered",
     alreadyJoined: "Professionals already registered",
     benefits: [
-      "Understand What is IT Infrastructure and How it Works",
-      "How it is AI Proof",
-      "Job Opportunities and Salaries in IT Infrastructure Domain",
+      "Understand what is IT Infrastructure and how it works",
+      "AI-Proof Career Path",
+      "Job opportunities & salaries in IT Infrastructure Domain",
     ]
   },
 
