@@ -5,6 +5,49 @@ import AnimatedText from '../ui/AnimatedText'
 import { content } from '../../data/content'
 import { openLeadModal } from '../ui/LeadModal'
 
+const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
+
+function ExperienceDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      {/* Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setOpen(prev => !prev)}
+        className="w-full flex items-center justify-between py-3.5 px-4 bg-white/5 border border-white/10 text-white rounded-xl focus:outline-none focus:border-pink-500/50 transition-all text-sm"
+      >
+        <span className={value ? 'text-white' : 'text-gray-500'}>
+          {value || 'Select experience'}
+        </span>
+        <svg className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Dropdown Options */}
+      {open && (
+        <div className="absolute z-50 w-full mt-1 bg-[#11161d] border border-white/10 rounded-xl overflow-hidden shadow-xl shadow-black/50">
+          {EXPERIENCE_OPTIONS.map((opt) => (
+            <div
+              key={opt}
+              onClick={() => { onChange(opt); setOpen(false); }}
+              className={`px-4 py-3 text-sm cursor-pointer transition-colors
+                ${value === opt
+                  ? 'bg-gradient-to-r from-pink-500/20 to-orange-500/20 text-white font-bold border-l-2 border-pink-500'
+                  : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                }`}
+            >
+              {opt}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function HeroSection() {
   const { hero } = content;
   const [formData, setFormData] = useState({
@@ -120,9 +163,9 @@ function HeroSection() {
           {/* Right Form Card */}
           <div id="form-section" className="flex justify-center lg:justify-end w-full lg:w-[45%] lg:translate-y-12">
             <div className="w-full max-w-[480px]">
-              <div className="bg-[#0b0f14] border border-white/10 rounded-3xl shadow-2xl overflow-hidden relative" style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)' }}>
+              <div className="bg-[#0b0f14] border border-white/10 rounded-3xl shadow-2xl overflow-visible relative" style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)' }}>
                 {/* Top Strip */}
-                <div className="bg-gradient-to-r from-pink-600 to-orange-500 text-white text-center py-4">
+                <div className="bg-gradient-to-r from-pink-600 to-orange-500 text-white text-center py-4 rounded-t-3xl">
                   <p className="font-bold tracking-wide text-sm">
                     {hero.formHeader}
                   </p>
@@ -189,14 +232,9 @@ function HeroSection() {
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Years of Experience</label>
-                    <Input
-                      as="select"
-                      name="experience"
+                    <ExperienceDropdown
                       value={formData.experience}
-                      onChange={handleChange}
-                      options={["Fresher", "1–3 years", "3–5 years", "5+ years"]}
-                      required
-                      className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
+                      onChange={(val) => setFormData(prev => ({ ...prev, experience: val }))}
                     />
                   </div>
 
