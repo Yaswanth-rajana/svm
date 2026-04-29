@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import Input from './Input';
 
 export const openLeadModal = (type) => {
   window.dispatchEvent(new CustomEvent('open-lead-modal', { detail: { type } }));
@@ -13,7 +14,9 @@ const LeadModal = () => {
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    phone: ''
+    phone: '',
+    workingProfile: '',
+    experience: ''
   });
 
   useEffect(() => {
@@ -21,8 +24,8 @@ const LeadModal = () => {
       setType(e.detail.type);
       setIsRendered(true);
       setIsSubmitted(false);
-      setFormData({ fullName: '', email: '', phone: '' });
-      
+      setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
+
       // Request animation frame to ensure the DOM is updated before applying transitions
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -70,7 +73,7 @@ const LeadModal = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
+
     // Validation for phone number
     if (name === 'phone') {
       // Prevent 'e' and any non-numeric characters
@@ -89,35 +92,41 @@ const LeadModal = () => {
 
   if (!isRendered) return null;
 
-  const microcopy = type === 'pdf' 
+  const microcopy = type === 'pdf'
     ? "Enter your details to download the brochure instantly"
     : "Our team will contact you within 24 hours";
-    
+
   const ctaText = type === 'pdf' ? "Get Access" : "Request Call";
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
+      <div
         className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}
         onClick={closeModal}
       ></div>
 
       {/* Modal Content */}
-      <div 
-        className={`relative w-full max-w-md bg-[#0b0f14] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 transform ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+      <div
+        className={`relative w-full max-w-[500px] bg-[#0b0f14] rounded-[2.5rem] overflow-hidden shadow-2xl transition-all duration-300 transform ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
         style={{
-          boxShadow: '0 0 40px rgba(249, 115, 22, 0.15)',
+          boxShadow: '0 0 60px rgba(0, 0, 0, 0.8)',
         }}
       >
-        
-        {/* Soft Glow Gradient Border */}
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-pink-500/50 to-orange-500/50 p-[1px] pointer-events-none">
-          <div className="w-full h-full bg-[#0b0f14] rounded-2xl"></div>
-        </div>
+        {/* Top Header Strip - Only for Webinar */}
+        {type === 'webinar' && (
+          <div className="bg-gradient-to-r from-pink-600 to-orange-500 text-white text-center py-3.5">
+            <p className="font-bold tracking-wide text-sm">
+              Limited seats — Register Now
+            </p>
+          </div>
+        )}
+
+        {/* Glow Border */}
+        <div className="absolute inset-0 rounded-[2.5rem] border border-white/10 pointer-events-none"></div>
 
         <div className="relative z-10 p-8">
-          <button 
+          <button
             onClick={closeModal}
             className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
           >
@@ -134,6 +143,94 @@ const LeadModal = () => {
               <h3 className="text-2xl font-bold text-white mb-2">We'll reach out shortly 🚀</h3>
               <p className="text-gray-400">Thank you for your interest.</p>
             </div>
+          ) : type === 'webinar' ? (
+            <>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5 text-left">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Full Name</label>
+                    <Input
+                      placeholder="Elon Musk"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      required
+                      className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5 text-left">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Email</label>
+                    <Input
+                      type="email"
+                      placeholder="elon@spacex.com"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      required
+                      className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Phone Number</label>
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <Input
+                        type="tel"
+                        placeholder="6789123450"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        required
+                        className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                      />
+                    </div>
+                    <button type="button" className="px-5 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs transition-all shadow-lg shadow-pink-500/20 active:scale-95">
+                      Verify Number
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Working Profile</label>
+                  <Input
+                    placeholder="e.g. Software Engineer, Student, etc."
+                    name="workingProfile"
+                    value={formData.workingProfile}
+                    onChange={handleChange}
+                    required
+                    className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                  />
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Years of Experience</label>
+                  <Input
+                    as="select"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    options={["Fresher", "1–3 years", "3–5 years", "5+ years"]}
+                    required
+                    className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                  />
+                </div>
+
+                <div className="pt-2">
+                  <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-2xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide">
+                    Reserve Your Spot
+                  </button>
+                  <p className="text-center text-[11px] font-bold text-orange-400 mt-4 flex items-center justify-center gap-1.5">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
+                    ⚡ Filling fast — Only few seats left
+                  </p>
+                </div>
+              </form>
+            </>
           ) : (
             <>
               <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">
@@ -142,12 +239,11 @@ const LeadModal = () => {
               <p className="text-gray-400 text-sm mb-6">
                 {microcopy}
               </p>
-
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5 text-left">
                   <label className="text-xs font-semibold text-gray-400 ml-1">Full Name</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     name="fullName"
                     value={formData.fullName}
                     onChange={handleChange}
@@ -158,8 +254,8 @@ const LeadModal = () => {
                 </div>
                 <div className="space-y-1.5 text-left">
                   <label className="text-xs font-semibold text-gray-400 ml-1">Email Address</label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
@@ -170,8 +266,8 @@ const LeadModal = () => {
                 </div>
                 <div className="space-y-1.5 text-left">
                   <label className="text-xs font-semibold text-gray-400 ml-1">Phone Number</label>
-                  <input 
-                    type="tel" 
+                  <input
+                    type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
@@ -181,20 +277,14 @@ const LeadModal = () => {
                   />
                 </div>
 
-                <button 
+                <button
                   type="submit"
                   className="w-full mt-6 bg-gradient-to-r from-pink-500 to-orange-500 text-white py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
                 >
                   {ctaText}
                 </button>
-                
-                <p className="text-center text-xs text-gray-500 mt-4 flex items-center justify-center gap-1.5">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                  </svg>
-                  No spam • Instant access
-                </p>
               </form>
+
             </>
           )}
         </div>

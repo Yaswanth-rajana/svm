@@ -17,7 +17,7 @@ function HeroSection() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    
+
     if (name === 'fullName') {
       if (/[^A-Za-z\s]/.test(value)) return
     }
@@ -38,43 +38,71 @@ function HeroSection() {
   const handleDownload = () => {
     openLeadModal('pdf')
   }
-  
+
   return (
-    <div id="hero" className="relative bg-[#050505] text-white overflow-hidden min-h-screen flex items-center pt-24 pb-24 lg:pt-0 lg:pb-0">
+    <div id="hero" className="relative bg-[#050505] text-white overflow-x-hidden min-h-screen flex items-center pt-6 pb-6 lg:pt-0 lg:pb-0">
       {/* Background Gradients */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/20 blur-[120px] rounded-full"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-900/20 blur-[120px] rounded-full"></div>
       </div>
-      
+
       <Container>
         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-16 max-w-7xl mx-auto min-h-[80vh]">
           {/* Left Content */}
-          <div className="flex flex-col items-start text-left w-full lg:w-[55%]">
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-[55%]">
             
+            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
+              Start Your Career <br /> <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">in IT Infrastructure</span>
+            </h1>
+
             {/* AI-Proof Tag */}
-            <div 
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-3 border border-pink-500/30 bg-pink-500/5 shadow-[0_0_15px_rgba(236,72,153,0.2)]"
-              style={{
-                borderImageSource: 'linear-gradient(90deg, #ec4899, #f97316)',
-                borderImageSlice: 1,
-              }}
+            <div
+              className="inline-flex items-center gap-2 px-[14px] py-[6px] rounded-full mb-6 border border-[rgba(255,0,100,0.4)] bg-[rgba(255,0,100,0.1)] shadow-[0_0_20px_rgba(255,0,100,0.2)] hover:shadow-[0_0_30px_rgba(255,0,100,0.3)] transition-all duration-300"
             >
-              <span className="text-sm font-semibold bg-gradient-to-r from-pink-500 to-orange-500 bg-clip-text text-transparent">
-                🔥 {hero.badge}
+              <span className="text-sm font-bold text-[#ff0064] tracking-wide flex items-center gap-1.5">
+                ⚡ {hero.badge}
               </span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-5 tracking-tight">
-              Start Your Career <br /> <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent">in IT Infrastructure</span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-gray-400 font-medium mb-8 max-w-xl leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-400 font-medium mb-4 lg:mb-8 max-w-xl leading-relaxed">
               {hero.subtitle}
             </p>
-            
-            <div className="mt-4">
-              <button 
+
+            {/* Mobile-only Centered Arrow */}
+            <div className="lg:hidden flex justify-center mb-4">
+              <span className="arrow-down">↓</span>
+            </div>
+
+            <div className="mt-1 lg:mt-4 relative">
+              {/* Refined Premium SVG Arrow */}
+              <div className="cta-hint hidden lg:block absolute -top-12 -right-32 pointer-events-none z-20 rotate-[-15deg]">
+                <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-bounce-slow">
+                  <path
+                    d="M160,10 C160,60 80,100 20,80"
+                    stroke="url(#arrowGradientFlipped)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    className="drop-shadow-[0_0_10px_rgba(236,72,153,0.4)]"
+                  />
+                  <path
+                    d="M35,68 L20,80 L38,92"
+                    stroke="url(#arrowGradientFlipped)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="drop-shadow-[0_0_10px_rgba(236,72,153,0.4)]"
+                  />
+                  <defs>
+                    <linearGradient id="arrowGradientFlipped" x1="100%" y1="0%" x2="0%" y2="0%">
+                      <stop offset="0%" stopColor="#ec4899" />
+                      <stop offset="100%" stopColor="#f97316" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+
+              <button
                 onClick={handleDownload}
                 className="group relative flex items-center gap-3 px-10 py-5 bg-white text-gray-900 rounded-2xl font-bold text-xl hover:bg-gray-100 transition-all duration-300 shadow-[0_10px_40px_rgba(255,255,255,0.1)] hover:shadow-[0_15px_50px_rgba(255,255,255,0.2)] active:scale-95"
               >
@@ -87,7 +115,7 @@ function HeroSection() {
               </button>
             </div>
           </div>
-          
+
           {/* Right Form Card */}
           <div id="form-section" className="flex justify-center lg:justify-end w-full lg:w-[45%] lg:translate-y-12">
             <div className="w-full max-w-[480px]">
@@ -98,29 +126,29 @@ function HeroSection() {
                     {hero.formHeader}
                   </p>
                 </div>
-                
+
                 <form onSubmit={handleSubmit} className="p-8 space-y-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="flex flex-col gap-2">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Full Name</label>
-                      <Input 
-                        placeholder="Elon Musk" 
+                      <Input
+                        placeholder="Elon Musk"
                         name="fullName"
                         value={formData.fullName}
                         onChange={handleChange}
-                        required 
+                        required
                         className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Email</label>
-                      <Input 
+                      <Input
                         type="email"
-                        placeholder="elon@spacex.com" 
+                        placeholder="elon@spacex.com"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        required 
+                        required
                         className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
                       />
                     </div>
@@ -130,13 +158,13 @@ function HeroSection() {
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Phone Number</label>
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <Input 
+                        <Input
                           type="tel"
-                          placeholder="6789123450" 
+                          placeholder="6789123450"
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          required 
+                          required
                           className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
                         />
                       </div>
@@ -148,32 +176,32 @@ function HeroSection() {
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Working Profile</label>
-                    <Input 
-                      placeholder="e.g. Software Engineer, Student, etc." 
+                    <Input
+                      placeholder="e.g. Software Engineer, Student, etc."
                       name="workingProfile"
                       value={formData.workingProfile}
                       onChange={handleChange}
-                      required 
+                      required
                       className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
                     />
                   </div>
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Years of Experience</label>
-                    <Input 
+                    <Input
                       as="select"
                       name="experience"
                       value={formData.experience}
                       onChange={handleChange}
                       options={["Fresher", "1–3 years", "3–5 years", "5+ years"]}
-                      required 
+                      required
                       className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
                     />
                   </div>
-                  
+
                   <div className="pt-2">
                     <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide">
-                      Reserve My Spot
+                      Reserve Your Spot
                     </button>
                     <p className="text-center text-xs font-bold text-orange-400 mt-4 flex items-center justify-center gap-1.5">
                       <span className="relative flex h-2 w-2">
@@ -189,7 +217,7 @@ function HeroSection() {
           </div>
         </div>
       </Container>
-      
+
     </div>
   )
 }

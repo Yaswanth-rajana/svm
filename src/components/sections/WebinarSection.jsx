@@ -2,6 +2,7 @@ import React from 'react';
 import { CheckCircle, Lock, Calendar, Users, ArrowRight } from 'lucide-react';
 import { content } from '../../data/content';
 import AnimatedText from '../ui/AnimatedText';
+import { openLeadModal } from '../ui/LeadModal';
 
 function WebinarSection() {
   const { webinar } = content;
@@ -29,7 +30,7 @@ function WebinarSection() {
             </div>
             
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-5 tracking-tight">
-              Join Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-400">FREE</span> <br className="hidden md:block" /> Live Webinar <span className="inline-block align-middle -translate-y-[2px]">🚀</span>
+              Join Our <br className="hidden md:block" /> Live Webinar <span className="inline-block align-middle -translate-y-[2px]">🚀</span>
               <div className="w-20 h-1.5 bg-gradient-to-r from-pink-500 to-orange-400 mt-5 rounded-full hidden lg:block opacity-90"></div>
             </h2>
             
@@ -91,12 +92,15 @@ function WebinarSection() {
                 </div>
 
                 {/* Primary Button */}
-                <button className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-5 px-6 md:px-8 rounded-2xl 
-                                 shadow-[0_0_20px_rgba(255,77,141,0.4)] 
-                                 hover:shadow-[0_0_35px_rgba(255,100,50,0.6)] 
-                                 hover:-translate-y-1 hover:scale-[1.02]
-                                 animate-[ctaPulse_3s_ease-in-out_infinite]
-                                 transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden">
+                <button 
+                  onClick={() => openLeadModal('webinar')}
+                  className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-5 px-6 md:px-8 rounded-2xl 
+                                   shadow-[0_0_20px_rgba(255,77,141,0.4)] 
+                                   hover:shadow-[0_0_35px_rgba(255,100,50,0.6)] 
+                                   hover:-translate-y-1 hover:scale-[1.02]
+                                   animate-[ctaPulse_3s_ease-in-out_infinite]
+                                   transition-all duration-300 transform active:scale-95 flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden"
+                >
                   <span className="text-base md:text-lg uppercase tracking-wider whitespace-nowrap">
                     <AnimatedText text={webinar.cta} />
                   </span>

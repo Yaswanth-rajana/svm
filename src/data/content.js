@@ -1,9 +1,9 @@
 export const content = {
   // Hero Section
   hero: {
-    badge: "AI-Proof Career Path",
+    badge: "AI-Proof Job Roles",
     title: "Start Your Career in IT Infrastructure",
-    subtitle: "Understand how IT Infrastructure actually works in real-world systems",
+    subtitle: "Understand how IT Infrastructure actually works",
     addonBadge: "AI-Proof Career Path",
     ctaPrimary: "Download Pdf",
     stats: [
@@ -22,7 +22,7 @@ export const content = {
       {
         title: "Cloud Engineer",
         description: "Manage and oversee cloud-based systems and services.",
-        salary: "₹6-10 LPA"
+        salary: "₹10-15 LPA"
       },
       {
         title: "DevOps Engineer",
@@ -62,7 +62,7 @@ export const content = {
       "Networks (Connectivity & Communication)",
       "Cloud & Security"
     ],
-    image: "https://cdn.prod.website-files.com/697c1ba40a3d9d8d84842e2b/697c8bd62ef4354f3fb952b7_FDE%20academy%20intersect.svg"
+    image: "/Untitled.png"
   },
 
   // IT Infrastructure Types
@@ -107,7 +107,7 @@ export const content = {
     title: "Job Roles and Payscale in IT Infrastructure",
     subtitle: "Based on industry averages across India and global markets",
     roles: [
-      { name: "Cloud Engineer", india: "₹6–10 LPA", global: "$70k–$120k", tag: "Core Role", icon: "🌐" },
+      { name: "Cloud Engineer", india: "₹10–15 LPA", global: "$70k–$120k", tag: "Core Role", icon: "🌐" },
       { name: "DevOps Engineer", india: "₹8–15 LPA", global: "$90k–$140k", tag: "High Demand", icon: "☁️" },
       { name: "Virtualization Engineer", india: "₹15–18 LPA", global: "$110k–$160k", tag: "Mid–Senior", icon: "⚙️" },
       { name: "Server Engineer", india: "₹8–12 LPA", global: "$90k–$150k", tag: "High Demand", icon: "🔒" },
@@ -192,14 +192,14 @@ export const content = {
         name: "Saurabh Singh",
         role: "Senior IT Engineer",
         credibility: "10+ Years Experience in Enterprise Systems",
-        linkedin: "https://www.linkedin.com/",
-        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200&h=200"
+        linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
+        photo: "Saurabh singh.jpg"
       }
     ]
   },
 
   webinar: {
-    title: "🚀 Join Our Free Webinar",
+    title: "🚀 Join Our Live Webinar",
     subtitle: "Learn IT Infrastructure from Industry Experts",
     dateTime: "📅 June 7 \u00A0|\u00A0 ⏰ 10:00 AM IST \u00A0|\u00A0 ⏳ 90 mins",
     cta: "Claim Your Spot",
@@ -209,14 +209,14 @@ export const content = {
     alreadyJoined: "Professionals already registered",
     benefits: [
       "Understand what is IT Infrastructure and how it works",
-      "AI-Proof Career Path",
+      "Know how this is an AI-Proof Career Path",
       "Job opportunities & salaries in IT Infrastructure Domain",
     ]
   },
 
   faq: {
     title: "Frequently Asked Questions",
-    subtitle: "We know you might have some questions before getting started in our platform",
+    subtitle: "We have already answered your queries here",
     questions: [
       {
         question: "What is IT Infrastructure?",

@@ -21,18 +21,13 @@ function RoadmapSection() {
 
   const visibleSteps = showAll ? roadmap.steps : roadmap.steps.slice(0, 4);
 
-  const scrollToForm = () => {
-    const formElement = document.getElementById("form-section");
-    if (formElement) {
-      formElement.scrollIntoView({
+  const scrollToWebinar = () => {
+    const webinarElement = document.getElementById("webinar");
+    if (webinarElement) {
+      webinarElement.scrollIntoView({
         behavior: "smooth",
-        block: "center",
+        block: "start",
       });
-      // Optional: Add a brief focus highlight effect
-      formElement.classList.add('ring-2', 'ring-pink-500', 'ring-offset-4', 'ring-offset-black');
-      setTimeout(() => {
-        formElement.classList.remove('ring-2', 'ring-pink-500', 'ring-offset-4', 'ring-offset-black');
-      }, 2000);
     }
   };
 
@@ -150,7 +145,7 @@ function RoadmapSection() {
                 
                 <div className="pt-8">
                   <motion.button 
-                    onClick={scrollToForm}
+                    onClick={scrollToWebinar}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="px-8 py-4 rounded-2xl bg-blue-50 border border-blue-100 text-blue-600 font-bold flex items-center justify-center gap-3 mx-auto hover:bg-blue-100 transition-all"
@@ -173,7 +168,7 @@ function RoadmapSection() {
               className="text-center mt-24"
             >
               <motion.button 
-                onClick={scrollToForm}
+                onClick={scrollToWebinar}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-12 py-5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 flex items-center justify-center gap-3 mx-auto"

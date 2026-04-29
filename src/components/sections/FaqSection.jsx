@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { content } from '../../data/content';
+import { openLeadModal } from '../ui/LeadModal';
 
 const FaqItem = ({ question, answer, list, isOpen, onClick }) => {
   return (
@@ -78,8 +79,11 @@ const FaqSection = () => {
         <div className="text-center mt-12 sm:mt-16">
           <p className="text-gray-600">
             Still have questions?{' '}
-            <a href="#contact" className="text-pink-600 font-semibold hover:text-pink-700 hover:underline transition-colors">
-              Contact us
+            <a 
+              href="tel:+919876543210"
+              className="text-pink-600 font-semibold hover:text-pink-700 hover:underline transition-colors"
+            >
+              Call us now
             </a>
           </p>
         </div>
