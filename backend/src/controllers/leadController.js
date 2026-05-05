@@ -1,4 +1,6 @@
 import Lead from "../models/Lead.js";
+import OTP from "../models/Otp.js";
+import { sendConfirmationEmail, sendCallRequestEmail } from "../services/emailService.js";
 
 /**
  * @desc    Create a new lead
@@ -7,42 +9,69 @@ import Lead from "../models/Lead.js";
  */
 export const createLead = async (req, res) => {
   try {
-    const { name, email, phone, source, workingProfile, experience } = req.body;
+    const { name, email, workingProfile, experience } = req.body;
+    
+    // Normalize input
+    const phone = req.body.phone ? "91" + req.body.phone.replace(/\D/g, "").slice(-10) : undefined;
+    const source = req.body.source?.toLowerCase();
+
+    if (!phone || !source) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone and source are required",
+      });
+    }
+
+    // 1.5 Verify OTP first
+    const verifiedOtp = await OTP.findOne({ 
+      contact: { $in: [phone, email].filter(Boolean) }, 
+      isVerified: true 
+    });
+    if (!verifiedOtp) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify OTP first",
+      });
+    }
 
     // 2. Check if lead already exists by phone
     let lead = await Lead.findOne({ phone });
 
     if (lead) {
-      // Check if this specific source already exists for this user
+      // ❌ If already registered for same source
       if (lead.sources.includes(source)) {
-        console.log("🚫 Duplicate registration for same source:", source);
-        return res.status(200).json({
+        return res.json({
           success: false,
           message: "You have already registered for this",
         });
       }
 
-      // Existing user but NEW source
-      console.log("➕ Adding new source to existing user:", source);
-      
-      // Update other fields if provided
-      lead.name = name || lead.name;
-      lead.email = email || lead.email;
-      if (workingProfile) lead.workingProfile = workingProfile;
-      if (experience) lead.experience = experience;
-      
+      // ✅ New action → add source
       lead.sources.push(source);
       await lead.save();
 
-      return res.status(200).json({
+      // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
+      if (source === "webinar" && lead.email) {
+        try {
+          console.log(`📩 Webinar email triggered for: ${lead.email}`);
+          sendConfirmationEmail({ name: lead.name, email: lead.email });
+        } catch (emailErr) {
+          console.error("❌ Email trigger failed:", emailErr.message);
+        }
+      }
+
+      // Do NOT consume the OTP immediately. 
+      // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
+      // (like downloading a PDF after registering) without verifying twice.
+
+      return res.json({
         success: true,
         message: "Your action has been recorded",
         data: lead,
       });
     }
 
-    // 3. Create new Lead (CASE 1)
-    console.log("🆕 Creating new lead...");
+    // 🆕 New user
     lead = await Lead.create({
       name,
       email,
@@ -52,8 +81,21 @@ export const createLead = async (req, res) => {
       experience,
     });
 
-    // 4. Return success response
-    res.status(201).json({
+    // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
+    if (source === "webinar" && email) {
+      try {
+        console.log(`📩 Webinar email triggered for: ${email}`);
+        sendConfirmationEmail({ name, email });
+      } catch (emailErr) {
+        console.error("❌ Email trigger failed:", emailErr.message);
+      }
+    }
+
+    // Do NOT consume the OTP immediately. 
+    // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
+    // (like downloading a PDF after registering) without verifying twice.
+
+    return res.json({
       success: true,
       message: "Registered successfully",
       data: lead,
@@ -74,7 +116,10 @@ export const createLead = async (req, res) => {
  */
 export const requestCall = async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
+    const { name, email } = req.body;
+    
+    // Normalize input
+    const phone = req.body.phone ? "91" + req.body.phone.replace(/\D/g, "").slice(-10) : undefined;
     const source = "call_request";
 
     // 1. Validation
@@ -85,7 +130,19 @@ export const requestCall = async (req, res) => {
       });
     }
 
-    console.log("📥 Request Call reached backend:", req.body);
+    // 1.5 Verify OTP first
+    const verifiedOtp = await OTP.findOne({ 
+      contact: { $in: [phone, email].filter(Boolean) }, 
+      isVerified: true 
+    });
+    if (!verifiedOtp) {
+      return res.status(400).json({
+        success: false,
+        message: "Please verify OTP first",
+      });
+    }
+
+    console.log("📥 Request Call reached backend:", { name, email, phone });
 
     // 2. Check if lead exists (Upsert logic)
     let lead = await Lead.findOne({ phone });
@@ -105,11 +162,25 @@ export const requestCall = async (req, res) => {
         email,
         phone,
         sources: [source],
-        isVerified: false,
+        isVerified: true,
       });
     }
 
     console.log("🚀 Call request saved successfully:", lead);
+
+    // 🚀 Send confirmation email (Non-blocking & Fail-safe)
+    if (lead.email) {
+      try {
+        console.log(`📩 Call request email triggered for: ${lead.email}`);
+        sendCallRequestEmail({ name: lead.name, email: lead.email });
+      } catch (emailErr) {
+        console.error("❌ Call request email trigger failed:", emailErr.message);
+      }
+    }
+
+    // Do NOT consume the OTP immediately. 
+    // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
+    // (like downloading a PDF after registering) without verifying twice.
 
     res.status(200).json({
       success: true,

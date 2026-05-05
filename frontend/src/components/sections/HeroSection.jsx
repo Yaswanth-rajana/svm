@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Container from '../layout/Container'
 import Input from '../ui/Input'
 import AnimatedText from '../ui/AnimatedText'
 import { content } from '../../data/content'
 import { openLeadModal } from '../../utils/modalEvents'
+import OtpVerification from '../ui/OtpVerification'
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -58,11 +59,16 @@ function HeroSection() {
     experience: ''
   })
 
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [loadingAction, setLoadingAction] = useState(""); // "submit"
+  const [resetKey, setResetKey] = useState(0);
+
   const handleChange = (e) => {
     const { name, value } = e.target
     if (name === 'phone') {
       if (/[^0-9]/.test(value)) return
       if (value.length > 10) return
+      if (isPhoneVerified) setIsPhoneVerified(false);
     }
     setFormData(prev => ({ ...prev, [name]: value }))
   }
@@ -73,6 +79,11 @@ function HeroSection() {
       alert("Please enter a valid 10-digit phone number.");
       return;
     }
+    if (!isPhoneVerified) {
+      alert("Please verify your phone number first.");
+      return;
+    }
+    setLoadingAction("submit");
 
     try {
       const response = await fetch('http://localhost:5001/api/leads', {
@@ -97,12 +108,16 @@ function HeroSection() {
         openLeadModal('webinar', true);
         // Clear the hero form
         setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
+        setIsPhoneVerified(false);
+        setResetKey(prev => prev + 1);
       } else {
         alert(data.message || "Something went wrong. Please try again.");
       }
     } catch (error) {
       console.error("Submission error:", error);
       alert("Could not connect to the server. Please try again later.");
+    } finally {
+      setLoadingAction("");
     }
   };
 
@@ -221,29 +236,35 @@ function HeroSection() {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
+                        disabled={isPhoneVerified}
+                        className={`!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                       />
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-2">
                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Phone Number</label>
-                    <div className="flex gap-3">
-                      <div className="flex-1">
-                        <Input
-                          type="tel"
-                          placeholder="6789123450"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          required
-                          className="!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all"
-                        />
-                      </div>
-                      <button type="button" className="px-5 py-3 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-sm transition-all shadow-lg shadow-pink-500/20 active:scale-95">
-                        Verify Number
-                      </button>
-                    </div>
+                    <Input
+                      type="tel"
+                      placeholder="6789123450"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      disabled={isPhoneVerified}
+                      className={`!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
+                    <OtpVerification 
+                      key={`otp-hero-${resetKey}`}
+                      phone={formData.phone} 
+                      email={formData.email} 
+                      onVerified={() => setIsPhoneVerified(true)}
+                      onReset={() => setIsPhoneVerified(false)}
+                    />
                   </div>
 
                   <div className="flex flex-col gap-2">
@@ -267,8 +288,8 @@ function HeroSection() {
                   </div>
 
                   <div className="pt-2">
-                    <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide">
-                      Reserve Your Spot
+                    <button type="submit" disabled={!isPhoneVerified || loadingAction === "submit"} className={`w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide ${(!isPhoneVerified || loadingAction === "submit") ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                      {loadingAction === "submit" ? "Reserving..." : "Reserve Your Spot"}
                     </button>
                     <p className="text-center text-xs font-bold text-orange-400 mt-4 flex items-center justify-center gap-1.5">
                       <span className="relative flex h-2 w-2">

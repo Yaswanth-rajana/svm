@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import Input from './Input';
+import OtpVerification from './OtpVerification';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -54,6 +55,8 @@ const LeadModal = () => {
     workingProfile: '',
     experience: ''
   });
+  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     const handleOpen = (e) => {
@@ -61,6 +64,8 @@ const LeadModal = () => {
       setIsRendered(true);
       setIsSubmitted(e.detail.isSuccess || false);
       setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
+      setIsPhoneVerified(false);
+      setResetKey(prev => prev + 1);
 
       // Request animation frame to ensure the DOM is updated before applying transitions
       requestAnimationFrame(() => {
@@ -99,6 +104,11 @@ const LeadModal = () => {
     e.preventDefault();
     if (formData.phone.length !== 10) {
       alert("Please enter a valid 10-digit phone number.");
+      return;
+    }
+    
+    if (!isPhoneVerified) {
+      alert("Please verify your contact before submitting.");
       return;
     }
 
@@ -285,10 +295,18 @@ const LeadModal = () => {
                         className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
                       />
                     </div>
-                    <button type="button" className="px-5 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs transition-all shadow-lg shadow-pink-500/20 active:scale-95">
-                      Verify Number
-                    </button>
                   </div>
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
+                  <OtpVerification 
+                    key={`otp-modal-${resetKey}`}
+                    phone={formData.phone} 
+                    email={formData.email} 
+                    onVerified={() => setIsPhoneVerified(true)}
+                    onReset={() => setIsPhoneVerified(false)}
+                  />
                 </div>
 
                 <div className="space-y-1.5 text-left">
@@ -312,7 +330,11 @@ const LeadModal = () => {
                 </div>
 
                 <div className="pt-2">
-                  <button type="submit" className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-2xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide">
+                  <button 
+                    type="submit" 
+                    disabled={!isPhoneVerified}
+                    className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-2xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                  >
                     Reserve Your Spot
                   </button>
                   <p className="text-center text-[11px] font-bold text-orange-400 mt-4 flex items-center justify-center gap-1.5">
