@@ -19,7 +19,7 @@ function Navbar() {
         <div className="flex justify-between items-center gap-4">
           {/* Logo & Brand */}
           <div className="flex items-center gap-2 cursor-pointer flex-shrink-0" onClick={() => scrollToSection('hero')}>
-            <span className="text-sm sm:text-base md:text-2xl font-bold text-white tracking-tight uppercase truncate max-w-[150px] sm:max-w-none">SMART MATE VENTURES</span>
+            <img src="/logo2.png" alt="Smart Mate Ventures" style={{ height: '50px', width: 'auto', maxWidth: '300px', objectFit: 'contain' }} />
           </div>
 
           {/* Action Area */}
