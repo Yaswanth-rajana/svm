@@ -107,7 +107,7 @@ const LeadModal = () => {
       return;
     }
     
-    if (!isPhoneVerified) {
+    if (type === 'webinar' && !isPhoneVerified) {
       alert("Please verify your contact before submitting.");
       return;
     }
@@ -177,6 +177,7 @@ const LeadModal = () => {
       if (/[^0-9]/.test(value)) return;
       // Limit to 10 digits
       if (value.length > 10) return;
+      if (isPhoneVerified) setIsPhoneVerified(false);
     }
 
     // Validation for full name (optional, but good for consistency)
@@ -276,7 +277,8 @@ const LeadModal = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                      disabled={isPhoneVerified}
+                      className={`!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all text-sm ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                     />
                   </div>
                 </div>
@@ -292,7 +294,8 @@ const LeadModal = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         required
-                        className="!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl focus:!border-pink-500/50 transition-all text-sm"
+                        disabled={isPhoneVerified}
+                        className={`!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all text-sm ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                       />
                     </div>
                   </div>

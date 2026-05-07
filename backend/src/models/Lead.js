@@ -41,6 +41,31 @@ const leadSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    eventDate: {
+      type: Date,
+      default: new Date("2026-05-08T10:00:00+05:30"),
+    },
+    
+    paymentStatus: {
+      type: String,
+      default: "pending",
+    },
+
+    reminder7Sent: {
+      type: Boolean,
+      default: false,
+    },
+    
+    reminder3Sent: {
+      type: Boolean,
+      default: false,
+    },
+    
+    reminder1Sent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

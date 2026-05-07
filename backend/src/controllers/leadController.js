@@ -1,6 +1,6 @@
 import Lead from "../models/Lead.js";
 import OTP from "../models/Otp.js";
-import { sendConfirmationEmail, sendCallRequestEmail } from "../services/emailService.js";
+import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail, sendCallRequestAdminEmail } from "../services/emailService.js";
 
 /**
  * @desc    Create a new lead
@@ -58,6 +58,19 @@ export const createLead = async (req, res) => {
         } catch (emailErr) {
           console.error("❌ Email trigger failed:", emailErr.message);
         }
+
+        try {
+          console.log(`📩 Admin webinar notification triggered for: ${lead.email}`);
+          sendRegistrationAdminEmail({ 
+            name: lead.name, 
+            email: lead.email, 
+            phone: lead.phone, 
+            workingProfile: lead.workingProfile, 
+            experience: lead.experience 
+          });
+        } catch (adminErr) {
+          console.error("❌ Admin notification failed:", adminErr.message);
+        }
       }
 
       // Do NOT consume the OTP immediately. 
@@ -89,6 +102,19 @@ export const createLead = async (req, res) => {
       } catch (emailErr) {
         console.error("❌ Email trigger failed:", emailErr.message);
       }
+
+      try {
+        console.log(`📩 Admin webinar notification triggered for: ${email}`);
+        sendRegistrationAdminEmail({ 
+          name: lead.name, 
+          email: lead.email, 
+          phone: lead.phone, 
+          workingProfile: lead.workingProfile, 
+          experience: lead.experience 
+        });
+      } catch (adminErr) {
+        console.error("❌ Admin notification failed:", adminErr.message);
+      }
     }
 
     // Do NOT consume the OTP immediately. 
@@ -116,7 +142,7 @@ export const createLead = async (req, res) => {
  */
 export const requestCall = async (req, res) => {
   try {
-    const { name, email } = req.body;
+    const { name, email, preferredTime, message } = req.body;
     
     // Normalize input
     const phone = req.body.phone ? "91" + req.body.phone.replace(/\D/g, "").slice(-10) : undefined;
@@ -175,6 +201,19 @@ export const requestCall = async (req, res) => {
         sendCallRequestEmail({ name: lead.name, email: lead.email });
       } catch (emailErr) {
         console.error("❌ Call request email trigger failed:", emailErr.message);
+      }
+
+      try {
+        console.log(`📩 Admin call request notification triggered for: ${lead.email}`);
+        sendCallRequestAdminEmail({ 
+          name: lead.name, 
+          email: lead.email, 
+          phone: lead.phone, 
+          preferredTime, 
+          message 
+        });
+      } catch (adminErr) {
+        console.error("❌ Admin call request notification failed:", adminErr.message);
       }
     }
 

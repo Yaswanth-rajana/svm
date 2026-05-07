@@ -1,5 +1,20 @@
 import axios from 'axios';
 
+/**
+ * Formats an Indian phone number stored with a '91' prefix.
+ * e.g., '911234567890' -> '+91 12345 67890'
+ * 
+ * @param {string} phone - The raw phone number
+ * @returns {string} The formatted phone number
+ */
+export const formatPhoneNumber = (phone) => {
+    if (!phone) return phone;
+    const phoneStr = phone.toString();
+    if (phoneStr.startsWith("91") && phoneStr.length === 12) {
+        return `+91 ${phoneStr.slice(2, 7)} ${phoneStr.slice(7)}`;
+    }
+    return phoneStr;
+};
 
 /**
  * Sends a webinar registration confirmation email via ZeptoMail API.
@@ -54,9 +69,9 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; padding: 24px; border-radius: 12px; margin-bottom: 32px;">
                     <div style="margin-bottom: 16px;">
                         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Date & Time</p>
-                        <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Sunday, June 07, 2026 at 10:00 AM IST</p>
+                        <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Friday, May 08, 2026 at 10:00 AM IST</p>
                         <p style="margin: 8px 0 0; font-size: 14px;">
-                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=IT+Infrastructure+Engineering+Roadmap+Webinar&dates=20260607T043000Z/20260607T060000Z&details=Join+our+exclusive+webinar+to+build+your+IT+Infrastructure+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
+                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=IT+Infrastructure+Engineering+Roadmap+Webinar&dates=20260506T043000Z/20260506T060000Z&details=Join+our+exclusive+webinar+to+build+your+IT+Infrastructure+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
                         </p>
                     </div>
 
@@ -293,4 +308,158 @@ export const sendEmailOTP = async (email, otp) => {
         }
         throw error;
     }
+};
+
+/**
+ * Sends a webinar registration admin notification email.
+ * 
+ * @param {Object} params - Registration details.
+ * @param {string} params.name
+ * @param {string} params.email
+ * @param {string} params.phone
+ * @param {string} params.workingProfile
+ * @param {string} params.experience
+ */
+export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile, experience }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const formattedPhone = formatPhoneNumber(phone);
+
+    // Safety Check
+    if (!apiKey || !fromEmail || !adminEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY, FROM_EMAIL or ADMIN_EMAIL is not defined in .env");
+        return;
+    }
+
+    const url = 'https://api.zeptomail.in/v1.1/email';
+    const registrationTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+    const data = {
+        from: {
+            address: fromEmail,
+            name: "System Notification"
+        },
+        to: [
+            {
+                email_address: {
+                    address: adminEmail,
+                    name: "Admin"
+                }
+            }
+        ],
+        subject: "🎉 New Webinar Registration",
+        htmlbody: `
+            <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #ffffff; color: #1f2937;">
+                <h2 style="color: #111827; margin-bottom: 16px;">New Webinar Registration 🎉</h2>
+                <p>A new user has successfully registered for the webinar.</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Working Profile</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${workingProfile || 'N/A'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Experience</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${experience || 'N/A'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>
+                </table>
+            </div>
+        `
+    };
+
+    const config = {
+        headers: {
+            'Authorization': `Zoho-enczapikey ${apiKey}`,
+            'Content-Type': 'application/json'
+        }
+    };
+
+    // Non-blocking call
+    axios.post(url, data, config)
+        .then(() => {
+            console.log(`✅ Admin notification (Webinar) sent successfully to: ${adminEmail}`);
+        })
+        .catch(error => {
+            console.error('❌ Failed to send admin notification (Webinar):');
+            if (error.response) {
+                console.error('ZeptoMail Error:', JSON.stringify(error.response.data, null, 2));
+            } else {
+                console.error('Error Message:', error.message);
+            }
+        });
+};
+
+/**
+ * Sends a call request admin notification email.
+ * 
+ * @param {Object} params - Request details.
+ * @param {string} params.name
+ * @param {string} params.email
+ * @param {string} params.phone
+ * @param {string} params.preferredTime
+ * @param {string} params.message
+ */
+export const sendCallRequestAdminEmail = ({ name, email, phone, preferredTime, message }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const formattedPhone = formatPhoneNumber(phone);
+
+    // Safety Check
+    if (!apiKey || !fromEmail || !adminEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY, FROM_EMAIL or ADMIN_EMAIL is not defined in .env");
+        return;
+    }
+
+    const url = 'https://api.zeptomail.in/v1.1/email';
+    const submittedTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+    const data = {
+        from: {
+            address: fromEmail,
+            name: "System Notification"
+        },
+        to: [
+            {
+                email_address: {
+                    address: adminEmail,
+                    name: "Admin"
+                }
+            }
+        ],
+        subject: "📞 New Request a Call Lead",
+        htmlbody: `
+            <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #ffffff; color: #1f2937;">
+                <h2 style="color: #111827; margin-bottom: 16px;">New Call Request 📞</h2>
+                <p>A new user has requested a call.</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Preferred Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${preferredTime || 'Not specified'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Message / Query</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${message || 'None'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Submitted Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${submittedTime}</td></tr>
+                </table>
+            </div>
+        `
+    };
+
+    const config = {
+        headers: {
+            'Authorization': `Zoho-enczapikey ${apiKey}`,
+            'Content-Type': 'application/json'
+        }
+    };
+
+    // Non-blocking call
+    axios.post(url, data, config)
+        .then(() => {
+            console.log(`✅ Admin notification (Call Request) sent successfully to: ${adminEmail}`);
+        })
+        .catch(error => {
+            console.error('❌ Failed to send admin notification (Call Request):');
+            if (error.response) {
+                console.error('ZeptoMail Error:', JSON.stringify(error.response.data, null, 2));
+            } else {
+                console.error('Error Message:', error.message);
+            }
+        });
 };
