@@ -1,4 +1,4 @@
-import OTP from "../models/Otp.js";
+import OTP from "../models/OTP.js";
 import { sendWhatsAppOTP } from "../services/whatsappService.js";
 import { sendEmailOTP } from "../services/emailService.js";
 
