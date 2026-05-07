@@ -1,5 +1,5 @@
 import Lead from "../models/Lead.js";
-import OTP from "../models/Otp.js";
+import OTP from "../models/OTP.js";
 import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail, sendCallRequestAdminEmail } from "../services/emailService.js";
 
 /**
