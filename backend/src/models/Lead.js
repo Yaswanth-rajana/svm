@@ -52,6 +52,14 @@ const leadSchema = new mongoose.Schema(
       default: "pending",
     },
 
+    razorpayOrderId: {
+      type: String,
+    },
+    
+    razorpayPaymentId: {
+      type: String,
+    },
+
     reminder7Sent: {
       type: Boolean,
       default: false,

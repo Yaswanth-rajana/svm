@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import Input from './Input';
 import OtpVerification from './OtpVerification';
+import { handleRazorpayPayment } from '../../utils/payment';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -57,6 +58,7 @@ const LeadModal = () => {
   });
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [resetKey, setResetKey] = useState(0);
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
   useEffect(() => {
     const handleOpen = (e) => {
@@ -145,6 +147,30 @@ const LeadModal = () => {
       const data = await response.json();
 
       if (data.success) {
+        const lead = data.data;
+
+        // 💳 Razorpay Integration for Webinar
+        if (type === 'webinar') {
+          setIsPaymentLoading(true);
+          handleRazorpayPayment({
+            leadData: lead,
+            formData: formData,
+            onSuccess: (updatedLead) => {
+              setIsSubmitted(true);
+              setIsPaymentLoading(false);
+              setTimeout(() => closeModal(), 4000);
+            },
+            onFailure: () => {
+              setIsPaymentLoading(false);
+            },
+            onModalClose: () => {
+              setIsPaymentLoading(false);
+            }
+          });
+          return;
+        }
+
+        // Regular success flow for non-webinar types
         setIsSubmitted(true);
 
         // If it's a PDF request, trigger the download
@@ -159,7 +185,7 @@ const LeadModal = () => {
 
         setTimeout(() => {
           closeModal();
-        }, 4000); // Increased time slightly to allow user to see message
+        }, 4000);
       } else {
         alert(data.message || "Something went wrong. Please try again.");
       }
@@ -336,10 +362,18 @@ const LeadModal = () => {
                 <div className="pt-2">
                   <button 
                     type="submit" 
-                    disabled={!isPhoneVerified}
-                    className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-2xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                    disabled={!isPhoneVerified || isPaymentLoading}
+                    className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-2xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    Reserve Your Spot
+                    {isPaymentLoading ? (
+                      <>
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Processing...
+                      </>
+                    ) : "Reserve Your Spot"}
                   </button>
                   <p className="text-center text-[11px] font-bold text-orange-400 mt-4 flex items-center justify-center gap-1.5">
                     <span className="relative flex h-2 w-2">

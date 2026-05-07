@@ -319,8 +319,9 @@ export const sendEmailOTP = async (email, otp) => {
  * @param {string} params.phone
  * @param {string} params.workingProfile
  * @param {string} params.experience
+ * @param {string} params.paymentStatus
  */
-export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile, experience }) => {
+export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile, experience, paymentStatus }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
     const adminEmail = process.env.ADMIN_EMAIL;
@@ -359,6 +360,7 @@ export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile,
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Working Profile</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${workingProfile || 'N/A'}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Experience</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${experience || 'N/A'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${paymentStatus || 'N/A'}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>
                 </table>
             </div>

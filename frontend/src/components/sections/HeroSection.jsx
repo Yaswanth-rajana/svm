@@ -5,6 +5,7 @@ import AnimatedText from '../ui/AnimatedText'
 import { content } from '../../data/content'
 import { openLeadModal } from '../../utils/modalEvents'
 import OtpVerification from '../ui/OtpVerification'
+import { handleRazorpayPayment } from '../../utils/payment'
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -105,19 +106,35 @@ function HeroSection() {
       const data = await response.json();
 
       if (data.success) {
-        // Open the success popup
-        openLeadModal('webinar', true);
-        // Clear the hero form
-        setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
-        setIsPhoneVerified(false);
-        setResetKey(prev => prev + 1);
+        const lead = data.data;
+
+        // 💳 Razorpay Integration for Webinar
+        handleRazorpayPayment({
+          leadData: lead,
+          formData: formData,
+          onSuccess: (updatedLead) => {
+            // Open the success popup
+            openLeadModal('webinar', true);
+            // Clear the hero form
+            setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
+            setIsPhoneVerified(false);
+            setResetKey(prev => prev + 1);
+            setLoadingAction("");
+          },
+          onFailure: () => {
+            setLoadingAction("");
+          },
+          onModalClose: () => {
+            setLoadingAction("");
+          }
+        });
       } else {
         alert(data.message || "Something went wrong. Please try again.");
+        setLoadingAction("");
       }
     } catch (error) {
       console.error("Submission error:", error);
       alert("Could not connect to the server. Please try again later.");
-    } finally {
       setLoadingAction("");
     }
   };

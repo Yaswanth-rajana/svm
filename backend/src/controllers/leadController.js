@@ -40,6 +40,13 @@ export const createLead = async (req, res) => {
     if (lead) {
       // ❌ If already registered for same source
       if (lead.sources.includes(source)) {
+        if (source === "webinar" && lead.paymentStatus !== "paid") {
+          return res.json({
+            success: true,
+            message: "You have registered but payment is pending. Proceeding to payment.",
+            data: lead,
+          });
+        }
         return res.json({
           success: false,
           message: "You have already registered for this",
@@ -50,28 +57,7 @@ export const createLead = async (req, res) => {
       lead.sources.push(source);
       await lead.save();
 
-      // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
-      if (source === "webinar" && lead.email) {
-        try {
-          console.log(`📩 Webinar email triggered for: ${lead.email}`);
-          sendConfirmationEmail({ name: lead.name, email: lead.email });
-        } catch (emailErr) {
-          console.error("❌ Email trigger failed:", emailErr.message);
-        }
-
-        try {
-          console.log(`📩 Admin webinar notification triggered for: ${lead.email}`);
-          sendRegistrationAdminEmail({ 
-            name: lead.name, 
-            email: lead.email, 
-            phone: lead.phone, 
-            workingProfile: lead.workingProfile, 
-            experience: lead.experience 
-          });
-        } catch (adminErr) {
-          console.error("❌ Admin notification failed:", adminErr.message);
-        }
-      }
+      // Removed email sending for webinar (now handled during payment verification)
 
       // Do NOT consume the OTP immediately. 
       // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
@@ -94,28 +80,7 @@ export const createLead = async (req, res) => {
       experience,
     });
 
-    // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
-    if (source === "webinar" && email) {
-      try {
-        console.log(`📩 Webinar email triggered for: ${email}`);
-        sendConfirmationEmail({ name, email });
-      } catch (emailErr) {
-        console.error("❌ Email trigger failed:", emailErr.message);
-      }
-
-      try {
-        console.log(`📩 Admin webinar notification triggered for: ${email}`);
-        sendRegistrationAdminEmail({ 
-          name: lead.name, 
-          email: lead.email, 
-          phone: lead.phone, 
-          workingProfile: lead.workingProfile, 
-          experience: lead.experience 
-        });
-      } catch (adminErr) {
-        console.error("❌ Admin notification failed:", adminErr.message);
-      }
-    }
+    // Removed email sending for webinar (now handled during payment verification)
 
     // Do NOT consume the OTP immediately. 
     // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
