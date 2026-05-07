@@ -59,7 +59,8 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
     setLoading(true);
     
     try {
-      const res = await axios.post('http://localhost:5001/api/send-otp', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const res = await axios.post(`${API_URL}/api/send-otp`, {
         phone,
         email,
         channel: selectedChannel
@@ -103,7 +104,8 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
     setLoading(true);
     
     try {
-      const res = await axios.post('http://localhost:5001/api/verify-otp', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const res = await axios.post(`${API_URL}/api/verify-otp`, {
         contact,
         otp
       });

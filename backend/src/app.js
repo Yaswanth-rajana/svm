@@ -12,7 +12,13 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://svm-two.vercel.app"
+  ],
+  credentials: true
+}));
 app.use(express.json());
 
 // Routes

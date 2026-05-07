@@ -86,7 +86,8 @@ function HeroSection() {
     setLoadingAction("submit");
 
     try {
-      const response = await fetch('http://localhost:5001/api/leads', {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}/api/leads`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

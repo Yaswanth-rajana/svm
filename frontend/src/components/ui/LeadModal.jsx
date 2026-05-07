@@ -133,7 +133,8 @@ const LeadModal = () => {
 
       console.log("Sending payload:", payload);
 
-      const response = await fetch(`http://localhost:5001${endpoint}`, {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
