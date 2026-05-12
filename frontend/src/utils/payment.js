@@ -53,8 +53,8 @@ export const handleRazorpayPayment = async ({
       handler: async function (response) {
         try {
           console.log("Razorpay success handler triggered");
-          console.log("Razorpay response:", response);
-          console.log("Calling payment verification API");
+          console.log("Payment response:", response);
+          console.log("Calling backend verification API");
           
           logger.info("Payment verification started");
           
@@ -67,10 +67,11 @@ export const handleRazorpayPayment = async ({
           
           logger.info("Calling verification API");
 
-          // 2. Verify payment on backend using axios
+          // 2. Verify payment on backend using axios with 15s timeout
           const verifyRes = await axios.post(
             `${API_URL}/api/payment/verify`,
-            verifyPayload
+            verifyPayload,
+            { timeout: 15000 }
           );
 
           const verifyData = verifyRes.data;
@@ -83,9 +84,13 @@ export const handleRazorpayPayment = async ({
             onFailure && onFailure();
           }
         } catch (error) {
-          console.error("Payment verification failed:", error);
-          logger.error("Payment verification failed: Exception occurred");
-          alert("An error occurred during verification.");
+          if (error.code === 'ECONNABORTED') {
+            console.error("Payment verification timed out after 15 seconds");
+            alert("Verification is taking longer than expected. Please do not refresh. If the problem persists, contact support.");
+          } else {
+            console.error("Payment verification failed:", error);
+          }
+          logger.error(`Payment verification failed: ${error.message}`);
           onFailure && onFailure();
         }
       },
@@ -96,13 +101,28 @@ export const handleRazorpayPayment = async ({
       },
       theme: { color: "#ff5a5f" },
       modal: {
-        ondismiss: () => {
+        ondismiss: function () {
+          console.log("Razorpay modal dismissed");
           onModalClose && onModalClose();
         }
       }
     };
 
     const paymentObject = new window.Razorpay(options);
+
+    // 3. Add payment failure listener
+    paymentObject.on('payment.failed', function (response) {
+      console.log("Razorpay payment.failed event triggered");
+      console.error("Payment failed details:", response.error);
+      // Optional: inform backend about failure
+      axios.post(`${API_URL}/api/payment/fail`, {
+        leadId: leadData._id,
+        razorpay_order_id: response.error.metadata.order_id,
+        razorpay_payment_id: response.error.metadata.payment_id,
+        error_description: response.error.description
+      }).catch(err => console.error("Failed to log payment failure:", err));
+    });
+
     paymentObject.open();
   } catch (error) {
     console.error("Payment initialization error:", error);
