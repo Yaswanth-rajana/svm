@@ -39,15 +39,15 @@ export const sendWhatsAppOTP = async (phone, otp) => {
 
   // Enhanced Debug Logs
   console.log("📤 Sending WhatsApp OTP...");
-  console.log("Phone:", formattedPhone);
+
 
   try {
     const res = await axios.post(url, data, config);
     console.log("✅ SUCCESS WhatsApp OTP");
     return res.data;
   } catch (err) {
-    console.log("❌ ERROR WhatsApp OTP");
-    console.log(JSON.stringify(err.response?.data || err.message, null, 2));
+    console.log("❌ ERROR WhatsApp OTP:", err.message);
+
     throw err;
   }
 };

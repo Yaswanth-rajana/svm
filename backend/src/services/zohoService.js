@@ -53,8 +53,6 @@ export const sendLeadToZohoCRM = async (leadData) => {
       duplicate_check_fields: ["Email"],
     };
 
-    console.log("🚀 Zoho payload:", JSON.stringify(payload, null, 2));
-
     const response = await axios.post(
       "https://www.zohoapis.in/crm/v2/Leads/upsert",
       payload,

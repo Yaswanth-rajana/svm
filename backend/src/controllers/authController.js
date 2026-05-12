@@ -24,20 +24,19 @@ export const zohoCallback = async (req, res) => {
     const { access_token, refresh_token } = response.data;
 
     if (refresh_token) {
-      console.log("\n================ ZOHO REFRESH TOKEN ================");
-      console.log(refresh_token);
-      console.log("====================================================\n");
+      console.log("✅ Zoho Refresh Token received and should be stored securely.");
+      // In a real production app, store this in a secure database/vault, not logs.
     } else {
-      console.log("\nZoho Access Token received, but no Refresh Token was provided.");
-      console.log("Note: Refresh tokens are usually only provided on the first authorization.\n");
+      console.log("ℹ️ Zoho Access Token received, but no Refresh Token was provided.");
     }
 
     res.send("Zoho CRM connected successfully");
   } catch (error) {
-    console.error("Error exchanging Zoho code:", error.response?.data || error.message);
+    console.error("❌ Error exchanging Zoho code:", error.message);
     res.status(500).json({
-      error: "Failed to connect Zoho CRM",
-      details: error.response?.data || error.message
+      success: false,
+      message: "Failed to connect Zoho CRM. Please check logs for details."
     });
   }
 };
+

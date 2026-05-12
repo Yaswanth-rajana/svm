@@ -3,6 +3,7 @@ import OTP from "../models/OTP.js";
 import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail, sendCallRequestAdminEmail, sendPendingPaymentAdminEmail } from "../services/emailService.js";
 import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { normalizePhone } from "../utils/phone.js";
+import { maskEmail, maskPhone } from "../utils/logger.js";
 
 
 /**
@@ -62,7 +63,7 @@ export const createLead = async (req, res) => {
 
       // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
       try {
-        console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+        console.log(`🔄 Syncing lead to Zoho CRM: ${maskEmail(lead.email)}`);
         sendLeadToZohoCRM(lead);
       } catch (zohoErr) {
         console.error("❌ Zoho sync failed:", zohoErr.message);
@@ -94,7 +95,7 @@ export const createLead = async (req, res) => {
 
     // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
     try {
-      console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+      console.log(`🔄 Syncing lead to Zoho CRM: ${maskEmail(lead.email)}`);
       sendLeadToZohoCRM(lead);
     } catch (zohoErr) {
       console.error("❌ Zoho sync failed:", zohoErr.message);
@@ -107,20 +108,7 @@ export const createLead = async (req, res) => {
     // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
     // (like downloading a PDF after registering) without verifying twice.
 
-    // Trigger admin notification for pending payment if source is webinar
-    if (source === "webinar") {
-      try {
-        sendPendingPaymentAdminEmail({
-          name: lead.name,
-          email: lead.email,
-          phone: lead.phone,
-          source: source,
-          registrationTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-        });
-      } catch (adminErr) {
-        console.error("❌ Failed to trigger pending payment admin notification:", adminErr.message);
-      }
-    }
+
 
     return res.json({
       success: true,
@@ -128,10 +116,10 @@ export const createLead = async (req, res) => {
       data: lead,
     });
   } catch (error) {
-    console.error("Error creating lead:", error);
+    console.error("❌ Error creating lead:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Internal Server Error",
+      message: "Internal Server Error",
     });
   }
 };
@@ -169,7 +157,7 @@ export const requestCall = async (req, res) => {
       });
     }
 
-    console.log("📥 Request Call reached backend:", { name, email, phone });
+    console.log("📥 Request Call reached backend:", { name, email: maskEmail(email), phone: maskPhone(phone) });
 
     // 2. Check if lead exists (Upsert logic)
     let lead = await Lead.findOne({ phone });
@@ -195,13 +183,13 @@ export const requestCall = async (req, res) => {
 
     // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
     try {
-      console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+      console.log(`🔄 Syncing lead to Zoho CRM: ${maskEmail(lead.email)}`);
       sendLeadToZohoCRM(lead);
     } catch (zohoErr) {
       console.error("❌ Zoho sync failed:", zohoErr.message);
     }
 
-    console.log("🚀 Call request saved successfully:", lead);
+    console.log("🚀 Call request saved successfully:", maskEmail(lead.email));
 
     // 🚀 Send confirmation email (Non-blocking & Fail-safe)
     if (lead.email) {
@@ -213,7 +201,7 @@ export const requestCall = async (req, res) => {
       }
 
       try {
-        console.log(`📩 Admin call request notification triggered for: ${lead.email}`);
+        console.log(`📩 Admin call request notification triggered for: ${maskEmail(lead.email)}`);
         sendCallRequestAdminEmail({ 
           name: lead.name, 
           email: lead.email, 
@@ -236,10 +224,10 @@ export const requestCall = async (req, res) => {
       data: lead,
     });
   } catch (error) {
-    console.error("Error in requestCall:", error);
+    console.error("❌ Error in requestCall:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Internal Server Error",
+      message: "Internal Server Error",
     });
   }
 };

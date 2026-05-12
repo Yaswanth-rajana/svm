@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { maskEmail } from '../utils/logger.js';
 import Lead from '../models/Lead.js';
 
 /**
@@ -133,7 +134,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
     // Non-blocking call: Not using await here as per requirement
     axios.post(url, data, config)
         .then(response => {
-            console.log(`✅ Confirmation email sent successfully to: ${email}`);
+            console.log(`✅ Confirmation email sent successfully to: ${maskEmail(email)}`);
         })
         .catch(error => {
             console.error('❌ Failed to send confirmation email:');
@@ -234,7 +235,7 @@ export const sendCallRequestEmail = ({ name, email }) => {
     // Non-blocking call
     axios.post(url, data, config)
         .then(response => {
-            console.log(`✅ Call request confirmation email sent to: ${email}`);
+            console.log(`✅ Call request confirmation email sent to: ${maskEmail(email)}`);
         })
         .catch(error => {
             console.error('❌ Failed to send call request email:');
@@ -298,7 +299,7 @@ export const sendEmailOTP = async (email, otp) => {
 
     try {
         const response = await axios.post(url, data, config);
-        console.log(`✅ Email OTP sent successfully to: ${email}`);
+        console.log(`✅ Email OTP sent successfully to: ${maskEmail(email)}`);
         return response.data;
     } catch (error) {
         console.error('❌ Failed to send email OTP:');
@@ -506,7 +507,7 @@ export const sendPendingPaymentAdminEmail = ({ name, email, phone, source, regis
 
     const config = { headers: { 'Authorization': `Zoho-enczapikey ${apiKey}`, 'Content-Type': 'application/json' } };
     axios.post(url, data, config)
-        .then(() => console.log(`✅ Admin alert (Pending Payment) sent successfully for: ${email}`))
+        .then(() => console.log(`✅ Admin alert (Pending Payment) sent successfully for: ${maskEmail(email)}`))
         .catch(error => console.error('❌ Failed to send admin alert (Pending Payment):', error.message));
 };
 
@@ -550,6 +551,6 @@ export const sendFailedPaymentAdminEmail = ({ name, email, phone, amount, paymen
 
     const config = { headers: { 'Authorization': `Zoho-enczapikey ${apiKey}`, 'Content-Type': 'application/json' } };
     axios.post(url, data, config)
-        .then(() => console.log(`✅ Admin alert (Payment Failed) sent successfully for: ${email}`))
+        .then(() => console.log(`✅ Admin alert (Payment Failed) sent successfully for: ${maskEmail(email)}`))
         .catch(error => console.error('❌ Failed to send admin alert (Payment Failed):', error.message));
 };

@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+import crypto from "crypto";
 import OTP from "../models/OTP.js";
 import { sendWhatsAppOTP } from "../services/whatsappService.js";
 import { sendEmailOTP } from "../services/emailService.js";
@@ -39,8 +41,9 @@ export const sendOtp = async (req, res) => {
       await OTP.deleteMany({ contact: primaryContact });
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate 6-digit OTP using cryptographically secure random numbers
+    const otp = crypto.randomInt(100000, 999999).toString();
+
 
     // Expiry: 5 minutes from now
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -136,8 +139,8 @@ export const verifyOtp = async (req, res) => {
       return res.status(400).json({ success: false, message: "OTP has expired" });
     }
 
-    // Check attempts limit (Max 3 attempts)
-    if (otpRecord.attempts >= 3) {
+    // Check attempts limit (Max 5 attempts)
+    if (otpRecord.attempts >= 5) {
       await OTP.deleteOne({ _id: otpRecord._id });
       return res.status(429).json({ success: false, message: "Maximum verification attempts reached. Please request a new OTP." });
     }
@@ -154,7 +157,17 @@ export const verifyOtp = async (req, res) => {
     await otpRecord.save();
 
     // Optionally delete older unverified OTPs for the same contact
-    await OTP.deleteMany({ contact: formattedContact, _id: { $ne: otpRecord._id } });
+    // Using string ID and wrapping in try-catch to avoid non-critical CastErrors
+    try {
+      if (otpRecord && otpRecord._id) {
+        await OTP.deleteMany({ 
+          contact: formattedContact, 
+          _id: { $ne: otpRecord._id.toString() } 
+        });
+      }
+    } catch (cleanupError) {
+      console.warn("⚠️ Cleanup of old OTPs failed (non-critical):", cleanupError.message);
+    }
 
     return res.status(200).json({
       success: true,

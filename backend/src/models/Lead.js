@@ -90,6 +90,11 @@ const leadSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    pendingPaymentAlertSent: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

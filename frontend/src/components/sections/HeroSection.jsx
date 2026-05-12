@@ -68,10 +68,10 @@ function HeroSection() {
   const handleChange = (e) => {
     const { name, value } = e.target
     if (name === 'phone') {
-      // Allow +, digits, spaces, dashes
-      if (/[^0-9+\s\-]/.test(value)) return
-      // Limit to 15 chars (standard max for E.164)
-      if (value.length > 15) return
+      // Allow only digits
+      if (/[^0-9]/.test(value)) return;
+      // Limit to 10 chars
+      if (value.length > 10) return;
       if (isPhoneVerified) setIsPhoneVerified(false);
     }
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -272,6 +272,7 @@ function HeroSection() {
                       value={formData.phone}
                       onChange={handleChange}
                       required
+                      maxLength={10}
                       disabled={isPhoneVerified}
                       className={`!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                     />

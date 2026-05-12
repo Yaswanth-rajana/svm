@@ -3,6 +3,7 @@ import crypto from "crypto";
 import Lead from "../models/Lead.js";
 import { sendConfirmationEmail, sendRegistrationAdminEmail, sendFailedPaymentAdminEmail } from "../services/emailService.js";
 import { sendLeadToZohoCRM } from "../services/zohoService.js";
+import { maskEmail } from "../utils/logger.js";
 
 
 /**
@@ -42,8 +43,8 @@ export const createOrder = async (req, res) => {
 
     res.status(200).json({ success: true, order });
   } catch (error) {
-    console.error("Error creating Razorpay order:", error);
-    res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+    console.error("❌ Error creating Razorpay order:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -56,28 +57,15 @@ export const verifyPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, leadId } = req.body;
 
-    // 🔍 Debug logs
-    console.log("📥 [Verify] req.body:", req.body);
-    console.log("📦 [Verify] razorpay_order_id:", razorpay_order_id);
-    console.log("📦 [Verify] razorpay_payment_id:", razorpay_payment_id);
-    console.log("📦 [Verify] razorpay_signature:", razorpay_signature);
-    console.log("📦 [Verify] leadId:", leadId);
-
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !leadId) {
-      console.error("❌ [Verify] Missing fields:", { razorpay_order_id, razorpay_payment_id, razorpay_signature, leadId });
       return res.status(400).json({ success: false, message: "Missing required parameters" });
     }
 
-    // Trim the secret to guard against any trailing whitespace/newline in .env
     const secret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
     const generatedSignature = crypto
       .createHmac("sha256", secret)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
-
-    console.log("🔐 [Verify] Generated signature:", generatedSignature);
-    console.log("🔐 [Verify] Received  signature:", razorpay_signature);
-    console.log("✅ [Verify] Match:", generatedSignature === razorpay_signature);
 
     if (generatedSignature === razorpay_signature) {
       // Payment is successful
@@ -113,14 +101,14 @@ export const verifyPayment = async (req, res) => {
 
       // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
       try {
-        console.log(`📩 Webinar email triggered for: ${lead.email}`);
+        console.log(`📩 Webinar email triggered for: ${maskEmail(lead.email)}`);
         sendConfirmationEmail({ name: lead.name, email: lead.email });
       } catch (emailErr) {
         console.error("❌ Email trigger failed:", emailErr.message);
       }
 
       try {
-        console.log(`📩 Admin webinar notification triggered for: ${lead.email}`);
+        console.log(`📩 Admin webinar notification triggered for: ${maskEmail(lead.email)}`);
         sendRegistrationAdminEmail({
           name: lead.name,
           email: lead.email,
@@ -135,7 +123,7 @@ export const verifyPayment = async (req, res) => {
 
       // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
       try {
-        console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+        console.log(`🔄 Syncing lead to Zoho CRM: ${maskEmail(lead.email)}`);
         sendLeadToZohoCRM(lead);
       } catch (zohoErr) {
         console.error("❌ Zoho sync failed:", zohoErr.message);
@@ -146,8 +134,8 @@ export const verifyPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid signature sent!" });
     }
   } catch (error) {
-    console.error("Error verifying Razorpay payment:", error);
-    res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+    console.error("❌ Error verifying Razorpay payment:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -158,9 +146,8 @@ export const verifyPayment = async (req, res) => {
  */
 export const handlePaymentFailure = async (req, res) => {
   try {
-    const { leadId, razorpay_order_id, razorpay_payment_id, error_description } = req.body;
 
-    console.log("❌ [PaymentFailure] Received failure notification:", { leadId, razorpay_order_id, razorpay_payment_id, error_description });
+    const { leadId, razorpay_order_id, razorpay_payment_id, error_description } = req.body;
 
     if (!leadId) {
       return res.status(400).json({ success: false, message: "LeadId is required" });
@@ -200,7 +187,7 @@ export const handlePaymentFailure = async (req, res) => {
 
     res.status(200).json({ success: true, message: "Payment status updated to failed" });
   } catch (error) {
-    console.error("Error handling payment failure:", error);
-    res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+    console.error("❌ Error handling payment failure:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };

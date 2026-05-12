@@ -201,10 +201,10 @@ const LeadModal = () => {
 
     // Validation for phone number
     if (name === 'phone') {
-      // Allow +, digits, spaces, dashes
-      if (/[^0-9+\s\-]/.test(value)) return;
-      // Limit to 15 chars (standard max for E.164)
-      if (value.length > 15) return;
+      // Allow only digits
+      if (/[^0-9]/.test(value)) return;
+      // Limit to 10 chars
+      if (value.length > 10) return;
       if (isPhoneVerified) setIsPhoneVerified(false);
     }
 
@@ -322,6 +322,7 @@ const LeadModal = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         required
+                        maxLength={10}
                         disabled={isPhoneVerified}
                         className={`!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all text-sm ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                       />
@@ -427,17 +428,31 @@ const LeadModal = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     required
-                    placeholder="+91 1234567890"
+                    maxLength={10}
+                    placeholder="1234567890"
                     className="w-full py-3 px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-pink-500/50 focus:ring-1 focus:ring-pink-500/50 transition-all"
+                  />
+                </div>
+
+                <div className="space-y-1.5 text-left">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
+                  <OtpVerification 
+                    key={`otp-modal-simple-${resetKey}`}
+                    phone={formData.phone} 
+                    email={formData.email} 
+                    onVerified={() => setIsPhoneVerified(true)}
+                    onReset={() => setIsPhoneVerified(false)}
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full mt-6 bg-gradient-to-r from-pink-500 to-orange-500 text-white py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+                  disabled={!isPhoneVerified}
+                  className="w-full mt-6 bg-gradient-to-r from-pink-500 to-orange-500 text-white py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {ctaText}
                 </button>
+
               </form>
 
             </>
