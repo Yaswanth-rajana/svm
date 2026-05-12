@@ -41,6 +41,12 @@ export const createOrder = async (req, res) => {
       return res.status(500).json({ success: false, message: "Failed to create order" });
     }
 
+    const lead = await Lead.findById(leadId);
+    if (lead) {
+      lead.razorpayOrderId = order.id;
+      await lead.save();
+    }
+
     res.status(200).json({ success: true, order });
   } catch (error) {
     console.error("❌ Error creating Razorpay order:", error);
@@ -210,3 +216,94 @@ export const handlePaymentFailure = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
+
+/**
+ * @desc    Verify Razorpay Payment Callback (Redirect Flow)
+ * @route   POST /api/payment/verify-callback
+ * @access  Public
+ */
+export const verifyPaymentCallback = async (req, res) => {
+  try {
+    console.log("verifyPaymentCallback hit with body:", req.body);
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      console.error("verifyPaymentCallback failed: Missing parameters");
+      return res.redirect("https://svm-two.vercel.app/payment-failed");
+    }
+
+    const secret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
+    const generatedSignature = crypto
+      .createHmac("sha256", secret)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+
+    if (generatedSignature === razorpay_signature) {
+      console.log("Payment verification successful");
+      const lead = await Lead.findOne({ razorpayOrderId: razorpay_order_id });
+      
+      if (lead) {
+        lead.paymentStatus = "paid";
+        lead.razorpayPaymentId = razorpay_payment_id;
+        lead.paymentDate = new Date();
+        
+        try {
+          const instance = new Razorpay({
+            key_id: secret ? (process.env.RAZORPAY_KEY_ID || "").trim() : "",
+            key_secret: secret,
+          });
+          const paymentDetails = await instance.payments.fetch(razorpay_payment_id);
+          lead.paymentMethod = paymentDetails.method || "unknown";
+          lead.transactionId = razorpay_payment_id;
+          lead.amountPaid = paymentDetails.amount ? paymentDetails.amount / 100 : 0;
+        } catch (payErr) {
+          console.error("⚠️ Failed to fetch payment details from Razorpay:", payErr.message);
+        }
+
+        await lead.save();
+
+        try {
+          console.log(`📩 Webinar email triggered for: ${maskEmail(lead.email)}`);
+          sendConfirmationEmail({ name: lead.name, email: lead.email });
+        } catch (emailErr) {
+          console.error("❌ Email trigger failed:", emailErr.message);
+        }
+
+        try {
+          console.log(`📩 Admin webinar notification triggered for: ${maskEmail(lead.email)}`);
+          sendRegistrationAdminEmail({
+            name: lead.name,
+            email: lead.email,
+            phone: lead.phone,
+            workingProfile: lead.workingProfile,
+            experience: lead.experience,
+            paymentStatus: lead.paymentStatus,
+          });
+        } catch (adminErr) {
+          console.error("❌ Admin notification failed:", adminErr.message);
+        }
+
+        try {
+          console.log(`🔄 Syncing lead to Zoho CRM: ${maskEmail(lead.email)}`);
+          sendLeadToZohoCRM(lead);
+        } catch (zohoErr) {
+          console.error("❌ Zoho sync failed:", zohoErr.message);
+        }
+      }
+
+      return res.redirect("https://svm-two.vercel.app/payment-success");
+    } else {
+      console.error("Razorpay signature verification failed");
+      const lead = await Lead.findOne({ razorpayOrderId: razorpay_order_id });
+      if (lead) {
+        lead.paymentStatus = "failed";
+        await lead.save();
+      }
+      return res.redirect("https://svm-two.vercel.app/payment-failed");
+    }
+  } catch (error) {
+    console.error("❌ Error in verifyPaymentCallback:", error);
+    return res.redirect("https://svm-two.vercel.app/payment-failed");
+  }
+};
+
