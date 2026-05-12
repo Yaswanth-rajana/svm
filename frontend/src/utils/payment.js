@@ -58,12 +58,11 @@ export const handleRazorpayPayment = async ({
       description: "Webinar Registration",
       order_id: orderData.order.id,
       handler: async function (response) {
+        console.log("Handler entered");
+        console.log("Razorpay response:", response);
         try {
           const leadId = leadData?._id;
-          
-          console.log("Handler entered");
           console.log("leadId:", leadId);
-          console.log("response:", response);
 
           if (!leadId) {
             console.error("leadId is missing");
@@ -136,9 +135,11 @@ export const handleRazorpayPayment = async ({
     };
 
     const paymentObject = new window.Razorpay(options);
+    console.log("Razorpay instance created");
 
     // 3. Add payment failure listener
     paymentObject.on('payment.failed', function (response) {
+      console.error("PAYMENT FAILED EVENT:", response);
       console.log("Razorpay payment.failed event triggered");
       console.error("Payment failed details:", response.error);
       // Optional: inform backend about failure
@@ -150,6 +151,8 @@ export const handleRazorpayPayment = async ({
       }).catch(err => console.error("Failed to log payment failure:", err));
     });
 
+    console.log("Razorpay options:", options);
+    console.log("Handler exists:", typeof options.handler);
     paymentObject.open();
   } catch (error) {
     console.error("Payment initialization error:", error);
