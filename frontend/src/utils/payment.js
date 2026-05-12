@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 export const loadRazorpayScript = () => {
   return new Promise((resolve) => {
     const script = document.createElement('script');
@@ -50,20 +52,16 @@ export const handleRazorpayPayment = async ({
       order_id: orderData.order.id,
       handler: async (response) => {
         try {
-          // 🔍 Debug: confirm all 3 fields arrive from Razorpay
-          console.log("RAZORPAY RESPONSE:", response);
-          console.log("razorpay_order_id:", response.razorpay_order_id);
-          console.log("razorpay_payment_id:", response.razorpay_payment_id);
-          console.log("razorpay_signature:", response.razorpay_signature);
-          console.log("leadId:", leadData._id);
-
+          logger.info("Payment verification started");
+          
           const verifyPayload = {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
             leadId: leadData._id
           };
-          console.log("VERIFY PAYLOAD SENT:", verifyPayload);
+          
+          logger.info("Calling verification API");
 
           // 2. Verify payment on backend
           const verifyRes = await fetch(`${API_URL}/api/payment/verify`, {
@@ -74,12 +72,15 @@ export const handleRazorpayPayment = async ({
 
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
+            logger.info("Payment verification successful");
             onSuccess && onSuccess(verifyData.data);
           } else {
+            logger.error("Payment verification failed");
             alert("Payment verification failed. Please contact support.");
             onFailure && onFailure();
           }
         } catch (err) {
+          logger.error("Payment verification failed: Exception occurred");
           console.error("Verification error:", err);
           alert("An error occurred during verification.");
           onFailure && onFailure();

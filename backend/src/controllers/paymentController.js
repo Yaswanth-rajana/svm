@@ -3,7 +3,7 @@ import crypto from "crypto";
 import Lead from "../models/Lead.js";
 import { sendConfirmationEmail, sendRegistrationAdminEmail, sendFailedPaymentAdminEmail } from "../services/emailService.js";
 import { sendLeadToZohoCRM } from "../services/zohoService.js";
-import { maskEmail } from "../utils/logger.js";
+import { maskEmail, logger } from "../utils/logger.js";
 
 
 /**
@@ -55,11 +55,15 @@ export const createOrder = async (req, res) => {
  */
 export const verifyPayment = async (req, res) => {
   try {
+    logger.info("Payment verification started");
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, leadId } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !leadId) {
+      logger.error("Payment verification failed: Missing parameters");
       return res.status(400).json({ success: false, message: "Missing required parameters" });
     }
+
+    logger.info("Calling verification API logic");
 
     const secret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
     const generatedSignature = crypto
@@ -98,6 +102,7 @@ export const verifyPayment = async (req, res) => {
       lead.amountPaid = paymentDetails.amount ? paymentDetails.amount / 100 : 0;
 
       await lead.save();
+      logger.info("Payment verification successful");
 
       // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
       try {
@@ -131,9 +136,11 @@ export const verifyPayment = async (req, res) => {
 
       return res.status(200).json({ success: true, message: "Payment verified successfully", data: lead });
     } else {
+      logger.error("Payment verification failed: Invalid signature");
       return res.status(400).json({ success: false, message: "Invalid signature sent!" });
     }
   } catch (error) {
+    logger.error("Payment verification failed: Exception occurred", error.message);
     console.error("❌ Error verifying Razorpay payment:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }

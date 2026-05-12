@@ -17,3 +17,12 @@ export const maskPhone = (phone) => {
   if (s.length <= 4) return "****";
   return `${s.slice(0, 2)}******${s.slice(-4)}`;
 };
+
+/**
+ * Simple logger for production tracking
+ */
+export const logger = {
+  info: (msg, meta = "") => console.log(`[INFO] ${new Date().toISOString()} - ${msg}`, meta),
+  error: (msg, meta = "") => console.error(`[ERROR] ${new Date().toISOString()} - ${msg}`, meta),
+  warn: (msg, meta = "") => console.warn(`[WARN] ${new Date().toISOString()} - ${msg}`, meta),
+};
