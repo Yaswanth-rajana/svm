@@ -56,6 +56,7 @@ export const createOrder = async (req, res) => {
 export const verifyPayment = async (req, res) => {
   try {
     logger.info("Payment verification API hit");
+    console.log("Payment verification API hit");
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, leadId } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !leadId) {
@@ -64,12 +65,22 @@ export const verifyPayment = async (req, res) => {
     }
 
     logger.info("Calling verification API logic");
+    
+    console.log("Received payment id:", razorpay_payment_id);
+    console.log("Received order id:", razorpay_order_id);
+    console.log("Received signature:", razorpay_signature);
 
     const secret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
     const generatedSignature = crypto
       .createHmac("sha256", secret)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex");
+
+    console.log("Generated signature:", generatedSignature);
+    console.log(
+       "Signature Match:",
+       generatedSignature === razorpay_signature
+    );
 
     if (generatedSignature === razorpay_signature) {
       // Payment is successful
@@ -136,6 +147,7 @@ export const verifyPayment = async (req, res) => {
 
       return res.status(200).json({ success: true, message: "Payment verified successfully", data: lead });
     } else {
+      console.error("Razorpay signature verification failed");
       logger.error("Payment verification failed: Invalid signature");
       return res.status(400).json({ success: false, message: "Invalid signature sent!" });
     }
