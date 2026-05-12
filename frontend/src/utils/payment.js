@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { logger } from './logger';
 
+// Temporary global error listener
+if (typeof window !== 'undefined') {
+  window.addEventListener("error", (e) => {
+     console.error("Global runtime error:", e.error);
+  });
+}
+
 export const loadRazorpayScript = () => {
   return new Promise((resolve) => {
     const script = document.createElement('script');
@@ -52,16 +59,34 @@ export const handleRazorpayPayment = async ({
       order_id: orderData.order.id,
       handler: async function (response) {
         try {
-          console.log("Razorpay success handler triggered");
-          console.log("Calling verify-payment API");
+          const leadId = leadData?._id;
           
+          console.log("Handler entered");
+          console.log("leadId:", leadId);
+          console.log("response:", response);
+
+          if (!leadId) {
+            console.error("leadId is missing");
+            return;
+          }
+
+          if (
+            !response.razorpay_order_id ||
+            !response.razorpay_payment_id ||
+            !response.razorpay_signature
+          ) {
+            console.error("Incomplete Razorpay response");
+            return;
+          }
+
+          console.log("Calling verify-payment API");
           logger.info("Payment verification started");
           
           const verifyPayload = {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
-            leadId: leadData._id
+            leadId: leadId
           };
           
           logger.info("Calling verification API");
@@ -73,6 +98,8 @@ export const handleRazorpayPayment = async ({
             { timeout: 15000 }
           );
 
+          console.log("Verification response:", verifyRes.data);
+
           const verifyData = verifyRes.data;
           if (verifyData.success) {
             logger.info("Payment verification successful");
@@ -83,6 +110,7 @@ export const handleRazorpayPayment = async ({
             onFailure && onFailure();
           }
         } catch (error) {
+          console.error("Handler crashed:", error);
           if (error.code === 'ECONNABORTED') {
             console.error("Payment verification timed out after 15 seconds");
             alert("Verification is taking longer than expected. Please do not refresh. If the problem persists, contact support.");
