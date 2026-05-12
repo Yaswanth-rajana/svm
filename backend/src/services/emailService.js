@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Lead from '../models/Lead.js';
 
 /**
  * Formats an Indian phone number stored with a '91' prefix.
@@ -9,11 +10,11 @@ import axios from 'axios';
  */
 export const formatPhoneNumber = (phone) => {
     if (!phone) return phone;
-    const phoneStr = phone.toString();
+    const phoneStr = phone.toString().replace(/\+/g, "");
     if (phoneStr.startsWith("91") && phoneStr.length === 12) {
         return `+91 ${phoneStr.slice(2, 7)} ${phoneStr.slice(7)}`;
     }
-    return phoneStr;
+    return phone.startsWith("+") ? phone : "+" + phone;
 };
 
 /**
@@ -69,7 +70,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; padding: 24px; border-radius: 12px; margin-bottom: 32px;">
                     <div style="margin-bottom: 16px;">
                         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Date & Time</p>
-                        <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Friday, May 08, 2026 at 10:00 AM IST</p>
+                        <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Tuesday, May 13, 2026 at 10:00 AM IST</p>
                         <p style="margin: 8px 0 0; font-size: 14px;">
                             📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=IT+Infrastructure+Engineering+Roadmap+Webinar&dates=20260506T043000Z/20260506T060000Z&details=Join+our+exclusive+webinar+to+build+your+IT+Infrastructure+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
                         </p>
@@ -464,4 +465,91 @@ export const sendCallRequestAdminEmail = ({ name, email, phone, preferredTime, m
                 console.error('Error Message:', error.message);
             }
         });
+};
+
+/**
+ * Sends an admin notification for a registration with pending payment.
+ * 
+ * @param {Object} params - Registration details.
+ */
+export const sendPendingPaymentAdminEmail = ({ name, email, phone, source, registrationTime }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const formattedPhone = formatPhoneNumber(phone);
+
+    if (!apiKey || !fromEmail || !adminEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY, FROM_EMAIL or ADMIN_EMAIL is not defined in .env");
+        return;
+    }
+
+    const url = 'https://api.zeptomail.in/v1.1/email';
+    const data = {
+        from: { address: fromEmail, name: "System Notification" },
+        to: [{ email_address: { address: adminEmail, name: "Admin" } }],
+        subject: "⚠️ New Registration With Pending Payment",
+        htmlbody: `
+            <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #ffffff; color: #1f2937;">
+                <h2 style="color: #111827; margin-bottom: 16px;">Pending Payment Alert ⚠️</h2>
+                <p>A user has registered but has not yet completed the payment.</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">User Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone Number</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">IT Infrastructure Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb; color: #d97706; font-weight: bold;">Pending</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>
+                </table>
+            </div>
+        `
+    };
+
+    const config = { headers: { 'Authorization': `Zoho-enczapikey ${apiKey}`, 'Content-Type': 'application/json' } };
+    axios.post(url, data, config)
+        .then(() => console.log(`✅ Admin alert (Pending Payment) sent successfully for: ${email}`))
+        .catch(error => console.error('❌ Failed to send admin alert (Pending Payment):', error.message));
+};
+
+/**
+ * Sends an admin notification for a failed payment.
+ * 
+ * @param {Object} params - Payment details.
+ */
+export const sendFailedPaymentAdminEmail = ({ name, email, phone, amount, paymentMethod, registrationTime }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const formattedPhone = formatPhoneNumber(phone);
+
+    if (!apiKey || !fromEmail || !adminEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY, FROM_EMAIL or ADMIN_EMAIL is not defined in .env");
+        return;
+    }
+
+    const url = 'https://api.zeptomail.in/v1.1/email';
+    const data = {
+        from: { address: fromEmail, name: "System Notification" },
+        to: [{ email_address: { address: adminEmail, name: "Admin" } }],
+        subject: "❌ Payment Failed Alert",
+        htmlbody: `
+            <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #ffffff; color: #1f2937;">
+                <h2 style="color: #ef4444; margin-bottom: 16px;">Payment Failed Alert ❌</h2>
+                <p>A payment attempt has failed for a registration.</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">User Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone Number</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">IT Infrastructure Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb; color: #ef4444; font-weight: bold;">Failed</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Method</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${paymentMethod || 'Unknown'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>
+                </table>
+            </div>
+        `
+    };
+
+    const config = { headers: { 'Authorization': `Zoho-enczapikey ${apiKey}`, 'Content-Type': 'application/json' } };
+    axios.post(url, data, config)
+        .then(() => console.log(`✅ Admin alert (Payment Failed) sent successfully for: ${email}`))
+        .catch(error => console.error('❌ Failed to send admin alert (Payment Failed):', error.message));
 };

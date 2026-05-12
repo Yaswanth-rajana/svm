@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail } from 'lucide-react';
+import { normalizePhone } from '../../utils/phone';
 
 const OtpVerification = ({ phone, email, onVerified, onReset }) => {
   const [step, setStep] = useState(1); // 1: Send OTP, 2: Verify OTP, 3: Verified
@@ -45,7 +46,7 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
     }
 
     if (selectedChannel === 'whatsapp' && (!phone || phone.length < 10)) {
-      showToast('Please enter a valid 10-digit phone number', true);
+      showToast('Please enter a valid phone number', true);
       return;
     }
 
@@ -61,7 +62,7 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
       const res = await axios.post(`${API_URL}/api/send-otp`, {
-        phone,
+        phone: normalizePhone(phone),
         email,
         channel: selectedChannel
       });

@@ -1,6 +1,7 @@
 import OTP from "../models/OTP.js";
 import { sendWhatsAppOTP } from "../services/whatsappService.js";
 import { sendEmailOTP } from "../services/emailService.js";
+import { normalizePhone } from "../utils/phone.js";
 
 /**
  * @desc    Send OTP via WhatsApp with Email fallback
@@ -16,7 +17,7 @@ export const sendOtp = async (req, res) => {
     }
 
     // Format phone if provided
-    const formattedPhone = phone ? "91" + phone.replace(/\D/g, "").slice(-10) : null;
+    const formattedPhone = phone ? normalizePhone(phone) : null;
     
     // Choose primary contact based on requested channel
     let primaryContact = channel === 'email' && email ? email : (formattedPhone || email);
@@ -121,7 +122,7 @@ export const verifyOtp = async (req, res) => {
     }
 
     const isPhone = !contact.includes('@');
-    const formattedContact = isPhone ? "91" + contact.replace(/\D/g, "").slice(-10) : contact;
+    const formattedContact = isPhone ? normalizePhone(contact) : contact;
 
     const otpRecord = await OTP.findOne({ contact: formattedContact }).sort({ createdAt: -1 });
 

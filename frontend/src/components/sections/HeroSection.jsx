@@ -6,6 +6,7 @@ import { content } from '../../data/content'
 import { openLeadModal } from '../../utils/modalEvents'
 import OtpVerification from '../ui/OtpVerification'
 import { handleRazorpayPayment } from '../../utils/payment'
+import { normalizePhone } from '../../utils/phone'
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -67,8 +68,10 @@ function HeroSection() {
   const handleChange = (e) => {
     const { name, value } = e.target
     if (name === 'phone') {
-      if (/[^0-9]/.test(value)) return
-      if (value.length > 10) return
+      // Allow +, digits, spaces, dashes
+      if (/[^0-9+\s\-]/.test(value)) return
+      // Limit to 15 chars (standard max for E.164)
+      if (value.length > 15) return
       if (isPhoneVerified) setIsPhoneVerified(false);
     }
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -76,8 +79,8 @@ function HeroSection() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.phone.length !== 10) {
-      alert("Please enter a valid 10-digit phone number.");
+    if (formData.phone.length < 10) {
+      alert("Please enter a valid phone number.");
       return;
     }
     if (!isPhoneVerified) {
@@ -96,7 +99,7 @@ function HeroSection() {
         body: JSON.stringify({
           name: formData.fullName,
           email: formData.email,
-          phone: formData.phone,
+          phone: normalizePhone(formData.phone),
           source: 'webinar',
           workingProfile: formData.workingProfile,
           experience: formData.experience

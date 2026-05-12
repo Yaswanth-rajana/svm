@@ -18,22 +18,25 @@ import AnnouncementBar from './components/layout/AnnouncementBar'
 function App() {
   return (
     <div className="min-h-screen">
-      <div className="sticky top-0 z-[100] flex flex-col w-full">
+      <header className="fixed top-0 left-0 right-0 z-[100] flex flex-col w-full">
         <Navbar />
         <AnnouncementBar />
-      </div>
-      <div id="hero"><HeroSection /></div>
-      <div id="demand"><DemandSection /></div>
-      <InfrastructureSection />
-      <WhatIsInfra />
-      <ComponentsSection />
-      <WhyBusinessSection />
-      <JobRolesSection />
-      <div id="roadmap"><RoadmapSection /></div>
-      <MentorSection />
-      <div id="webinar"><WebinarSection /></div>
-      <FaqSection />
-      <Footer />
+      </header>
+
+      <main className="pt-[86px] md:pt-[114px]">
+        <div id="hero"><HeroSection /></div>
+        <div id="demand"><DemandSection /></div>
+        <InfrastructureSection />
+        <WhatIsInfra />
+        <ComponentsSection />
+        <WhyBusinessSection />
+        <JobRolesSection />
+        <div id="roadmap"><RoadmapSection /></div>
+        <MentorSection />
+        <div id="webinar"><WebinarSection /></div>
+        <FaqSection />
+        <Footer />
+      </main>
       <LeadModal />
     </div>
   )

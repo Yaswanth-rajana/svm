@@ -44,7 +44,7 @@ const leadSchema = new mongoose.Schema(
 
     eventDate: {
       type: Date,
-      default: new Date("2026-05-08T10:00:00+05:30"),
+      default: new Date("2026-05-13T10:00:00+05:30"),
     },
     
     paymentStatus: {
@@ -58,6 +58,22 @@ const leadSchema = new mongoose.Schema(
     
     razorpayPaymentId: {
       type: String,
+    },
+
+    paymentDate: {
+      type: Date,
+    },
+
+    paymentMethod: {
+      type: String,
+    },
+
+    transactionId: {
+      type: String,
+    },
+
+    amountPaid: {
+      type: Number,
     },
 
     reminder7Sent: {

@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import Input from './Input';
 import OtpVerification from './OtpVerification';
 import { handleRazorpayPayment } from '../../utils/payment';
+import { normalizePhone } from '../../utils/phone';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -104,8 +105,8 @@ const LeadModal = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.phone.length !== 10) {
-      alert("Please enter a valid 10-digit phone number.");
+    if (formData.phone.length < 10) {
+      alert("Please enter a valid phone number.");
       return;
     }
     
@@ -122,12 +123,12 @@ const LeadModal = () => {
         ? {
             name: formData.fullName,
             email: formData.email,
-            phone: formData.phone
+            phone: normalizePhone(formData.phone)
           }
         : {
             name: formData.fullName,
             email: formData.email,
-            phone: formData.phone,
+            phone: normalizePhone(formData.phone),
             source: type === 'webinar' ? 'webinar' : 'brochure',
             workingProfile: formData.workingProfile,
             experience: formData.experience
@@ -200,10 +201,10 @@ const LeadModal = () => {
 
     // Validation for phone number
     if (name === 'phone') {
-      // Prevent 'e' and any non-numeric characters
-      if (/[^0-9]/.test(value)) return;
-      // Limit to 10 digits
-      if (value.length > 10) return;
+      // Allow +, digits, spaces, dashes
+      if (/[^0-9+\s\-]/.test(value)) return;
+      // Limit to 15 chars (standard max for E.164)
+      if (value.length > 15) return;
       if (isPhoneVerified) setIsPhoneVerified(false);
     }
 

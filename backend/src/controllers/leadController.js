@@ -1,6 +1,9 @@
 import Lead from "../models/Lead.js";
 import OTP from "../models/OTP.js";
-import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail, sendCallRequestAdminEmail } from "../services/emailService.js";
+import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail, sendCallRequestAdminEmail, sendPendingPaymentAdminEmail } from "../services/emailService.js";
+import { sendLeadToZohoCRM } from "../services/zohoService.js";
+import { normalizePhone } from "../utils/phone.js";
+
 
 /**
  * @desc    Create a new lead
@@ -12,7 +15,7 @@ export const createLead = async (req, res) => {
     const { name, email, workingProfile, experience } = req.body;
     
     // Normalize input
-    const phone = req.body.phone ? "91" + req.body.phone.replace(/\D/g, "").slice(-10) : undefined;
+    const phone = req.body.phone ? normalizePhone(req.body.phone) : undefined;
     const source = req.body.source?.toLowerCase();
 
     if (!phone || !source) {
@@ -57,6 +60,15 @@ export const createLead = async (req, res) => {
       lead.sources.push(source);
       await lead.save();
 
+      // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
+      try {
+        console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+        sendLeadToZohoCRM(lead);
+      } catch (zohoErr) {
+        console.error("❌ Zoho sync failed:", zohoErr.message);
+      }
+
+
       // Removed email sending for webinar (now handled during payment verification)
 
       // Do NOT consume the OTP immediately. 
@@ -80,11 +92,35 @@ export const createLead = async (req, res) => {
       experience,
     });
 
+    // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
+    try {
+      console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+      sendLeadToZohoCRM(lead);
+    } catch (zohoErr) {
+      console.error("❌ Zoho sync failed:", zohoErr.message);
+    }
+
+
     // Removed email sending for webinar (now handled during payment verification)
 
     // Do NOT consume the OTP immediately. 
     // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
     // (like downloading a PDF after registering) without verifying twice.
+
+    // Trigger admin notification for pending payment if source is webinar
+    if (source === "webinar") {
+      try {
+        sendPendingPaymentAdminEmail({
+          name: lead.name,
+          email: lead.email,
+          phone: lead.phone,
+          source: source,
+          registrationTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+        });
+      } catch (adminErr) {
+        console.error("❌ Failed to trigger pending payment admin notification:", adminErr.message);
+      }
+    }
 
     return res.json({
       success: true,
@@ -110,7 +146,7 @@ export const requestCall = async (req, res) => {
     const { name, email, preferredTime, message } = req.body;
     
     // Normalize input
-    const phone = req.body.phone ? "91" + req.body.phone.replace(/\D/g, "").slice(-10) : undefined;
+    const phone = req.body.phone ? normalizePhone(req.body.phone) : undefined;
     const source = "call_request";
 
     // 1. Validation
@@ -155,6 +191,14 @@ export const requestCall = async (req, res) => {
         sources: [source],
         isVerified: true,
       });
+    }
+
+    // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
+    try {
+      console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+      sendLeadToZohoCRM(lead);
+    } catch (zohoErr) {
+      console.error("❌ Zoho sync failed:", zohoErr.message);
     }
 
     console.log("🚀 Call request saved successfully:", lead);

@@ -8,16 +8,29 @@ import { sendReminderEmail } from './services/reminderService.js';
 export const initScheduler = () => {
     // Run every day at 9:00 AM IST
     // IST is UTC+5:30. 9:00 AM IST = 3:30 AM UTC
-    // In node-cron, we can specify the timezone.
     cron.schedule('* * * * *', async () => {
-        console.log('⏰ Running daily reminder job at 9:00 AM IST...');
+        console.log(`⏰ [PID: ${process.pid}] Running daily reminder job at 9:00 AM IST...`);
         try {
-            // Find all verified leads
-            const leads = await Lead.find({ isVerified: true });
+            // Find all verified leads who have completed payment
+            const leads = await Lead.find({ 
+              isVerified: true,
+              paymentStatus: "paid" 
+            });
+
+            console.log(`🔍 [Scheduler] Query found ${leads.length} leads with paymentStatus: "paid"`);
+            
             let emailsSent = 0;
 
             for (const lead of leads) {
+                // Internal Safety Check
+                if (lead.paymentStatus !== "paid") {
+                    console.log(`⚠️ [Scheduler] ERROR: Query returned non-paid lead: ${lead.email} (${lead.paymentStatus}). Skipping.`);
+                    continue;
+                }
+
                 if (!lead.eventDate) continue;
+                
+                console.log(`⚙️ [Scheduler] Processing lead: ${lead.email}`);
 
                 const today = new Date();
                 const event = new Date(lead.eventDate);

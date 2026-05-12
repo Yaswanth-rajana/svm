@@ -1,7 +1,9 @@
 import Razorpay from "razorpay";
 import crypto from "crypto";
 import Lead from "../models/Lead.js";
-import { sendConfirmationEmail, sendRegistrationAdminEmail } from "../services/emailService.js";
+import { sendConfirmationEmail, sendRegistrationAdminEmail, sendFailedPaymentAdminEmail } from "../services/emailService.js";
+import { sendLeadToZohoCRM } from "../services/zohoService.js";
+
 
 /**
  * @desc    Create Razorpay Order
@@ -84,10 +86,29 @@ export const verifyPayment = async (req, res) => {
         return res.status(404).json({ success: false, message: "Lead not found" });
       }
 
+      // Fetch payment details from Razorpay to get method, amount, etc.
+      let paymentDetails = {};
+      try {
+        const instance = new Razorpay({
+          key_id: secret ? (process.env.RAZORPAY_KEY_ID || "").trim() : "",
+          key_secret: secret,
+        });
+        paymentDetails = await instance.payments.fetch(razorpay_payment_id);
+      } catch (payErr) {
+        console.error("⚠️ Failed to fetch payment details from Razorpay:", payErr.message);
+      }
+
       // Update lead
       lead.paymentStatus = "paid";
       lead.razorpayOrderId = razorpay_order_id;
       lead.razorpayPaymentId = razorpay_payment_id;
+
+      // Future-ready fields
+      lead.paymentDate = new Date();
+      lead.paymentMethod = paymentDetails.method || "unknown";
+      lead.transactionId = razorpay_payment_id;
+      lead.amountPaid = paymentDetails.amount ? paymentDetails.amount / 100 : 0;
+
       await lead.save();
 
       // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
@@ -112,12 +133,74 @@ export const verifyPayment = async (req, res) => {
         console.error("❌ Admin notification failed:", adminErr.message);
       }
 
+      // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
+      try {
+        console.log(`🔄 Syncing lead to Zoho CRM: ${lead.email}`);
+        sendLeadToZohoCRM(lead);
+      } catch (zohoErr) {
+        console.error("❌ Zoho sync failed:", zohoErr.message);
+      }
+
       return res.status(200).json({ success: true, message: "Payment verified successfully", data: lead });
     } else {
       return res.status(400).json({ success: false, message: "Invalid signature sent!" });
     }
   } catch (error) {
     console.error("Error verifying Razorpay payment:", error);
+    res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
+  }
+};
+
+/**
+ * @desc    Handle Razorpay Payment Failure
+ * @route   POST /api/payment/fail
+ * @access  Public
+ */
+export const handlePaymentFailure = async (req, res) => {
+  try {
+    const { leadId, razorpay_order_id, razorpay_payment_id, error_description } = req.body;
+
+    console.log("❌ [PaymentFailure] Received failure notification:", { leadId, razorpay_order_id, razorpay_payment_id, error_description });
+
+    if (!leadId) {
+      return res.status(400).json({ success: false, message: "LeadId is required" });
+    }
+
+    const lead = await Lead.findById(leadId);
+    if (!lead) {
+      return res.status(404).json({ success: false, message: "Lead not found" });
+    }
+
+    // Update status to failed
+    lead.paymentStatus = "failed";
+    if (razorpay_order_id) lead.razorpayOrderId = razorpay_order_id;
+    if (razorpay_payment_id) lead.razorpayPaymentId = razorpay_payment_id;
+
+    await lead.save();
+
+    // Trigger admin notification for failed payment
+    try {
+      sendFailedPaymentAdminEmail({
+        name: lead.name,
+        email: lead.email,
+        phone: lead.phone,
+        registrationTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+        paymentMethod: "Razorpay (Modal Exit or Declined)"
+      });
+    } catch (adminErr) {
+      console.error("❌ Failed to trigger failed payment admin notification:", adminErr.message);
+    }
+
+    // Sync to Zoho (so admin knows it failed)
+    try {
+      sendLeadToZohoCRM(lead);
+    } catch (zohoErr) {
+      console.error("❌ Zoho sync failed on failure:", zohoErr.message);
+    }
+
+    res.status(200).json({ success: true, message: "Payment status updated to failed" });
+  } catch (error) {
+    console.error("Error handling payment failure:", error);
     res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
   }
 };

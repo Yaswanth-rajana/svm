@@ -112,7 +112,7 @@ export const sendReminderEmail = async ({ name, email, daysLeft, eventDate }) =>
 
     try {
         await axios.post(url, data, config);
-        console.log(`✅ ${daysLeft}-day reminder email sent successfully to: ${email}`);
+        console.log(`✅ [PID: ${process.pid}] ${daysLeft}-day reminder email sent successfully to: ${email}`);
     } catch (error) {
         console.error(`❌ Failed to send ${daysLeft}-day reminder email to ${email}:`);
         if (error.response) {
