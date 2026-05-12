@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { logger } from './logger';
 
 export const loadRazorpayScript = () => {
@@ -30,13 +31,12 @@ export const handleRazorpayPayment = async ({
     }
 
     // 1. Create order on backend
-    const orderResponse = await fetch(`${API_URL}/api/payment/create-order`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ amount: 1, leadId: leadData._id }), // ₹1 as requested
+    const orderResponse = await axios.post(`${API_URL}/api/payment/create-order`, {
+      amount: 1, // ₹1 as requested
+      leadId: leadData._id
     });
 
-    const orderData = await orderResponse.json();
+    const orderData = orderResponse.data;
     if (!orderData.success) {
       alert("Failed to create payment order. Please try again.");
       onFailure && onFailure();
@@ -50,8 +50,12 @@ export const handleRazorpayPayment = async ({
       name: "Smart Mate Ventures",
       description: "Webinar Registration",
       order_id: orderData.order.id,
-      handler: async (response) => {
+      handler: async function (response) {
         try {
+          console.log("Razorpay success handler triggered");
+          console.log("Razorpay response:", response);
+          console.log("Calling payment verification API");
+          
           logger.info("Payment verification started");
           
           const verifyPayload = {
@@ -63,14 +67,13 @@ export const handleRazorpayPayment = async ({
           
           logger.info("Calling verification API");
 
-          // 2. Verify payment on backend
-          const verifyRes = await fetch(`${API_URL}/api/payment/verify`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(verifyPayload),
-          });
+          // 2. Verify payment on backend using axios
+          const verifyRes = await axios.post(
+            `${API_URL}/api/payment/verify`,
+            verifyPayload
+          );
 
-          const verifyData = await verifyRes.json();
+          const verifyData = verifyRes.data;
           if (verifyData.success) {
             logger.info("Payment verification successful");
             onSuccess && onSuccess(verifyData.data);
@@ -79,9 +82,9 @@ export const handleRazorpayPayment = async ({
             alert("Payment verification failed. Please contact support.");
             onFailure && onFailure();
           }
-        } catch (err) {
+        } catch (error) {
+          console.error("Payment verification failed:", error);
           logger.error("Payment verification failed: Exception occurred");
-          console.error("Verification error:", err);
           alert("An error occurred during verification.");
           onFailure && onFailure();
         }
