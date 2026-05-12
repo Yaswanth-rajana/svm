@@ -55,7 +55,7 @@ export const createOrder = async (req, res) => {
  */
 export const verifyPayment = async (req, res) => {
   try {
-    logger.info("Payment verification started");
+    logger.info("Payment verification API hit");
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, leadId } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !leadId) {

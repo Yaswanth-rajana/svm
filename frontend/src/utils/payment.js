@@ -53,8 +53,7 @@ export const handleRazorpayPayment = async ({
       handler: async function (response) {
         try {
           console.log("Razorpay success handler triggered");
-          console.log("Payment response:", response);
-          console.log("Calling backend verification API");
+          console.log("Calling verify-payment API");
           
           logger.info("Payment verification started");
           

@@ -14,8 +14,14 @@ const app = express();
 // Trust Proxy (Required for correct IP detection behind Render/Railway/Nginx)
 app.set("trust proxy", 1);
 
-// Security Headers
-app.use(helmet());
+// Security Headers with Razorpay Compatibility
+app.use(
+  helmet({
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+    contentSecurityPolicy: false,
+  })
+);
 
 // Global Rate Limiting
 const globalLimiter = rateLimit({
