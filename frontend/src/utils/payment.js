@@ -57,8 +57,6 @@ export const handleRazorpayPayment = async ({
       name: "Smart Mate Ventures",
       description: "Webinar Registration",
       order_id: orderData.order.id,
-      redirect: true,
-      callback_url: "https://webinar-backend-khk4.onrender.com/api/payment/verify-callback",
       handler: async function (response) {
         console.log("Handler entered");
         console.log("Razorpay response:", response);
