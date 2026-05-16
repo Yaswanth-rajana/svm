@@ -82,26 +82,26 @@ export const initScheduler = () => {
         timezone: "Asia/Kolkata"
     });
 
-    // 2. Pending Payment Alert Job (Runs every 15 minutes)
-    // Notifies admin if a user hasn't completed payment after 30 minutes
-    cron.schedule('*/15 * * * *', async () => {
+    // 2. Pending Payment Alert Job (Runs every 2 minutes)
+    // Notifies admin if a user hasn't completed payment after 2 minutes
+    cron.schedule('*/2 * * * *', async () => {
         console.log(`⏰ [Scheduler] Running pending payment alert job...`);
         try {
-            const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+            const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
             
             // Find leads where:
             // - Source includes webinar
             // - Payment is pending
             // - We haven't sent this alert yet
-            // - Created more than 30 minutes ago
+            // - Created more than 2 minutes ago
             const pendingLeads = await Lead.find({
                 sources: "webinar",
                 paymentStatus: "pending",
                 pendingPaymentAlertSent: { $ne: true },
-                createdAt: { $lt: thirtyMinutesAgo }
+                createdAt: { $lt: twoMinutesAgo }
             });
 
-            console.log(`🔍 [Scheduler] Found ${pendingLeads.length} leads with pending payments older than 30 mins.`);
+            console.log(`🔍 [Scheduler] Found ${pendingLeads.length} leads with pending payments older than 2 mins.`);
 
             for (const lead of pendingLeads) {
                 try {
@@ -127,5 +127,5 @@ export const initScheduler = () => {
 
     console.log('🗓️  Scheduler initialized.');
     console.log('   - Daily reminder job: 9:00 AM IST');
-    console.log('   - Pending payment alerts: Every 15 minutes (for >30 min delay)');
+    console.log('   - Pending payment alerts: Every 2 minutes (for >2 min delay)');
 };
