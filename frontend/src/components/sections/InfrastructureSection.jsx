@@ -34,7 +34,7 @@ function InfrastructureSection() {
               <img
                 src={content.infrastructure.image}
                 alt="IT Infrastructure Diagram"
-                className="w-[360px] lg:w-[420px] h-auto mx-auto transition-transform duration-700 ease-out hover:scale-105 cursor-pointer"
+                className="w-full max-w-[360px] lg:max-w-[520px] h-auto mx-auto transition-transform duration-700 ease-out hover:scale-105 cursor-pointer"
               />
             </div>
           </div>

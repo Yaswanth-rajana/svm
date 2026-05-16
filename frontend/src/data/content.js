@@ -62,7 +62,7 @@ export const content = {
       "Networks (Connectivity & Communication)",
       "Cloud & Security"
     ],
-    image: "/Untitled.png"
+    image: "/InfraImage.png"
   },
 
   // IT Infrastructure Types
