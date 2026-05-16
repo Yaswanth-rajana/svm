@@ -11,6 +11,12 @@ import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: "https://smven.com",
+    credentials: true,
+  })
+);
 // Trust Proxy (Required for correct IP detection behind Render/Railway/Nginx)
 app.set("trust proxy", 1);
 
@@ -42,10 +48,7 @@ const authLimiter = rateLimit({
   message: "Too many attempts, please try again after an hour",
 });
 
-app.use(cors({
-  origin: env.ALLOWED_ORIGINS,
-  credentials: true
-}));
+
 
 app.use(express.json());
 
