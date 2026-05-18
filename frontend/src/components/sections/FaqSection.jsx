@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Phone, Mail, Check } from 'lucide-react';
 import { content } from '../../data/content';
 import { openLeadModal } from '../../utils/modalEvents';
 
@@ -45,9 +45,19 @@ const FaqItem = ({ question, answer, list, isOpen, onClick }) => {
 const FaqSection = () => {
   const { faq } = content;
   const [openIndex, setOpenIndex] = useState(-1);
+  const [copied, setCopied] = useState(false);
 
   const handleToggle = (index) => {
     setOpenIndex(openIndex === index ? -1 : index);
+  };
+
+  const handleEmailClick = (e) => {
+    e.preventDefault();
+    navigator.clipboard.writeText('hello@smven.com');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    // Attempt to open mail client as well
+    window.location.href = 'mailto:hello@smven.com';
   };
 
   return (
@@ -77,15 +87,27 @@ const FaqSection = () => {
         </div>
 
         <div className="text-center mt-12 sm:mt-16">
-          <p className="text-gray-600">
-            Still have questions?{' '}
-            <a 
-              href="tel:+919876543210"
-              className="text-pink-600 font-semibold hover:text-pink-700 hover:underline transition-colors"
-            >
-              Call us now
-            </a>
+          <p className="text-gray-800 text-lg font-medium mb-6">
+            Need help choosing the right IT path?
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
+            <a 
+              href="tel:+917307765051"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-white border border-pink-100 rounded-full text-pink-600 font-semibold shadow-sm hover:shadow-md hover:border-pink-200 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <Phone className="w-5 h-5" />
+              <span>+91 73077 65051</span>
+            </a>
+            
+            <a 
+              href="mailto:hello@smven.com"
+              onClick={handleEmailClick}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-white border border-pink-100 rounded-full text-pink-600 font-semibold shadow-sm hover:shadow-md hover:border-pink-200 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              {copied ? <Check className="w-5 h-5 text-green-500" /> : <Mail className="w-5 h-5" />}
+              <span>{copied ? 'Copied!' : 'hello@smven.com'}</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>

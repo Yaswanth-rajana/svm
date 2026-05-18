@@ -12,6 +12,7 @@ import WebinarSection from './components/sections/WebinarSection'
 import FaqSection from './components/sections/FaqSection'
 import Footer from './components/layout/Footer'
 import LeadModal from './components/ui/LeadModal'
+import WhatsAppFloat from './components/ui/WhatsAppFloat'
 
 import AnnouncementBar from './components/layout/AnnouncementBar'
 
@@ -38,6 +39,7 @@ function App() {
         <Footer />
       </main>
       <LeadModal />
+      <WhatsAppFloat />
     </div>
   )
 }
