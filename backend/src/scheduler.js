@@ -12,7 +12,7 @@ export const initScheduler = () => {
     // IST is UTC+5:30. 9:00 AM IST = 3:30 AM UTC
     // Note: If running on a server with different timezone, adjust accordingly.
     cron.schedule('* * * * *', async () => {
-        console.log(`⏰ [Scheduler] Running daily reminder job at 9:00 AM IST...`);
+        console.log(`⏰ [Scheduler] Running daily reminder job at 9:00 AM IST (TESTING: RUNNING EVERY MINUTE)...`);
         try {
             const leads = await Lead.find({ 
               isVerified: true,
@@ -60,7 +60,7 @@ export const initScheduler = () => {
                     emailsSent++;
                 }
                 // 1-day reminder
-                else if (diffDays <= 1 && diffDays >= 0 && !lead.reminder1Sent) {
+                else if (diffDays <= 1 && diffDays >= 0 /* && !lead.reminder1Sent TEST MODE */) {
                     await sendReminderEmail({
                         name: lead.name,
                         email: lead.email,

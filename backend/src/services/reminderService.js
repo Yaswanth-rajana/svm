@@ -65,7 +65,7 @@ export const sendReminderEmail = async ({ name, email, daysLeft, eventDate }) =>
             <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
                 
                 <div style="text-align: center; margin-bottom: 32px;">
-                    <img src="https://smven.com/logo.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <img src="https://smven.com/Logo.1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
                 </div>
 
                 <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">Hi ${safeName},</h2>
