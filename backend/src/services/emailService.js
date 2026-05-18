@@ -58,7 +58,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 
                 <!-- Logo/Header -->
                 <div style="text-align: center; margin-bottom: 32px;">
-                    <img src="https://smven.com/Logo1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <img src="https://smven.com/Logo.1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
                     <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
                 </div>
 
@@ -185,7 +185,7 @@ export const sendCallRequestEmail = ({ name, email }) => {
                 
                 <!-- Logo/Header -->
                 <div style="text-align: center; margin-bottom: 32px;">
-                    <img src="https://smven.com/Logo1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <img src="https://smven.com/Logo.1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
                     <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
                 </div>
 
