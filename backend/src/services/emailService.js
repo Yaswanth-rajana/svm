@@ -106,7 +106,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 <!-- Support Section -->
                 <div style="background-color: #eff6ff; padding: 16px; border-radius: 8px; margin-bottom: 32px; border-left: 4px solid #2563eb;">
                     <p style="margin: 0; font-size: 14px; color: #1e40af;">
-                        <strong>Need help?</strong> Reply to this email or contact us at <a href="mailto:hello@smven.com" style="color: #2563eb; text-decoration: underline;">hello@smven.com</a>
+                        <strong>Need help?</strong> Contact us at <a href="mailto:hello@smven.com" style="color: #2563eb; text-decoration: underline;">hello@smven.com</a>
                     </p>
                 </div>
 
