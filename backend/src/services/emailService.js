@@ -58,7 +58,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 
                 <!-- Logo/Header -->
                 <div style="text-align: center; margin-bottom: 32px;">
-                    <img src="https://smven.com/logo.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <img src="https://smven.com/logo2.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
                     <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
                 </div>
 
@@ -106,7 +106,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 <!-- Support Section -->
                 <div style="background-color: #eff6ff; padding: 16px; border-radius: 8px; margin-bottom: 32px; border-left: 4px solid #2563eb;">
                     <p style="margin: 0; font-size: 14px; color: #1e40af;">
-                        <strong>Need help?</strong> Reply to this email or contact us at <a href="mailto:support@smven.com" style="color: #2563eb; text-decoration: underline;">support@smven.com</a>
+                        <strong>Need help?</strong> Reply to this email or contact us at <a href="mailto:hello@smven.com" style="color: #2563eb; text-decoration: underline;">hello@smven.com</a>
                     </p>
                 </div>
 
@@ -185,7 +185,7 @@ export const sendCallRequestEmail = ({ name, email }) => {
                 
                 <!-- Logo/Header -->
                 <div style="text-align: center; margin-bottom: 32px;">
-                    <img src="https://smven.com/logo.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <img src="https://smven.com/logo2.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
                     <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
                 </div>
 
@@ -207,7 +207,7 @@ export const sendCallRequestEmail = ({ name, email }) => {
                 <!-- Support Section -->
                 <div style="background-color: #eff6ff; padding: 16px; border-radius: 8px; margin-bottom: 32px; border-left: 4px solid #2563eb;">
                     <p style="margin: 0; font-size: 14px; color: #1e40af;">
-                        <strong>Have immediate questions?</strong> Reply to this email or contact us at <a href="mailto:support@smven.com" style="color: #2563eb; text-decoration: underline;">support@smven.com</a>
+                        <strong>Have immediate questions?</strong> Reply to this email or contact us at <a href="mailto:hello@smven.com" style="color: #2563eb; text-decoration: underline;">hello@smven.com</a>
                     </p>
                 </div>
 
