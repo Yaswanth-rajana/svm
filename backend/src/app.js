@@ -13,7 +13,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://smven.com",
+    origin: ["https://smven.com", "http://localhost:5173"],
     credentials: true,
   })
 );

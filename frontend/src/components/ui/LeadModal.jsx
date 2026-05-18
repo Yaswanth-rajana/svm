@@ -434,27 +434,26 @@ const LeadModal = () => {
                   />
                 </div>
 
-                <div className="space-y-1.5 text-left">
-                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
-                  <OtpVerification 
-                    key={`otp-modal-simple-${resetKey}`}
-                    phone={formData.phone} 
-                    email={formData.email} 
-                    onVerified={() => setIsPhoneVerified(true)}
-                    onReset={() => setIsPhoneVerified(false)}
-                  />
-                </div>
-
+                {type === 'call' && (
+                  <div className="space-y-1.5 text-left">
+                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
+                    <OtpVerification 
+                      key={`otp-modal-simple-${resetKey}`}
+                      phone={formData.phone} 
+                      email={formData.email} 
+                      onVerified={() => setIsPhoneVerified(true)}
+                      onReset={() => setIsPhoneVerified(false)}
+                    />
+                  </div>
+                )}
                 <button
                   type="submit"
-                  disabled={!isPhoneVerified}
+                  disabled={type === 'call' && !isPhoneVerified}
                   className="w-full mt-6 bg-gradient-to-r from-pink-500 to-orange-500 text-white py-3.5 rounded-xl font-bold shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {ctaText}
                 </button>
-
               </form>
-
             </>
           )}
         </div>

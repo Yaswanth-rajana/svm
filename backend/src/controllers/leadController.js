@@ -26,16 +26,18 @@ export const createLead = async (req, res) => {
       });
     }
 
-    // 1.5 Verify OTP first
-    const verifiedOtp = await OTP.findOne({ 
-      contact: { $in: [phone, email].filter(Boolean) }, 
-      isVerified: true 
-    });
-    if (!verifiedOtp) {
-      return res.status(400).json({
-        success: false,
-        message: "Please verify OTP first",
+    // 1.5 Verify OTP first (except for brochure downloads)
+    if (source !== 'brochure') {
+      const verifiedOtp = await OTP.findOne({ 
+        contact: { $in: [phone, email].filter(Boolean) }, 
+        isVerified: true 
       });
+      if (!verifiedOtp) {
+        return res.status(400).json({
+          success: false,
+          message: "Please verify OTP first",
+        });
+      }
     }
 
     // 2. Check if lead already exists by phone
