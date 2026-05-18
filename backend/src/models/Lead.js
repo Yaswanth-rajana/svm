@@ -44,7 +44,7 @@ const leadSchema = new mongoose.Schema(
 
     eventDate: {
       type: Date,
-      default: new Date("2026-05-16T10:00:00+05:30"),
+      default: new Date("2026-05-19T10:00:00+05:30"),
     },
     
     paymentStatus: {
