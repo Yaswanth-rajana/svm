@@ -26,7 +26,7 @@ function Navbar() {
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 flex-shrink-0">
             {/* Call Button */}
             <a 
-              href="tel:+919876543210"
+              href="tel:+917307765051"
               className="relative flex items-center justify-center w-9 h-9 md:w-12 md:h-12 rounded-full border border-gray-800 hover:border-gray-600 text-gray-300 hover:text-white transition-all duration-300 group flex-shrink-0"
               aria-label="Call us now"
             >
