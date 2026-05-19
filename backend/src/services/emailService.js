@@ -100,7 +100,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 </div>
 
                 <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin-bottom: 32px;">
-                    We'll send you a reminder 15 minutes before the session starts. We recommend joining 5 minutes early to test your audio.
+                    We'll send you a reminder 30 minutes before the session starts. We recommend joining 5 minutes early to test your audio.
                 </p>
 
                 <!-- Support Section -->

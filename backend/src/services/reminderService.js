@@ -7,10 +7,11 @@ import { maskEmail } from '../utils/logger.js';
  * @param {Object} params - The recipient details.
  * @param {string} params.name - Recipient's name.
  * @param {string} params.email - Recipient's email address.
- * @param {number} params.daysLeft - Number of days left for the webinar (1, 3, or 7).
+ * @param {number} [params.daysLeft] - Number of days left for the webinar (1, 3, or 7).
+ * @param {number} [params.minutesLeft] - Number of minutes left for the webinar (e.g. 30).
  * @param {Date} params.eventDate - Date of the webinar.
  */
-export const sendReminderEmail = async ({ name, email, daysLeft, eventDate }) => {
+export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, eventDate }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
 
@@ -45,6 +46,14 @@ export const sendReminderEmail = async ({ name, email, daysLeft, eventDate }) =>
     } else if (daysLeft === 1) {
         subject = "🚨 Tomorrow is the day! IT Infrastructure Webinar";
         messageBody = `This is it! Tomorrow is the day of our <strong>IT Infrastructure Engineering Roadmap</strong> webinar. We are extremely excited to see you there. Make sure to join a few minutes early to secure your spot.`;
+    } else if (minutesLeft === 30) {
+        subject = "⏰ Starting in 30 Minutes! IT Infrastructure Webinar";
+        messageBody = `We are starting in exactly <strong>30 minutes</strong>! Grab a cup of coffee, get your notes ready, and join us to map out your IT Infrastructure engineering career.`;
+    }
+
+    let note = "We'll send you another reminder before the session starts. We recommend joining 5 minutes early to test your audio.";
+    if (minutesLeft === 30) {
+        note = "The webinar will start shortly. We recommend joining 5 minutes early to test your audio and ensure your connection is stable.";
     }
 
     const data = {
@@ -88,7 +97,7 @@ export const sendReminderEmail = async ({ name, email, daysLeft, eventDate }) =>
                 </div>
 
                 <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin-bottom: 32px;">
-                    We'll send you a final reminder 15 minutes before the session starts. We recommend joining 5 minutes early to test your audio.
+                    ${note}
                 </p>
 
                 <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 32px 0;" />
