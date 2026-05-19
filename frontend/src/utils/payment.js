@@ -39,7 +39,7 @@ export const handleRazorpayPayment = async ({
 
     // 1. Create order on backend
     const orderResponse = await axios.post(`${API_URL}/api/payment/create-order`, {
-      amount: 1, // ₹1 as requested
+      amount: 199, // ₹199 as requested
       leadId: leadData._id
     });
 
