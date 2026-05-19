@@ -9,7 +9,7 @@ import { maskEmail } from './utils/logger.js';
  */
 export const initScheduler = () => {
     // Temporarily set to run every minute for testing (regular schedule: '0 9 * * *')
-    cron.schedule('*/1 * * * *', async () => {
+    cron.schedule('0 9 * * * *', async () => {
         console.log(`⏰ [Scheduler] Running daily reminder job (testing mode: every minute)...`);
         try {
             const leads = await Lead.find({ 
@@ -84,25 +84,25 @@ export const initScheduler = () => {
     });
 
     // 2. Pending Payment Alert Job (Runs every 2 minutes)
-    // Notifies admin if a user hasn't completed payment after 2 minutes
+    // Notifies admin if a user hasn't completed payment after 15 minutes
     cron.schedule('*/2 * * * *', async () => {
         console.log(`⏰ [Scheduler] Running pending payment alert job...`);
         try {
-            const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+            const fifteenMinutesAgo = new Date(Date.now() - 15 * 60 * 1000);
             
             // Find leads where:
             // - Source includes webinar
             // - Payment is pending
             // - We haven't sent this alert yet
-            // - Created more than 2 minutes ago
+            // - Created more than 15 minutes ago
             const pendingLeads = await Lead.find({
                 sources: "webinar",
                 paymentStatus: "pending",
                 pendingPaymentAlertSent: { $ne: true },
-                createdAt: { $lt: twoMinutesAgo }
+                createdAt: { $lt: fifteenMinutesAgo }
             });
 
-            console.log(`🔍 [Scheduler] Found ${pendingLeads.length} leads with pending payments older than 2 mins.`);
+            console.log(`🔍 [Scheduler] Found ${pendingLeads.length} leads with pending payments older than 15 mins.`);
 
             for (const lead of pendingLeads) {
                 try {
@@ -170,6 +170,6 @@ export const initScheduler = () => {
 
     console.log('🗓️  Scheduler initialized.');
     console.log('   - Daily reminder job: 9:00 AM IST');
-    console.log('   - Pending payment alerts: Every 2 minutes (for >2 min delay)');
+    console.log('   - Pending payment alerts: Every 2 minutes (for >15 min delay)');
     console.log('   - 30-minute reminders: Every 2 minutes');
 };
