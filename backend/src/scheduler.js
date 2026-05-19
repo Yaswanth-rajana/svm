@@ -8,9 +8,10 @@ import { maskEmail } from './utils/logger.js';
  * Initializes the cron jobs for the application.
  */
 export const initScheduler = () => {
-    // Temporarily set to run every minute for testing (regular schedule: '0 9 * * *')
-    cron.schedule('0 9 * * * *', async () => {
-        console.log(`⏰ [Scheduler] Running daily reminder job (testing mode: every minute)...`);
+    // 1. Daily Reminder Job (Run every day at 9:00 AM IST)
+    // IST is UTC+5:30. 9:00 AM IST = 3:30 AM UTC
+    cron.schedule('0 9 * * *', async () => {
+        console.log(`⏰ [Scheduler] Running daily reminder job at 9:00 AM IST...`);
         try {
             const leads = await Lead.find({ 
               isVerified: true,
