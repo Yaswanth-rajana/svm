@@ -71,9 +71,9 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; padding: 24px; border-radius: 12px; margin-bottom: 32px;">
                     <div style="margin-bottom: 16px;">
                         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Date & Time</p>
-                        <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Tuesday, May 19, 2026 at 10:00 AM IST</p>
+                        <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Saturday, June 20, 2026 at 10:00 AM IST</p>
                         <p style="margin: 8px 0 0; font-size: 14px;">
-                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=IT+Infrastructure+Engineering+Roadmap+Webinar&dates=20260506T043000Z/20260506T060000Z&details=Join+our+exclusive+webinar+to+build+your+IT+Infrastructure+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
+                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=IT+Infrastructure+Engineering+Roadmap+Webinar&dates=20260620T043000Z/20260620T060000Z&details=Join+our+exclusive+webinar+to+build+your+IT+Infrastructure+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
                         </p>
                     </div>
 

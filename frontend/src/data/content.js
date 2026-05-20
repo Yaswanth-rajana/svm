@@ -201,7 +201,7 @@ export const content = {
   webinar: {
     title: "🚀 Join Our Live Webinar",
     subtitle: "Learn IT Infrastructure from Industry Experts",
-    dateTime: "📅 May 10 \u00A0|\u00A0 ⏰ 10:00 AM IST \u00A0|\u00A0 ⏳ 90 mins",
+    dateTime: "📅 June 20 \u00A0|\u00A0 ⏰ 10:00 AM IST \u00A0|\u00A0 ⏳ 90 mins",
     cta: "Claim Your Spot",
     trustLine: "Hurry Up, Seats are limited",
     urgencyLine: "Limited seats available – Filling fast!",
