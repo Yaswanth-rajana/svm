@@ -4,7 +4,7 @@ import { logger } from './logger';
 // Temporary global error listener
 if (typeof window !== 'undefined') {
   window.addEventListener("error", (e) => {
-     console.error("Global runtime error:", e.error);
+    console.error("Global runtime error:", e.error);
   });
 }
 
@@ -39,7 +39,7 @@ export const handleRazorpayPayment = async ({
 
     // 1. Create order on backend
     const orderResponse = await axios.post(`${API_URL}/api/payment/create-order`, {
-      amount: 199, // ₹199 as requested
+      amount: 99, // ₹99 as requested
       leadId: leadData._id
     });
 
@@ -80,14 +80,14 @@ export const handleRazorpayPayment = async ({
 
           console.log("Calling verify-payment API");
           logger.info("Payment verification started");
-          
+
           const verifyPayload = {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
             leadId: leadId
           };
-          
+
           logger.info("Calling verification API");
 
           // 2. Verify payment on backend using axios with 15s timeout
