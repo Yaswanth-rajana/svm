@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2, Gift, Sparkles, Award, ArrowRight } from 'lucide-react';
-import { openLeadModal } from '../../utils/modalEvents';
 
 const BenefitsModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -64,9 +63,17 @@ const BenefitsModal = () => {
 
   const handleCtaClick = () => {
     handleClose();
-    // Wait a brief moment for the close animation to run before opening the lead modal
+    // Wait a brief moment for the close animation to run before scrolling to the form
     setTimeout(() => {
-      openLeadModal('webinar');
+      const element = document.getElementById('form-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        // Focus the first input element (Full Name) to make it easy for user
+        const input = element.querySelector('input');
+        if (input) {
+          input.focus({ preventScroll: true });
+        }
+      }
     }, 150);
   };
 
