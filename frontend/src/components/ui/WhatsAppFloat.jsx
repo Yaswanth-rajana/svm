@@ -1,14 +1,35 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const WhatsAppFloat = () => {
   const whatsappUrl = 'https://wa.me/917307765051?text=Hi%20I%20want%20to%20know%20more%20about%20the%20webinar.';
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleStatus = (e) => {
+      setIsModalOpen(e.detail?.isOpen || false);
+    };
+    window.addEventListener('benefits-modal-status', handleStatus);
+    return () => {
+      window.removeEventListener('benefits-modal-status', handleStatus);
+    };
+  }, []);
 
   return (
     <motion.div 
       initial={{ opacity: 0, y: 50, scale: 0.5 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.5, delay: 0.5, type: 'spring', stiffness: 200 }}
+      animate={{ 
+        opacity: isModalOpen ? 0 : 1, 
+        y: isModalOpen ? 30 : 0, 
+        scale: isModalOpen ? 0.8 : 1,
+        pointerEvents: isModalOpen ? 'none' : 'auto'
+      }}
+      transition={{ 
+        duration: 0.3, 
+        type: 'spring', 
+        stiffness: 250, 
+        damping: 25 
+      }}
       className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end group"
     >
       {/* Tooltip */}

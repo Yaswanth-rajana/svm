@@ -12,6 +12,8 @@ import WebinarSection from './components/sections/WebinarSection'
 import FaqSection from './components/sections/FaqSection'
 import Footer from './components/layout/Footer'
 import LeadModal from './components/ui/LeadModal'
+import BenefitsModal from './components/ui/BenefitsModal'
+import BenefitsFloat from './components/ui/BenefitsFloat'
 import WhatsAppFloat from './components/ui/WhatsAppFloat'
 
 import AnnouncementBar from './components/layout/AnnouncementBar'
@@ -39,6 +41,8 @@ function App() {
         <Footer />
       </main>
       <LeadModal />
+      <BenefitsModal />
+      <BenefitsFloat />
       <WhatsAppFloat />
     </div>
   )
