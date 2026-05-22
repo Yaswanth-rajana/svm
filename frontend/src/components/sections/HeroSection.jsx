@@ -7,6 +7,7 @@ import { openLeadModal } from '../../utils/modalEvents'
 import OtpVerification from '../ui/OtpVerification'
 import { handleRazorpayPayment } from '../../utils/payment'
 import { normalizePhone } from '../../utils/phone'
+import BenefitsLink from '../ui/BenefitsLink'
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -308,6 +309,8 @@ function HeroSection() {
                       onChange={(val) => setFormData(prev => ({ ...prev, experience: val }))}
                     />
                   </div>
+
+                  <BenefitsLink />
 
                   <div className="pt-2">
                     <button type="submit" disabled={!isPhoneVerified || loadingAction === "submit"} className={`w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide ${(!isPhoneVerified || loadingAction === "submit") ? 'opacity-50 cursor-not-allowed' : ''}`}>

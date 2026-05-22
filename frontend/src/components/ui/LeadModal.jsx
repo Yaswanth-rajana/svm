@@ -4,6 +4,7 @@ import Input from './Input';
 import OtpVerification from './OtpVerification';
 import { handleRazorpayPayment } from '../../utils/payment';
 import { normalizePhone } from '../../utils/phone';
+import BenefitsLink from './BenefitsLink';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -360,6 +361,8 @@ const LeadModal = () => {
                     onChange={(val) => setFormData(prev => ({ ...prev, experience: val }))}
                   />
                 </div>
+
+                <BenefitsLink />
 
                 <div className="pt-2">
                   <button 
