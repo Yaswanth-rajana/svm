@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Container from '../layout/Container'
 import Input from '../ui/Input'
 import AnimatedText from '../ui/AnimatedText'
@@ -116,7 +116,7 @@ function HeroSection() {
         handleRazorpayPayment({
           leadData: lead,
           formData: formData,
-          onSuccess: (updatedLead) => {
+          onSuccess: () => {
             // Open the success popup
             openLeadModal('webinar', true);
             // Clear the hero form

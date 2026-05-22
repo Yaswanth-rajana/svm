@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail } from 'lucide-react';
 import { normalizePhone } from '../../utils/phone';
@@ -106,7 +106,7 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
     
     try {
       const API_URL = import.meta.env.VITE_API_URL;
-      const res = await axios.post(`${API_URL}/api/verify-otp`, {
+      await axios.post(`${API_URL}/api/verify-otp`, {
         contact,
         otp
       });
@@ -153,18 +153,18 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
   return (
     <div className="space-y-4">
       {/* Messages */}
-      {error && (
+      {error ? (
         <div className="flex items-center gap-2 text-red-400 text-xs bg-red-500/10 p-2 rounded-lg border border-red-500/20">
           <AlertCircle size={14} />
           {error}
         </div>
-      )}
-      {success && (
+      ) : null}
+      {success ? (
         <div className="flex items-center gap-2 text-green-400 text-xs bg-green-500/10 p-2 rounded-lg border border-green-500/20">
           <CheckCircle size={14} />
           {success}
         </div>
-      )}
+      ) : null}
 
       {step === 1 ? (
         <button

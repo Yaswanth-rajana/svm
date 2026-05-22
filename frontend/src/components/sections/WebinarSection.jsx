@@ -1,5 +1,4 @@
-import React from 'react';
-import { CheckCircle, Lock, Calendar, Users, ArrowRight } from 'lucide-react';
+import { CheckCircle, Calendar, Users, ArrowRight } from 'lucide-react';
 import { content } from '../../data/content';
 import AnimatedText from '../ui/AnimatedText';
 import { openLeadModal } from '../../utils/modalEvents';

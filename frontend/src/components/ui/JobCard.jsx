@@ -1,4 +1,3 @@
-import React from 'react'
 
 function JobCard({ title, description, salary }) {
   return (

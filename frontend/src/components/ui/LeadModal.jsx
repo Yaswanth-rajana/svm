@@ -82,6 +82,14 @@ const LeadModal = () => {
     return () => window.removeEventListener('open-lead-modal', handleOpen);
   }, []);
 
+  const closeModal = () => {
+    setIsOpen(false);
+    setTimeout(() => {
+      setIsRendered(false);
+      setIsSubmitted(false);
+    }, 300); // Wait for transition to finish
+  };
+
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape') closeModal();
@@ -95,14 +103,6 @@ const LeadModal = () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-
-  const closeModal = () => {
-    setIsOpen(false);
-    setTimeout(() => {
-      setIsRendered(false);
-      setIsSubmitted(false);
-    }, 300); // Wait for transition to finish
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -157,7 +157,7 @@ const LeadModal = () => {
           handleRazorpayPayment({
             leadData: lead,
             formData: formData,
-            onSuccess: (updatedLead) => {
+            onSuccess: () => {
               setIsSubmitted(true);
               setIsPaymentLoading(false);
               setTimeout(() => closeModal(), 4000);

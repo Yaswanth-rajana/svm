@@ -8,7 +8,7 @@ export const normalizePhone = (phone) => {
     if (!phone) return "";
 
     // Remove spaces, dashes, special characters (keep + if present)
-    let cleaned = phone.replace(/[\s\-\(\)]/g, "");
+    let cleaned = phone.replace(/[\s\-()]/g, "");
 
     // If starts with +91, keep as-is (but remove any other symbols)
     if (cleaned.startsWith("+91")) {

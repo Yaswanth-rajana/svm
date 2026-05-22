@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrendingUp, Shield, Zap, Activity } from 'lucide-react';
 import { content } from '../../data/content';
 

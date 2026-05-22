@@ -1,4 +1,3 @@
-import React from 'react';
 import { content } from '../../data/content';
 import Container from '../layout/Container'; // adjust path as needed
 

@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown, Phone, Mail, Check } from 'lucide-react';
 import { content } from '../../data/content';
-import { openLeadModal } from '../../utils/modalEvents';
 
 const FaqItem = ({ question, answer, list, isOpen, onClick }) => {
   return (

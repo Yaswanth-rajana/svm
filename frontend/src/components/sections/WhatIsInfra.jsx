@@ -1,4 +1,3 @@
-import React from 'react';
 import { Server, Cloud, RefreshCw } from 'lucide-react';
 import { content } from '../../data/content';
 import InfraTypeCircle from '../ui/InfraTypeCircle';

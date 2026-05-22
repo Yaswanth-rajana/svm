@@ -1,4 +1,3 @@
-import React from 'react';
 
 const InfraTypeCircle = ({ title, description, icon: Icon }) => {
   return (

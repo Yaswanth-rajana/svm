@@ -1,16 +1,14 @@
-import { useState } from 'react'
 import AnimatedText from '../ui/AnimatedText'
 import { openLeadModal } from '../../utils/modalEvents'
 
 function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
     }
-    setIsMenuOpen(false)
   }
 
   return (
