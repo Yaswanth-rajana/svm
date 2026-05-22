@@ -14,33 +14,6 @@ export const content = {
     formHeader: "Limited seats — Register Now"
   },
 
-  // Gains Section
-  gains: {
-    title: "What You’ll Gain From This Webinar",
-    subtitle: "A complete roadmap to start and grow your career in IT Infrastructure.",
-    leftCard: {
-      title: "Best Key Takeaways",
-      items: [
-        "Clear IT Infrastructure Career Roadmap",
-        "Step-by-Step Learning Path From 0 to Job Ready",
-        "Understanding of Real IT Job Roles",
-        "Practical Exposure Through Live Demo",
-        "Interview & Job Readiness Insights",
-        "Certificate of Participation"
-      ]
-    },
-    rightCard: {
-      title: "Bonus Takeaways",
-      items: [
-        "Community Access",
-        "IT Tools Starter Kit",
-        "IT Career Roadmap PDF",
-        "Live Resume Review Opportunity",
-        "LinkedIn & Naukri Optimization Guide"
-      ]
-    }
-  },
-
   // Demand Section
   demand: {
     title: "Top IT Infrastructure Job Roles",
