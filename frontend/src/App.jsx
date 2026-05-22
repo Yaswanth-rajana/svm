@@ -1,5 +1,6 @@
 import Navbar from './components/layout/Navbar'
 import HeroSection from './components/sections/HeroSection'
+import GainsSection from './components/sections/GainsSection'
 import DemandSection from './components/sections/DemandSection'
 import InfrastructureSection from './components/sections/InfrastructureSection'
 import WhatIsInfra from './components/sections/WhatIsInfra'
@@ -26,6 +27,7 @@ function App() {
 
       <main className="pt-[86px] md:pt-[114px]">
         <div id="hero"><HeroSection /></div>
+        <GainsSection />
         <div id="demand"><DemandSection /></div>
         <InfrastructureSection />
         <WhatIsInfra />
