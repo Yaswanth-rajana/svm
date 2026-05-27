@@ -1,6 +1,7 @@
 import { CheckCircle, Calendar, Users, ArrowRight } from 'lucide-react';
 import { content } from '../../data/content';
 import AnimatedText from '../ui/AnimatedText';
+import { openLeadModal } from '../../utils/modalEvents';
 
 function WebinarSection() {
   const { webinar } = content;
@@ -89,16 +90,7 @@ function WebinarSection() {
 
                 {/* Primary Button */}
                 <button 
-                  onClick={() => {
-                    const element = document.getElementById('form-section');
-                    if (element) {
-                      element.scrollIntoView({ behavior: 'smooth' });
-                      const input = element.querySelector('input');
-                      if (input) {
-                        input.focus({ preventScroll: true });
-                      }
-                    }
-                  }}
+                  onClick={() => openLeadModal('webinar')}
                   className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-5 px-6 md:px-8 rounded-2xl 
                                    shadow-[0_0_20px_rgba(255,77,141,0.4)] 
                                    hover:shadow-[0_0_35px_rgba(255,100,50,0.6)] 

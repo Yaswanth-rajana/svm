@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 const WhatsAppFloat = () => {
   const whatsappUrl = 'https://wa.me/917307765051?text=Hi%20I%20want%20to%20know%20more%20about%20the%20webinar.';
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isNearFooter, setIsNearFooter] = useState(false);
 
   useEffect(() => {
     const handleStatus = (e) => {
@@ -15,14 +16,47 @@ const WhatsAppFloat = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const footerElement = document.querySelector('footer');
+      if (footerElement) {
+        const footerRect = footerElement.getBoundingClientRect();
+        // Hide WhatsApp float if the footer enters the viewport (starts to overlap)
+        if (footerRect.top < window.innerHeight + 10) {
+          setIsNearFooter(true);
+        } else {
+          setIsNearFooter(false);
+        }
+      } else {
+        // Fallback calculation using scroll heights
+        const threshold = 120;
+        const totalHeight = document.documentElement.scrollHeight;
+        const scrollPosition = window.innerHeight + window.scrollY;
+        if (totalHeight - scrollPosition < threshold) {
+          setIsNearFooter(true);
+        } else {
+          setIsNearFooter(false);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    // Trigger initially
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 50, scale: 0.5 }}
       animate={{ 
-        opacity: isModalOpen ? 0 : 1, 
-        y: isModalOpen ? 30 : 0, 
-        scale: isModalOpen ? 0.8 : 1,
-        pointerEvents: isModalOpen ? 'none' : 'auto'
+        opacity: (isModalOpen || isNearFooter) ? 0 : 1, 
+        y: (isModalOpen || isNearFooter) ? 30 : 0, 
+        scale: (isModalOpen || isNearFooter) ? 0.8 : 1,
+        pointerEvents: (isModalOpen || isNearFooter) ? 'none' : 'auto'
       }}
       transition={{ 
         duration: 0.3, 

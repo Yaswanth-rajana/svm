@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700&display=swap');
+
+@page {
+  size: landscape;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  -webkit-print-color-adjust: exact;
+}
+
+.certificate-container {
+  width: 297mm;
+  height: 210mm;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-image: url('{{backgroundImagePath}}');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  overflow: hidden;
+  -webkit-print-color-adjust: exact;
+}
+
+/* Recipient Name: Montserrat SemiBold, centered horizontally and vertically in the middle */
+.recipient-name {
+  position: absolute;
+  top: 54%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Montserrat', 'Inter', sans-serif;
+  font-size: 40px;
+  font-weight: 600; /* SemiBold */
+  color: #0f172a; /* Slate 900 / Dark Navy */
+  text-align: center;
+  width: 80%;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.3);
+}

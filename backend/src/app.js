@@ -8,6 +8,7 @@ import leadRoutes from "./routes/leadRoutes.js";
 import otpRoutes from "./routes/otpRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import certificateRoutes from "./routes/certificateRoutes.js";
 
 const app = express();
 
@@ -35,7 +36,10 @@ const globalLimiter = rateLimit({
   max: 100, // Limit each IP to 100 requests per window
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Too many requests from this IP, please try again after 15 minutes",
+  message: {
+    success: false,
+    message: "Too many requests from this IP, please try again after 15 minutes"
+  },
 });
 app.use(globalLimiter);
 
@@ -45,7 +49,22 @@ const authLimiter = rateLimit({
   max: 10, // Limit each IP to 10 requests per hour
   standardHeaders: true,
   legacyHeaders: false,
-  message: "Too many attempts, please try again after an hour",
+  message: {
+    success: false,
+    message: "Too many attempts, please try again after an hour"
+  },
+});
+
+// Strict Rate Limiting for Certificate claims (30 requests per 15 minutes per IP)
+const certificateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // Limit each IP to 30 requests per 15 minutes
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: "Too many certificate attempts, please try again after 15 minutes"
+  },
 });
 
 
@@ -79,6 +98,8 @@ app.use("/api", leadRoutes);
 app.use("/api", otpRoutes);
 app.use("/api", paymentRoutes);
 app.use("/auth", authRoutes);
+app.use("/api/certificate", certificateLimiter);
+app.use("/api/certificate", certificateRoutes);
 
 
 app.get("/", (req, res) => {

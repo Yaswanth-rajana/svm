@@ -100,6 +100,21 @@ const leadSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    certificateClaimed: {
+      type: Boolean,
+      default: false
+    },
+
+    certificateId: {
+      type: String,
+      default: ""
+    },
+
+    claimedAt: {
+      type: Date,
+      default: null
+    },
   },
   {
     timestamps: true,

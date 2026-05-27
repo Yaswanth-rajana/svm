@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Container from '../layout/Container'
 import Input from '../ui/Input'
 import AnimatedText from '../ui/AnimatedText'
@@ -325,6 +326,30 @@ function HeroSection() {
                     </p>
                   </div>
                 </form>
+
+                {/* Claim Certificate CTA */}
+                {/* <div className="px-8 pb-8 text-center">
+                  <div className="w-full h-px bg-white/10 my-5" />
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-400">
+                      Already attended the webinar?
+                    </p>
+                    <Link
+                      to="/claim-certificate"
+                      className="group inline-flex items-center gap-1.5 text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300"
+                    >
+                      <span className="inline-block transition-transform duration-300 group-hover:scale-110">
+                        🎓
+                      </span>
+                      <span className="text-gray-300 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-500 group-hover:to-orange-500 transition-all duration-300">
+                        Claim your participation certificate
+                      </span>
+                      <span className="inline-block transition-transform duration-300 group-hover:translate-x-1 text-orange-400">
+                        →
+                      </span>
+                    </Link>
+                  </div>
+                </div> */}
               </div>
             </div>
           </div>
