@@ -93,6 +93,9 @@ function HeroSection() {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       const response = await fetch(`${API_URL}/api/leads`, {
         method: 'POST',
         headers: {
@@ -106,9 +109,21 @@ function HeroSection() {
           workingProfile: formData.workingProfile,
           experience: formData.experience
         }),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        throw new Error(`Unexpected server response format (HTTP ${response.status})`);
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || `Server error: HTTP ${response.status}`);
+      }
 
       if (data.success) {
         const lead = data.data;
@@ -139,7 +154,11 @@ function HeroSection() {
       }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("Could not connect to the server. Please try again later.");
+      if (error.name === 'AbortError') {
+        alert("Request timed out. Please check your connection and try again.");
+      } else {
+        alert(error.message || "Could not connect to the server. Please try again later.");
+      }
       setLoadingAction("");
     }
   };

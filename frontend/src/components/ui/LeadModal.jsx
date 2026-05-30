@@ -138,15 +138,30 @@ const LeadModal = () => {
       console.log("Sending payload:", payload);
 
       const API_URL = import.meta.env.VITE_API_URL;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
-      const data = await response.json();
+      let data;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        throw new Error(`Unexpected server response format (HTTP ${response.status})`);
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || `Server error: HTTP ${response.status}`);
+      }
 
       if (data.success) {
         const lead = data.data;
@@ -175,14 +190,9 @@ const LeadModal = () => {
         // Regular success flow for non-webinar types
         setIsSubmitted(true);
 
-        // If it's a PDF request, trigger the download
+        // If it's a PDF request, trigger the download (safely in new tab for mobile/popup blocker bypass)
         if (type === 'pdf') {
-          const link = document.createElement('a');
-          link.href = '/brochure.pdf'; // Make sure this file exists in public/
-          link.download = 'IT_Infrastructure_Brochure.pdf';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          window.open('/brochure.pdf', '_blank');
         }
 
         setTimeout(() => {
@@ -193,7 +203,11 @@ const LeadModal = () => {
       }
     } catch (error) {
       console.error("Submission error:", error);
-      alert("Could not connect to the server. Please try again later.");
+      if (error.name === 'AbortError') {
+        alert("Request timed out. Please check your connection and try again.");
+      } else {
+        alert(error.message || "Could not connect to the server. Please try again later.");
+      }
     }
   };
 

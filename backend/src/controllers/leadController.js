@@ -12,6 +12,7 @@ import { maskEmail, maskPhone } from "../utils/logger.js";
  * @access  Public
  */
 export const createLead = async (req, res) => {
+  console.log(`📥 API Request received (createLead): Source=${req.body.source}, Phone=${req.body.phone ? maskPhone(normalizePhone(req.body.phone)) : 'N/A'}, Email=${req.body.email ? maskEmail(req.body.email) : 'N/A'}`);
   try {
     const { name, email, workingProfile, experience } = req.body;
     
