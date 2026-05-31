@@ -16,7 +16,7 @@ function Footer() {
                 className="h-10 w-auto object-contain brightness-95"
               />
             </div>
-            <p className="text-sm text-gray-500 max-w-sm font-medium">
+            <p className="text-sm text-gray-300 font-medium">
               Building the next generation of IT Infrastructure and Cloud Engineers.
             </p>
           </div>
@@ -79,7 +79,7 @@ function Footer() {
 
               {/* LinkedIn */}
               <a
-                href="https://www.linkedin.com/company/smart-mate-venturess"
+                href="https://www.linkedin.com/company/smart-mate-ventures/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:border-pink-500/50 hover:bg-gradient-to-r hover:from-pink-500/10 hover:to-orange-500/10 transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
