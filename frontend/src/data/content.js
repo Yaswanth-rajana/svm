@@ -280,7 +280,7 @@ export const programsContent = {
       title: "Become a Cloud Engineer & Build the Future of IT",
       subtitle: "Cloud adoption is booming worldwide, making Cloud Engineering one of the most in-demand careers today.",
       addonBadge: "AI-Proof Career Path",
-      ctaPrimary: "Download Pdf",
+      ctaPrimary: "Connect With Trainer",
       stats: [
         { text: "₹15 LPA + Avg Salary" },
         { text: "Cloud Lab Partner" },
@@ -337,7 +337,7 @@ export const programsContent = {
       image: "/InfraImage.png"
     },
     infraTypes: {
-      title: "Top Cloud Platforms You'll Master",
+      title: "Top Cloud Platforms You Should Master",
       subtitle: "Gain hands-on experience with the world's leading cloud platforms used by top organizations worldwide.",
       types: [
         {
@@ -386,8 +386,7 @@ export const programsContent = {
         { name: "Enterprise IT Infrastructure Exposure", description: "Gain hands-on familiarity with physical hardware, networking components, and enterprise servers alongside cloud configurations.", icon: "Server" }
       ],
       highlights: [
-        "Live AWS Labs",
-        "Microsoft Azure Training",
+        "Lab Setup for Training",
         "Real-World Cloud Projects",
         "Resume Building Support",
         "Mock Interviews",
@@ -562,7 +561,7 @@ export const programsContent = {
       alreadyJoined: "Professionals already registered",
       benefits: [
         "Understand cloud architecture patterns and how they work",
-        "Know why Cloud Engineering is highly resistant to AI automation",
+        "Know why Cloud Engineering is highly resistant to AI",
         "Explore job opportunities and career transition strategies"
       ]
     },

@@ -8,7 +8,7 @@ function WebinarSection({ program = 'infrastructure' }) {
   const { webinar } = data;
 
   return (
-    <section className="relative bg-[#0B0F14] pt-10 pb-24 lg:pt-14 lg:pb-32 overflow-hidden" id="webinar">
+    <section className="relative bg-[#0B0F14] pt-20 pb-24 lg:pt-28 lg:pb-32 overflow-hidden" id="webinar">
       {/* Background Decorative Orbs & Radial Glow */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-pink-500/5 blur-[120px] rounded-full -z-10 animate-pulse-slow"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-orange-500/5 blur-[120px] rounded-full -z-10"></div>

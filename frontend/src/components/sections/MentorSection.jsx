@@ -6,7 +6,7 @@ function MentorSection({ program = 'infrastructure' }) {
   const { mentors } = data;
 
   return (
-    <section className="relative bg-[#0B0F14] pt-20 pb-10 lg:pt-28 lg:pb-14 overflow-hidden">
+    <section className="relative bg-[#0B0F14] pt-20 pb-20 lg:pt-28 lg:pb-28 overflow-hidden">
       {/* Side fade to make center content feel focused */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0B0F14] via-transparent to-[#0B0F14]" />
       

@@ -219,37 +219,41 @@ function HeroSection({ program }) {
             </p>
 
             {/* Mobile-only Centered Arrow */}
-            <div className="lg:hidden flex justify-center mb-4">
-              <span className="arrow-down">↓</span>
-            </div>
+            {!isCloud && (
+              <div className="lg:hidden flex justify-center mb-4">
+                <span className="arrow-down">↓</span>
+              </div>
+            )}
 
             <div className="mt-1 lg:mt-4 relative">
               {/* Refined Premium SVG Arrow */}
-              <div className="cta-hint hidden lg:block absolute -top-14 -right-32 pointer-events-none z-20 rotate-[-15deg]">
-                <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-bounce-slow">
-                  <path
-                    d="M160,10 C160,60 80,100 20,80"
-                    stroke="url(#arrowGradientFlipped)"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    className="drop-shadow-[0_0_10px_rgba(236,72,153,0.4)]"
-                  />
-                  <path
-                    d="M35,68 L20,80 L38,92"
-                    stroke="url(#arrowGradientFlipped)"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="drop-shadow-[0_0_10px_rgba(236,72,153,0.4)]"
-                  />
-                  <defs>
-                    <linearGradient id="arrowGradientFlipped" x1="100%" y1="0%" x2="0%" y2="0%">
-                      <stop offset="0%" stopColor="#ec4899" />
-                      <stop offset="100%" stopColor="#f97316" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </div>
+              {!isCloud && (
+                <div className="cta-hint hidden lg:block absolute -top-14 -right-32 pointer-events-none z-20 rotate-[-15deg]">
+                  <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-bounce-slow">
+                    <path
+                      d="M160,10 C160,60 80,100 20,80"
+                      stroke="url(#arrowGradientFlipped)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      className="drop-shadow-[0_0_10px_rgba(236,72,153,0.4)]"
+                    />
+                    <path
+                      d="M35,68 L20,80 L38,92"
+                      stroke="url(#arrowGradientFlipped)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="drop-shadow-[0_0_10px_rgba(236,72,153,0.4)]"
+                    />
+                    <defs>
+                      <linearGradient id="arrowGradientFlipped" x1="100%" y1="0%" x2="0%" y2="0%">
+                        <stop offset="0%" stopColor="#ec4899" />
+                        <stop offset="100%" stopColor="#f97316" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              )}
 
               <button
                 onClick={handleDownload}
@@ -258,9 +262,11 @@ function HeroSection({ program }) {
                 <span>
                   <AnimatedText text={hero.ctaPrimary} />
                 </span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
+                {!isCloud && (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>

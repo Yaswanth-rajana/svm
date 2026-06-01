@@ -27,7 +27,7 @@ function WhyBusinessSection({ program = 'infrastructure' }) {
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight max-w-[800px] mx-auto leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight max-w-[1000px] mx-auto leading-tight">
             {sectionData.title}
           </h2>
           {sectionData.subtitle && (
