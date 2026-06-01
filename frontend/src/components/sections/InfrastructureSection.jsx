@@ -1,6 +1,8 @@
-import { content } from '../../data/content'
+import { programsContent } from '../../data/content'
 
-function InfrastructureSection() {
+function InfrastructureSection({ program = 'infrastructure' }) {
+  const data = programsContent[program] || programsContent.infrastructure;
+  const sectionData = data.infrastructure;
   return (
     <section className="bg-gradient-to-b from-black via-[#050d10] to-black py-20 lg:py-28 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4 md:px-8 lg:px-2">
@@ -9,16 +11,16 @@ function InfrastructureSection() {
           {/* Left Content */}
           <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left space-y-6">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg">
-              {content.infrastructure.title}
+              {sectionData.title}
             </h2>
             <div className="w-20 h-1.5 bg-gradient-to-r from-pink-500 to-orange-400 rounded-full lg:mx-0"></div>
 
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed max-w-xl">
-              {content.infrastructure.description}
+              {sectionData.description}
             </p>
 
             <ul className="text-gray-300 space-y-3 mt-4 text-left">
-              {content.infrastructure.highlights.map((item, index) => (
+              {sectionData.highlights.map((item, index) => (
                 <li key={index} className="flex items-center gap-3">
                   <span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>
                   <span className="text-base md:text-lg">{item}</span>
@@ -31,7 +33,7 @@ function InfrastructureSection() {
           <div className="w-full lg:w-1/2 flex justify-center">
             <div className="relative group">
               <img
-                src={content.infrastructure.image}
+                src={sectionData.image}
                 alt="IT Infrastructure Diagram"
                 className="w-full max-w-[360px] lg:max-w-[520px] h-auto mx-auto transition-transform duration-700 ease-out hover:scale-105 cursor-pointer"
               />

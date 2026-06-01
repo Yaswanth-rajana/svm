@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
-import { content } from '../../data/content';
+import { programsContent } from '../../data/content';
 import { ArrowRight, CheckCircle2, ChevronDown } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
-function RoadmapSection() {
-  const { roadmap } = content;
+function RoadmapSection({ program = 'infrastructure' }) {
+  const data = programsContent[program] || programsContent.infrastructure;
+  const { roadmap } = data;
   const containerRef = useRef(null);
   const [showAll, setShowAll] = useState(false);
+  const isCloud = program === 'cloud-computing';
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -19,7 +21,11 @@ function RoadmapSection() {
     restDelta: 0.001
   });
 
-  const visibleSteps = showAll ? roadmap.steps : roadmap.steps.slice(0, 4);
+  const visibleSteps = (isCloud || showAll) ? roadmap.steps : roadmap.steps.slice(0, 4);
+
+  const getStepBadge = (step, index) => {
+    return index + 1;
+  };
 
   const scrollToWebinar = () => {
     const webinarElement = document.getElementById("webinar");
@@ -32,8 +38,8 @@ function RoadmapSection() {
   };
 
   return (
-    <section className="bg-white py-20 md:py-32 overflow-hidden" id="roadmap">
-      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24">
+    <section className="bg-white py-20 md:py-32 overflow-hidden text-gray-900" id="roadmap">
+      <div className="max-w-6xl mx-auto px-8 md:px-16 lg:px-24 relative z-10">
         {/* Header */}
         <div className="text-center mb-16 md:mb-24">
           <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight max-w-3xl mx-auto leading-tight">
@@ -54,7 +60,11 @@ function RoadmapSection() {
             {/* Animated Progress Line - HIDDEN ON MOBILE */}
             <motion.div 
               style={{ scaleY, originY: 0 }}
-              className="hidden md:block absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full z-10"
+              className={`hidden md:block absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-1 rounded-full z-10 ${
+                isCloud 
+                  ? 'bg-gradient-to-b from-pink-500 via-purple-500 to-orange-500' 
+                  : 'bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600'
+              }`}
             />
 
             {/* Steps */}
@@ -72,10 +82,20 @@ function RoadmapSection() {
                       index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
                     }`}
                   >
+                    {/* Masking lines to stop at the first and last badge center */}
+                    {index === 0 && (
+                      <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-1/2 w-4 bg-white z-[11] pointer-events-none" />
+                    )}
+                    {index === visibleSteps.length - 1 && (
+                      <div className="hidden md:block absolute left-1/2 -translate-x-1/2 top-1/2 bottom-0 w-4 bg-white z-[11] pointer-events-none" />
+                    )}
+
                     {/* Floating Badge - DESKTOP ONLY */}
                     <div className="hidden md:flex absolute md:left-1/2 md:-translate-x-1/2 flex-shrink-0 z-20">
-                      <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 border-blue-600 group-hover:scale-110 transition-transform duration-300">
-                        {index + 1}
+                      <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 group-hover:scale-110 transition-transform duration-300 ${
+                        isCloud ? 'border-pink-500' : 'border-blue-600'
+                      }`}>
+                        {getStepBadge(step, index)}
                       </div>
                     </div>
 
@@ -83,26 +103,46 @@ function RoadmapSection() {
                     <div className="w-full md:w-[45%]">
                       <motion.div 
                         whileTap={{ scale: 0.98 }}
-                        className="bg-white rounded-[2rem] px-5 py-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden cursor-pointer"
+                        className={`bg-white rounded-[2rem] px-5 py-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden cursor-pointer ${
+                          isCloud ? 'hover:border-pink-500/50' : 'hover:border-blue-600/50'
+                        }`}
                       >
                         {/* Hover Gradient Background */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 to-purple-50/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                        <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${
+                          isCloud 
+                            ? 'from-pink-50/40 to-orange-50/40' 
+                            : 'from-blue-50/40 to-purple-50/40'
+                        }`} />
                         
                         <div className="relative z-10">
                           {/* Title & Duration Pill */}
                           <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
                             <div className="flex items-center gap-4">
                               {/* Step Number Badge - MOBILE ONLY */}
-                              <div className="flex md:hidden w-7 h-7 rounded-full bg-blue-600 text-white items-center justify-center text-[13px] font-bold flex-shrink-0 shadow-lg shadow-blue-500/20">
-                                {index + 1}
+                              <div className={`flex md:hidden w-7 h-7 rounded-full items-center justify-center text-[13px] font-bold flex-shrink-0 shadow-lg text-white ${
+                                isCloud 
+                                  ? 'bg-pink-500 shadow-pink-500/20' 
+                                  : 'bg-blue-600 shadow-blue-500/20'
+                              }`}>
+                                {getStepBadge(step, index)}
                               </div>
-                              <h3 className="text-[18px] md:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
-                                {step.title}
+                              <h3 className={`text-[18px] md:text-xl font-bold transition-colors leading-tight text-gray-900 ${
+                                isCloud 
+                                  ? 'group-hover:text-pink-600' 
+                                  : 'group-hover:text-blue-600'
+                              }`}>
+                                {step.phase ? `${step.phase} — ` : ''}{step.title}
                               </h3>
                             </div>
-                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-[10px] md:text-xs font-bold whitespace-nowrap uppercase tracking-wider">
-                              {step.duration}
-                            </span>
+                            {step.duration && (
+                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] md:text-xs font-bold whitespace-nowrap uppercase tracking-wider ${
+                                isCloud 
+                                  ? 'bg-pink-50 text-pink-700' 
+                                  : 'bg-blue-50 text-blue-700'
+                              }`}>
+                                {step.duration}
+                              </span>
+                            )}
                           </div>
 
                           {/* Description */}
@@ -114,7 +154,7 @@ function RoadmapSection() {
                           <div className="flex flex-wrap gap-3">
                             {step.tags.map((tag, tIdx) => (
                               <div key={tIdx} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 group-hover:bg-white text-gray-600 text-[10px] md:text-[11px] font-semibold border border-gray-100 transition-colors">
-                                <CheckCircle2 size={12} className="text-blue-500" />
+                                <CheckCircle2 size={12} className={isCloud ? 'text-pink-500' : 'text-blue-500'} />
                                 {tag}
                               </div>
                             ))}
@@ -131,9 +171,11 @@ function RoadmapSection() {
             </div>
           </div>
 
+
+
           {/* Show More Button & Mid-Section CTA */}
           <div className="mt-16 text-center space-y-8 relative z-20">
-            {!showAll && (
+            {!isCloud && !showAll && (
               <>
                 <button 
                   onClick={() => setShowAll(true)}
@@ -161,17 +203,21 @@ function RoadmapSection() {
 
         {/* Final CTA (Always visible or only at the very end) */}
         <AnimatePresence>
-          {showAll && (
+          {(isCloud || showAll) && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center mt-24"
+              className="text-center mt-20 md:mt-28"
             >
               <motion.button 
                 onClick={scrollToWebinar}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-12 py-5 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg shadow-2xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 flex items-center justify-center gap-3 mx-auto"
+                className={`px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 mx-auto shadow-2xl ${
+                  isCloud 
+                    ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white hover:opacity-90 shadow-pink-500/20' 
+                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-blue-500/25 hover:shadow-blue-500/40'
+                }`}
               >
                 <span>Start your journey with us</span>
                 <ArrowRight size={24} />
@@ -181,6 +227,17 @@ function RoadmapSection() {
         </AnimatePresence>
 
       </div>
+
+      {/* Required CSS for Shimmer Animation */}
+      <style>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+        .animate-shimmer {
+          animation: shimmer 2.5s infinite linear;
+        }
+      `}</style>
     </section>
   );
 }

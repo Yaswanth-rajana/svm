@@ -1,10 +1,11 @@
 import { CheckCircle, Calendar, Users, ArrowRight } from 'lucide-react';
-import { content } from '../../data/content';
+import { programsContent } from '../../data/content';
 import AnimatedText from '../ui/AnimatedText';
 import { openLeadModal } from '../../utils/modalEvents';
 
-function WebinarSection() {
-  const { webinar } = content;
+function WebinarSection({ program = 'infrastructure' }) {
+  const data = programsContent[program] || programsContent.infrastructure;
+  const { webinar } = data;
 
   return (
     <section className="relative bg-[#0B0F14] pt-10 pb-24 lg:pt-14 lg:pb-32 overflow-hidden" id="webinar">

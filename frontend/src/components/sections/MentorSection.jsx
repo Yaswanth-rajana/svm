@@ -1,8 +1,9 @@
-import { content } from '../../data/content';
+import { programsContent } from '../../data/content';
 import Container from '../layout/Container'; // adjust path as needed
 
-function MentorSection() {
-  const { mentors } = content;
+function MentorSection({ program = 'infrastructure' }) {
+  const data = programsContent[program] || programsContent.infrastructure;
+  const { mentors } = data;
 
   return (
     <section className="relative bg-[#0B0F14] pt-20 pb-10 lg:pt-28 lg:pb-14 overflow-hidden">
@@ -13,7 +14,7 @@ function MentorSection() {
       <Container>
         <div className="relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-16 max-w-xl mx-auto">
+          <div className="text-center mb-16 max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-tight">
               {mentors.title}
             </h2>

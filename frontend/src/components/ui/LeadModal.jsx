@@ -46,7 +46,7 @@ function ExperienceDropdown({ value, onChange }) {
 }
 
 
-const LeadModal = () => {
+const LeadModal = ({ program }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isRendered, setIsRendered] = useState(false);
   const [type, setType] = useState('pdf'); // 'pdf' or 'call'
@@ -135,6 +135,10 @@ const LeadModal = () => {
             experience: formData.experience
           };
 
+      if (program === 'cloud-computing') {
+        payload.program = 'cloud-computing';
+      }
+
       console.log("Sending payload:", payload);
 
       const API_URL = import.meta.env.VITE_API_URL;
@@ -192,7 +196,8 @@ const LeadModal = () => {
 
         // If it's a PDF request, trigger the download (safely in new tab for mobile/popup blocker bypass)
         if (type === 'pdf') {
-          window.open('/brochure.pdf', '_blank');
+          const pdfPath = program === 'cloud-computing' ? '/cloud-brochure.pdf' : '/brochure.pdf';
+          window.open(pdfPath, '_blank');
         }
 
         setTimeout(() => {

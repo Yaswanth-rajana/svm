@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, Phone, Mail, Check } from 'lucide-react';
-import { content } from '../../data/content';
+import { programsContent } from '../../data/content';
 
 const FaqItem = ({ question, answer, list, isOpen, onClick }) => {
   return (
@@ -41,8 +41,9 @@ const FaqItem = ({ question, answer, list, isOpen, onClick }) => {
   );
 };
 
-const FaqSection = () => {
-  const { faq } = content;
+const FaqSection = ({ program = 'infrastructure' }) => {
+  const data = programsContent[program] || programsContent.infrastructure;
+  const { faq } = data;
   const [openIndex, setOpenIndex] = useState(-1);
   const [copied, setCopied] = useState(false);
 
@@ -87,7 +88,7 @@ const FaqSection = () => {
 
         <div className="text-center mt-12 sm:mt-16">
           <p className="text-gray-800 text-lg font-medium mb-6">
-            Need help choosing the right IT path?
+            Need help choosing the right career path?
           </p>
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
             <a 

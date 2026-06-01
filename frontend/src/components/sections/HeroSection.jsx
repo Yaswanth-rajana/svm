@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import Container from '../layout/Container'
 import Input from '../ui/Input'
 import AnimatedText from '../ui/AnimatedText'
-import { content } from '../../data/content'
+import { programsContent } from '../../data/content'
 import { openLeadModal } from '../../utils/modalEvents'
 import OtpVerification from '../ui/OtpVerification'
 import { handleRazorpayPayment } from '../../utils/payment'
@@ -53,8 +52,14 @@ function ExperienceDropdown({ value, onChange }) {
   );
 }
 
-function HeroSection() {
-  const { hero } = content;
+function HeroSection({ program }) {
+  const data = programsContent[program] || programsContent.infrastructure;
+  const { hero } = data;
+  const isCloud = program === 'cloud-computing';
+  const badgeText = hero.badge;
+  const titleText = isCloud ? "in Cloud Computing" : "in IT Infrastructure";
+  const subtitleText = hero.subtitle;
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -96,19 +101,25 @@ function HeroSection() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
+      const payload = {
+        name: formData.fullName,
+        email: formData.email,
+        phone: normalizePhone(formData.phone),
+        source: 'webinar',
+        workingProfile: formData.workingProfile,
+        experience: formData.experience
+      };
+
+      if (program === 'cloud-computing') {
+        payload.program = 'cloud-computing';
+      }
+
       const response = await fetch(`${API_URL}/api/leads`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.fullName,
-          email: formData.email,
-          phone: normalizePhone(formData.phone),
-          source: 'webinar',
-          workingProfile: formData.workingProfile,
-          experience: formData.experience
-        }),
+        body: JSON.stringify(payload),
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
@@ -180,9 +191,18 @@ function HeroSection() {
           {/* Left Content */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-[65%]">
             
-            <h1 className="text-[40px] sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] mb-6 tracking-tight">
-              <span className="block">Start Your Career</span>
-              <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block lg:inline">in IT Infrastructure</span>
+            <h1 className={`${isCloud ? 'text-[32px] sm:text-4xl md:text-5xl lg:text-6xl' : 'text-[40px] sm:text-5xl md:text-6xl lg:text-7xl'} font-extrabold text-white leading-[1.1] mb-6 tracking-tight`}>
+              {isCloud ? (
+                <>
+                  <span className="block md:whitespace-nowrap">Become a Cloud Engineer</span>
+                  <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block md:whitespace-nowrap">{"& Build the Future of IT"}</span>
+                </>
+              ) : (
+                <>
+                  <span className="block">Start Your Career</span>
+                  <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block lg:inline">{titleText}</span>
+                </>
+              )}
             </h1>
 
             {/* AI-Proof Tag */}
@@ -190,12 +210,12 @@ function HeroSection() {
               className="inline-flex items-center gap-2 px-[14px] py-[6px] rounded-full mb-6 border border-[rgba(255,0,100,0.4)] bg-[rgba(255,0,100,0.1)] shadow-[0_0_20px_rgba(255,0,100,0.2)] hover:shadow-[0_0_30px_rgba(255,0,100,0.3)] transition-all duration-300"
             >
               <span className="text-sm font-bold text-[#ff0064] tracking-wide flex items-center gap-1.5">
-                ⚡ {hero.badge}
+                ⚡ {badgeText}
               </span>
             </div>
 
-            <p className="text-lg md:text-xl text-gray-400 font-medium mb-4 lg:mb-8 max-w-xl leading-relaxed">
-              {hero.subtitle}
+            <p className="text-lg md:text-xl text-gray-400 font-medium mb-4 lg:mb-8 max-w-2xl leading-relaxed">
+              {subtitleText}
             </p>
 
             {/* Mobile-only Centered Arrow */}
