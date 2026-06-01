@@ -14,8 +14,8 @@ function JobCard({ title, description, salary, route }) {
             {salary}
           </span>
           {route && (
-            <span className="text-gray-400 text-sm font-semibold flex items-center gap-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-500 group-hover:to-orange-400 transition-all duration-300">
-              Start Learning
+            <span className="inline-flex items-center gap-1.5 bg-orange-400/10 text-orange-400 px-4 py-1.5 rounded-full text-sm font-semibold border border-orange-400/20 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-pink-500 group-hover:to-orange-400 group-hover:text-white group-hover:border-transparent">
+              Know More
               <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">→</span>
             </span>
           )}

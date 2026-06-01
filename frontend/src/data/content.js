@@ -544,7 +544,7 @@ export const programsContent = {
         {
           name: "Saurabh Singh",
           role: "Senior IT & Cloud Architect",
-          credibility: "10+ Years Experience in Enterprise & Cloud Infrastructure",
+          credibility: "10+ Years Experience in Enterprise Systems",
           linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
           photo: "Saurabh singh.jpg"
         }
