@@ -334,7 +334,7 @@ export const programsContent = {
         "Identity & Access Management",
         "Cloud Monitoring & Security"
       ],
-      image: "/InfraImage.png"
+      image: "/cloud.png"
     },
     infraTypes: {
       title: "Top Cloud Platforms You Should Master",
