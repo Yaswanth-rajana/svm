@@ -124,7 +124,7 @@ export const verifyPayment = async (req, res) => {
       // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
       try {
         console.log(`📩 Webinar email triggered for: ${maskEmail(lead.email)}`);
-        sendConfirmationEmail({ name: lead.name, email: lead.email });
+        sendConfirmationEmail({ name: lead.name, email: lead.email, program: lead.program });
       } catch (emailErr) {
         console.error("❌ Email trigger failed:", emailErr.message);
       }
@@ -138,6 +138,7 @@ export const verifyPayment = async (req, res) => {
           workingProfile: lead.workingProfile,
           experience: lead.experience,
           paymentStatus: lead.paymentStatus,
+          program: lead.program,
         });
       } catch (adminErr) {
         console.error("❌ Admin notification failed:", adminErr.message);
@@ -197,7 +198,8 @@ export const handlePaymentFailure = async (req, res) => {
         email: lead.email,
         phone: lead.phone,
         registrationTime: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-        paymentMethod: "Razorpay (Modal Exit or Declined)"
+        paymentMethod: "Razorpay (Modal Exit or Declined)",
+        program: lead.program,
       });
     } catch (adminErr) {
       console.error("❌ Failed to trigger failed payment admin notification:", adminErr.message);

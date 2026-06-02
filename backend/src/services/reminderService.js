@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { maskEmail } from '../utils/logger.js';
+import { getProgramConfig } from '../config/programConfig.js';
 
 /**
  * Sends a reminder email for the webinar via ZeptoMail API.
@@ -11,7 +12,7 @@ import { maskEmail } from '../utils/logger.js';
  * @param {number} [params.minutesLeft] - Number of minutes left for the webinar (e.g. 30).
  * @param {Date} params.eventDate - Date of the webinar.
  */
-export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, eventDate }) => {
+export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, eventDate, program }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
 
@@ -20,6 +21,7 @@ export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, ev
         return;
     }
 
+    const programConfig = getProgramConfig(program);
     const safeName = name || "User";
     const url = 'https://api.zeptomail.in/v1.1/email';
     
@@ -38,17 +40,17 @@ export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, ev
     });
 
     if (daysLeft === 7) {
-        subject = "⏳ 1 Week to go! IT Infrastructure Webinar";
-        messageBody = `Just a quick reminder that our highly anticipated <strong>IT Infrastructure Engineering Roadmap</strong> webinar is exactly <strong>1 week away</strong>. Make sure your calendar is marked!`;
+        subject = `⏳ 1 Week to go! ${programConfig.shortTitle} Webinar`;
+        messageBody = `Just a quick reminder that our highly anticipated <strong>${programConfig.title}</strong> webinar is exactly <strong>1 week away</strong>. Make sure your calendar is marked!`;
     } else if (daysLeft === 3) {
-        subject = "⌛ 3 Days left! Get ready for your IT Infrastructure Webinar";
-        messageBody = `We're only <strong>3 days away</strong> from the webinar! Get ready to explore the exciting world of IT Infrastructure and learn how to build a high-growth career.`;
+        subject = `⌛ 3 Days left! Get ready for your ${programConfig.shortTitle} Webinar`;
+        messageBody = `We're only <strong>3 days away</strong> from the webinar! Get ready to explore the exciting world of ${programConfig.shortTitle} and learn how to build a high-growth career.`;
     } else if (daysLeft === 1) {
-        subject = "🚨 Tomorrow is the day! IT Infrastructure Webinar";
-        messageBody = `This is it! Tomorrow is the day of our <strong>IT Infrastructure Engineering Roadmap</strong> webinar. We are extremely excited to see you there. Make sure to join a few minutes early to secure your spot.`;
+        subject = `🚨 Tomorrow is the day! ${programConfig.shortTitle} Webinar`;
+        messageBody = `This is it! Tomorrow is the day of our <strong>${programConfig.title}</strong> webinar. We are extremely excited to see you there. Make sure to join a few minutes early to secure your spot.`;
     } else if (minutesLeft === 30) {
-        subject = "⏰ Starting in 30 Minutes! IT Infrastructure Webinar";
-        messageBody = `We are starting in exactly <strong>30 minutes</strong>! Grab a cup of coffee, get your notes ready, and join us to map out your IT Infrastructure engineering career.`;
+        subject = `⏰ Starting in 30 Minutes! ${programConfig.shortTitle} Webinar`;
+        messageBody = `We am starting in exactly <strong>30 minutes</strong>! Grab a cup of coffee, get your notes ready, and join us to map out your ${programConfig.shortTitle} engineering career.`;
     }
 
     let note = "We'll send you another reminder before the session starts. We recommend joining 5 minutes early to test your audio.";
@@ -104,7 +106,7 @@ export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, ev
                 
                 <div style="text-align: center;">
                     <p style="margin: 0; font-size: 16px; color: #111827; font-weight: 700;">Smart Mate Ventures</p>
-                    <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in IT Infrastructure</p>
+                    <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in ${programConfig.shortTitle}</p>
                     <p style="margin: 16px 0 0; font-size: 12px; color: #9ca3af;">
                         &copy; 2026 Smart Mate Ventures. All rights reserved.
                     </p>

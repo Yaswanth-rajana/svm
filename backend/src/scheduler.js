@@ -40,7 +40,8 @@ export const initScheduler = () => {
                         name: lead.name,
                         email: lead.email,
                         daysLeft: 7,
-                        eventDate: lead.eventDate
+                        eventDate: lead.eventDate,
+                        program: lead.program
                     });
                     lead.reminder7Sent = true;
                     await lead.save();
@@ -52,7 +53,8 @@ export const initScheduler = () => {
                         name: lead.name,
                         email: lead.email,
                         daysLeft: 3,
-                        eventDate: lead.eventDate
+                        eventDate: lead.eventDate,
+                        program: lead.program
                     });
                     lead.reminder3Sent = true;
                     await lead.save();
@@ -66,7 +68,8 @@ export const initScheduler = () => {
                             name: lead.name,
                             email: lead.email,
                             daysLeft: 1,
-                            eventDate: lead.eventDate
+                            eventDate: lead.eventDate,
+                            program: lead.program
                         });
                         lead.reminder1Sent = true;
                         await lead.save();
@@ -112,7 +115,8 @@ export const initScheduler = () => {
                         email: lead.email,
                         phone: lead.phone,
                         source: "webinar",
-                        registrationTime: lead.createdAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+                        registrationTime: lead.createdAt.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+                        program: lead.program
                     });
 
                     lead.pendingPaymentAlertSent = true;
@@ -154,7 +158,8 @@ export const initScheduler = () => {
                         name: lead.name,
                         email: lead.email,
                         minutesLeft: 30,
-                        eventDate: lead.eventDate
+                        eventDate: lead.eventDate,
+                        program: lead.program
                     });
                     
                     lead.reminder30MinSent = true;

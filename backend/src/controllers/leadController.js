@@ -14,7 +14,10 @@ import { maskEmail, maskPhone } from "../utils/logger.js";
 export const createLead = async (req, res) => {
   console.log(`📥 API Request received (createLead): Source=${req.body.source}, Phone=${req.body.phone ? maskPhone(normalizePhone(req.body.phone)) : 'N/A'}, Email=${req.body.email ? maskEmail(req.body.email) : 'N/A'}`);
   try {
-    const { name, email, workingProfile, experience } = req.body;
+    const { name, email, workingProfile, experience, program: reqProgram } = req.body;
+    const program = reqProgram || "it-infrastructure";
+    console.log("Received lead payload (createLead):", req.body);
+    console.log("Program:", program);
     
     // Normalize input
     const phone = req.body.phone ? normalizePhone(req.body.phone) : undefined;
@@ -62,6 +65,10 @@ export const createLead = async (req, res) => {
 
       // ✅ New action → add source
       lead.sources.push(source);
+      if (reqProgram) {
+        lead.program = reqProgram;
+      }
+      console.log("Lead before save (existing createLead):", lead);
       await lead.save();
 
       // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
@@ -86,6 +93,15 @@ export const createLead = async (req, res) => {
       });
     }
 
+    console.log("Lead before save (new createLead):", {
+      name,
+      email,
+      phone,
+      sources: [source],
+      workingProfile,
+      experience,
+      program,
+    });
     // 🆕 New user
     lead = await Lead.create({
       name,
@@ -94,6 +110,7 @@ export const createLead = async (req, res) => {
       sources: [source],
       workingProfile,
       experience,
+      program,
     });
 
     // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
@@ -134,7 +151,10 @@ export const createLead = async (req, res) => {
  */
 export const requestCall = async (req, res) => {
   try {
-    const { name, email, preferredTime, message } = req.body;
+    const { name, email, preferredTime, message, program: reqProgram } = req.body;
+    const program = reqProgram || "it-infrastructure";
+    console.log("Received lead payload (requestCall):", req.body);
+    console.log("Program:", program);
     
     // Normalize input
     const phone = req.body.phone ? normalizePhone(req.body.phone) : undefined;
@@ -171,9 +191,21 @@ export const requestCall = async (req, res) => {
       if (!lead.sources.includes(source)) {
         lead.sources.push(source);
       }
+      if (reqProgram) {
+        lead.program = reqProgram;
+      }
+      console.log("Lead before save (existing requestCall):", lead);
       await lead.save();
     } else {
       console.log("🆕 Creating new call request lead");
+      console.log("Lead before save (new requestCall):", {
+        name,
+        email,
+        phone,
+        sources: [source],
+        isVerified: true,
+        program,
+      });
       // Create new lead
       lead = await Lead.create({
         name,
@@ -181,6 +213,7 @@ export const requestCall = async (req, res) => {
         phone,
         sources: [source],
         isVerified: true,
+        program,
       });
     }
 
@@ -198,7 +231,7 @@ export const requestCall = async (req, res) => {
     if (lead.email) {
       try {
         console.log(`📩 Call request email triggered for: ${lead.email}`);
-        sendCallRequestEmail({ name: lead.name, email: lead.email });
+        sendCallRequestEmail({ name: lead.name, email: lead.email, program: lead.program });
       } catch (emailErr) {
         console.error("❌ Call request email trigger failed:", emailErr.message);
       }
@@ -210,7 +243,8 @@ export const requestCall = async (req, res) => {
           email: lead.email, 
           phone: lead.phone, 
           preferredTime, 
-          message 
+          message,
+          program: lead.program,
         });
       } catch (adminErr) {
         console.error("❌ Admin call request notification failed:", adminErr.message);

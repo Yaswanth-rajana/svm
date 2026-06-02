@@ -27,6 +27,12 @@ const leadSchema = new mongoose.Schema(
       default: [],
     },
 
+    program: {
+      type: String,
+      default: "it-infrastructure",
+      trim: true,
+    },
+
     // 🔥 Only for webinar users (optional)
     workingProfile: {
       type: String,

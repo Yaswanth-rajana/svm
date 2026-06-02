@@ -11,7 +11,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LandingPage program="infrastructure" />} />
+        <Route path="/" element={<LandingPage program="it-infrastructure" />} />
         <Route path="/cloud-computing" element={<LandingPage program="cloud-computing" />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failed" element={<PaymentFailed />} />

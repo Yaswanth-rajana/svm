@@ -4,6 +4,7 @@ import OTP from '../models/OTP.js';
 import { webinarConfig } from '../config/webinarConfig.js';
 import { sendEmailOTP } from '../services/emailService.js';
 import { generateCertificatePDF, sendCertificateEmail } from '../services/certificateService.js';
+import { getProgramConfig } from '../config/programConfig.js';
 
 /**
  * @desc    Send verification OTP for certificate claim
@@ -247,9 +248,10 @@ export const verifyAndGenerateCertificate = async (req, res) => {
     // 6. Generate and send PDF in a safe block, with rollback on failure
     let pdfPath = "";
     try {
+      const programConfig = getProgramConfig(lead.program);
       pdfPath = await generateCertificatePDF({
         fullName: fullName.trim(),
-        webinarTitle: webinarConfig.webinarTitle,
+        webinarTitle: programConfig.title,
         webinarDate: webinarConfig.webinarDate,
         mentorName: webinarConfig.mentorName,
         organizationName: webinarConfig.organizationName,
@@ -257,7 +259,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
       });
 
       // Email PDF to recipient
-      await sendCertificateEmail(emailLower, fullName.trim(), pdfPath, webinarConfig.webinarTitle);
+      await sendCertificateEmail(emailLower, fullName.trim(), pdfPath, programConfig.title, lead.program);
 
       // Save generated ID and timestamp to database
       lead.certificateId = generatedId;

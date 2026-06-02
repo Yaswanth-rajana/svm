@@ -1,6 +1,21 @@
 import axios from 'axios';
 import { maskEmail } from '../utils/logger.js';
 import Lead from '../models/Lead.js';
+import { getProgramConfig } from '../config/programConfig.js';
+
+/**
+ * Formats a program slug into a human-readable title-cased name.
+ * e.g., 'cloud-computing' -> 'Cloud Computing'
+ * e.g., 'it-infrastructure' -> 'IT Infrastructure'
+ * e.g., 'devops-engineering' -> 'DevOps Engineering'
+ * 
+ * @param {string} program - The program slug
+ * @returns {string} The formatted program name
+ */
+export const getProgramLabel = (program) => {
+    return getProgramConfig(program).shortTitle;
+};
+
 
 /**
  * Formats an Indian phone number stored with a '91' prefix.
@@ -26,7 +41,7 @@ export const formatPhoneNumber = (phone) => {
  * @param {string} params.name - Recipient's name.
  * @param {string} params.email - Recipient's email address.
  */
-export const sendConfirmationEmail = ({ name, email }) => {
+export const sendConfirmationEmail = ({ name, email, program }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
 
@@ -36,6 +51,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
         return;
     }
 
+    const programConfig = getProgramConfig(program);
     const safeName = name || "User";
     const url = 'https://api.zeptomail.in/v1.1/email';
 
@@ -52,7 +68,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 }
             }
         ],
-        subject: "🚀 IT Infrastructure Webinar – Access details",
+        subject: programConfig.emailSubject,
         htmlbody: `
             <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
                 
@@ -64,7 +80,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
 
                 <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">You're in, ${safeName}! 🎉</h2>
                 <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-                    Your seat is confirmed for the <strong>IT Infrastructure Engineering Roadmap</strong> webinar. We're excited to help you navigate your career in this high-demand field.
+                    Your seat is confirmed for the <strong>${programConfig.title}</strong> webinar. We're excited to help you navigate your career in this high-demand field.
                 </p>
                 
                 <!-- Webinar Details Card -->
@@ -73,7 +89,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Date & Time</p>
                         <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Saturday, June 20, 2026 at 10:00 AM IST</p>
                         <p style="margin: 8px 0 0; font-size: 14px;">
-                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=IT+Infrastructure+Engineering+Roadmap+Webinar&dates=20260620T043000Z/20260620T060000Z&details=Join+our+exclusive+webinar+to+build+your+IT+Infrastructure+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
+                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(programConfig.title)}&dates=20260620T043000Z/20260620T060000Z&details=Join+our+exclusive+webinar+to+build+your+${encodeURIComponent(programConfig.shortTitle)}+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
                         </p>
                     </div>
 
@@ -93,9 +109,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 <div style="margin-bottom: 32px;">
                     <h3 style="color: #111827; font-size: 18px; font-weight: 700; margin-bottom: 12px;">What you'll learn:</h3>
                     <ul style="padding-left: 20px; margin: 0; color: #4b5563; line-height: 1.6;">
-                        <li style="margin-bottom: 8px;">Understand what IT Infrastructure is and how it powers the modern world.</li>
-                        <li style="margin-bottom: 8px;">Discover why this is a highly stable, AI-proof career path.</li>
-                        <li style="margin-bottom: 8px;">Get insights into job opportunities and salary benchmarks in the domain.</li>
+                        ${programConfig.learningPoints.map(point => `<li style="margin-bottom: 8px;">${point}</li>`).join('')}
                     </ul>
                 </div>
 
@@ -115,7 +129,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
                 <!-- Footer -->
                 <div style="text-align: center;">
                     <p style="margin: 0; font-size: 16px; color: #111827; font-weight: 700;">Smart Mate Ventures</p>
-                    <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in IT Infrastructure</p>
+                    <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in ${programConfig.shortTitle}</p>
                     <p style="margin: 16px 0 0; font-size: 12px; color: #9ca3af;">
                         &copy; 2026 Smart Mate Ventures. All rights reserved.
                     </p>
@@ -153,7 +167,7 @@ export const sendConfirmationEmail = ({ name, email }) => {
  * @param {string} params.name - Recipient's name.
  * @param {string} params.email - Recipient's email address.
  */
-export const sendCallRequestEmail = ({ name, email }) => {
+export const sendCallRequestEmail = ({ name, email, program }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
 
@@ -163,6 +177,7 @@ export const sendCallRequestEmail = ({ name, email }) => {
         return;
     }
 
+    const programConfig = getProgramConfig(program);
     const safeName = name || "User";
     const url = 'https://api.zeptomail.in/v1.1/email';
 
@@ -196,12 +211,12 @@ export const sendCallRequestEmail = ({ name, email }) => {
                 
                 <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; padding: 24px; border-radius: 12px; margin-bottom: 32px;">
                     <p style="margin: 0; font-size: 16px; color: #111827; line-height: 1.6;">
-                        One of our career experts will review your profile and contact you within the next <strong>24 hours</strong> to discuss your career goals in IT Infrastructure.
+                        One of our career experts will review your profile and contact you within the next <strong>24 hours</strong> to discuss your career goals in ${programConfig.shortTitle}.
                     </p>
                 </div>
 
                 <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin-bottom: 32px;">
-                    In the meantime, feel free to explore our website for more resources on IT Infrastructure Engineering and the current job market trends.
+                    In the meantime, feel free to explore our website for more resources on ${programConfig.shortTitle} Engineering and the current job market trends.
                 </p>
 
                 <!-- Support Section -->
@@ -216,7 +231,7 @@ export const sendCallRequestEmail = ({ name, email }) => {
                 <!-- Footer -->
                 <div style="text-align: center;">
                     <p style="margin: 0; font-size: 16px; color: #111827; font-weight: 700;">Smart Mate Ventures</p>
-                    <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in IT Infrastructure</p>
+                    <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in ${programConfig.shortTitle}</p>
                     <p style="margin: 16px 0 0; font-size: 12px; color: #9ca3af;">
                         &copy; 2026 Smart Mate Ventures. All rights reserved.
                     </p>
@@ -323,11 +338,12 @@ export const sendEmailOTP = async (email, otp) => {
  * @param {string} params.experience
  * @param {string} params.paymentStatus
  */
-export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile, experience, paymentStatus }) => {
+export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile, experience, paymentStatus, program }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
     const adminEmail = process.env.ADMIN_EMAIL;
     const formattedPhone = formatPhoneNumber(phone);
+    const programLabel = getProgramLabel(program);
 
     // Safety Check
     if (!apiKey || !fromEmail || !adminEmail) {
@@ -363,6 +379,7 @@ export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile,
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Working Profile</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${workingProfile || 'N/A'}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Experience</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${experience || 'N/A'}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${paymentStatus || 'N/A'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>
                 </table>
             </div>
@@ -401,11 +418,12 @@ export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile,
  * @param {string} params.preferredTime
  * @param {string} params.message
  */
-export const sendCallRequestAdminEmail = ({ name, email, phone, preferredTime, message }) => {
+export const sendCallRequestAdminEmail = ({ name, email, phone, preferredTime, message, program }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
     const adminEmail = process.env.ADMIN_EMAIL;
     const formattedPhone = formatPhoneNumber(phone);
+    const programLabel = getProgramLabel(program);
 
     // Safety Check
     if (!apiKey || !fromEmail || !adminEmail) {
@@ -440,6 +458,7 @@ export const sendCallRequestAdminEmail = ({ name, email, phone, preferredTime, m
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Preferred Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${preferredTime || 'Not specified'}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Message / Query</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${message || 'None'}</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Submitted Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${submittedTime}</td></tr>
                 </table>
             </div>
@@ -473,11 +492,12 @@ export const sendCallRequestAdminEmail = ({ name, email, phone, preferredTime, m
  * 
  * @param {Object} params - Registration details.
  */
-export const sendPendingPaymentAdminEmail = ({ name, email, phone, source, registrationTime }) => {
+export const sendPendingPaymentAdminEmail = ({ name, email, phone, source, registrationTime, program }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
     const adminEmail = process.env.ADMIN_EMAIL;
     const formattedPhone = formatPhoneNumber(phone);
+    const programLabel = getProgramLabel(program);
 
     if (!apiKey || !fromEmail || !adminEmail) {
         console.error("❌ Email config missing: ZEPTO_API_KEY, FROM_EMAIL or ADMIN_EMAIL is not defined in .env");
@@ -497,7 +517,8 @@ export const sendPendingPaymentAdminEmail = ({ name, email, phone, source, regis
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">User Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone Number</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">IT Infrastructure Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel} Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb; color: #d97706; font-weight: bold;">Pending</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>
                 </table>
@@ -516,11 +537,12 @@ export const sendPendingPaymentAdminEmail = ({ name, email, phone, source, regis
  * 
  * @param {Object} params - Payment details.
  */
-export const sendFailedPaymentAdminEmail = ({ name, email, phone, amount, paymentMethod, registrationTime }) => {
+export const sendFailedPaymentAdminEmail = ({ name, email, phone, amount, paymentMethod, registrationTime, program }) => {
     const apiKey = process.env.ZEPTO_API_KEY;
     const fromEmail = process.env.FROM_EMAIL;
     const adminEmail = process.env.ADMIN_EMAIL;
     const formattedPhone = formatPhoneNumber(phone);
+    const programLabel = getProgramLabel(program);
 
     if (!apiKey || !fromEmail || !adminEmail) {
         console.error("❌ Email config missing: ZEPTO_API_KEY, FROM_EMAIL or ADMIN_EMAIL is not defined in .env");
@@ -540,7 +562,8 @@ export const sendFailedPaymentAdminEmail = ({ name, email, phone, amount, paymen
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">User Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone Number</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">IT Infrastructure Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel} Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb; color: #ef4444; font-weight: bold;">Failed</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Method</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${paymentMethod || 'Unknown'}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>

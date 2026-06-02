@@ -107,12 +107,11 @@ function HeroSection({ program }) {
         phone: normalizePhone(formData.phone),
         source: 'webinar',
         workingProfile: formData.workingProfile,
-        experience: formData.experience
+        experience: formData.experience,
+        program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')
       };
 
-      if (program === 'cloud-computing') {
-        payload.program = 'cloud-computing';
-      }
+      console.log("Submitting lead from HeroSection:", payload);
 
       const response = await fetch(`${API_URL}/api/leads`, {
         method: 'POST',

@@ -124,7 +124,8 @@ const LeadModal = ({ program }) => {
         ? {
             name: formData.fullName,
             email: formData.email,
-            phone: normalizePhone(formData.phone)
+            phone: normalizePhone(formData.phone),
+            program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')
           }
         : {
             name: formData.fullName,
@@ -132,14 +133,11 @@ const LeadModal = ({ program }) => {
             phone: normalizePhone(formData.phone),
             source: type === 'webinar' ? 'webinar' : 'brochure',
             workingProfile: formData.workingProfile,
-            experience: formData.experience
+            experience: formData.experience,
+            program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')
           };
 
-      if (program === 'cloud-computing') {
-        payload.program = 'cloud-computing';
-      }
-
-      console.log("Sending payload:", payload);
+      console.log("Submitting lead:", payload);
 
       const API_URL = import.meta.env.VITE_API_URL;
       const controller = new AbortController();

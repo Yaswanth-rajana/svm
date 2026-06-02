@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import puppeteer from 'puppeteer';
 import nodemailer from 'nodemailer';
+import { getProgramConfig } from '../config/programConfig.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -113,13 +114,15 @@ export const generateCertificatePDF = async (data) => {
  * @param {string} webinarTitle - Webinar Title
  * @returns {Promise<void>}
  */
-export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitle) => {
+export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitle, program) => {
   const apiKey = process.env.ZEPTO_API_KEY;
   const fromEmail = process.env.FROM_EMAIL;
 
   if (!apiKey || !fromEmail) {
     throw new Error("Email configuration missing in backend/.env: ZEPTO_API_KEY or FROM_EMAIL");
   }
+
+  const programConfig = getProgramConfig(program);
 
   // Initialize Nodemailer with ZeptoMail SMTP credentials
   const transporter = nodemailer.createTransport({
@@ -164,7 +167,7 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
         </div>
 
         <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin-bottom: 32px;">
-          We look forward to seeing you in our upcoming cohorts and helping you advance in your IT Infrastructure career.
+          We look forward to seeing you in our upcoming cohorts and helping you advance in your ${programConfig.shortTitle} career.
         </p>
 
         <!-- Support Info -->
@@ -179,7 +182,7 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
         <!-- Footer -->
         <div style="text-align: center;">
           <p style="margin: 0; font-size: 16px; color: #111827; font-weight: 700;">Smart Mate Ventures</p>
-          <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in IT Infrastructure</p>
+          <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in ${programConfig.shortTitle}</p>
           <p style="margin: 16px 0 0; font-size: 12px; color: #9ca3af;">
             &copy; 2026 Smart Mate Ventures. All rights reserved.
           </p>

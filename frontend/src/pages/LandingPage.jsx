@@ -17,7 +17,7 @@ import BenefitsModal from '../components/ui/BenefitsModal'
 import WhatsAppFloat from '../components/ui/WhatsAppFloat'
 import AnnouncementBar from '../components/layout/AnnouncementBar'
 
-function LandingPage({ program = 'infrastructure' }) {
+function LandingPage({ program = 'it-infrastructure' }) {
   useEffect(() => {
     window.scrollTo(0, 0);
     let title;
