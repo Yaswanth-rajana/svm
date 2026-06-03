@@ -56,10 +56,10 @@ function LandingPage({ program = 'it-infrastructure' }) {
         )}
         <InfrastructureSection program={program} />
         <WhatIsInfra program={program} />
-        <ComponentsSection program={program} />
         <WhyBusinessSection program={program} />
         <JobRolesSection program={program} />
         <div id="roadmap"><RoadmapSection program={program} /></div>
+        <ComponentsSection program={program} />
         <MentorSection program={program} />
         <div id="webinar"><WebinarSection program={program} /></div>
         <FaqSection program={program} />

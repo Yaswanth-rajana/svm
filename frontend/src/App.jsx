@@ -30,10 +30,10 @@ function App() {
         <div id="demand"><DemandSection /></div>
         <InfrastructureSection />
         <WhatIsInfra />
-        <ComponentsSection />
         <WhyBusinessSection />
         <JobRolesSection />
         <div id="roadmap"><RoadmapSection /></div>
+        <ComponentsSection />
         <MentorSection />
         <div id="webinar"><WebinarSection /></div>
         <FaqSection />
