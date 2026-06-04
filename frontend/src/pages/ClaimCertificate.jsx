@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Award, Mail, Lock, CheckCircle, AlertCircle, RefreshCw, ArrowLeft, User, Key } from 'lucide-react';
+import { Award, Mail, Lock, CheckCircle, AlertCircle, RefreshCw, ArrowLeft, User, Key, Info } from 'lucide-react';
 
 const ClaimCertificate = () => {
   const [step, setStep] = useState(1); // 1: Info Form, 2: OTP Verification, 3: Success Screen
@@ -58,6 +58,19 @@ const ClaimCertificate = () => {
 
     try {
       const API_URL = import.meta.env.VITE_API_URL || '';
+
+      if (import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true') {
+        const response = await axios.post(`${API_URL}/api/certificate/verify-and-generate`, {
+          fullName: fullName.trim(),
+          email: email.trim(),
+          webinarCode: webinarCode.trim()
+        });
+
+        showToast(response.data.message || 'Certificate generated and emailed!');
+        setStep(3);
+        return;
+      }
+
       const response = await axios.post(`${API_URL}/api/certificate/send-otp`, {
         email: email.trim(),
         webinarCode: webinarCode.trim()
@@ -67,7 +80,7 @@ const ClaimCertificate = () => {
       setStep(2);
       setCooldown(30); // 30 seconds resend cooldown
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to send OTP. Please check your credentials.', true);
+      showToast(err.response?.data?.message || 'Failed to process request. Please check your credentials.', true);
     } finally {
       setLoading(false);
     }
@@ -149,6 +162,17 @@ const ClaimCertificate = () => {
         {/* STEP 1: Form Inputs & Send OTP */}
         {step === 1 && (
           <form onSubmit={handleSendOtp} className="space-y-5">
+            {import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true' && (
+              <div className="flex items-start gap-2.5 text-blue-400 text-xs bg-blue-500/10 p-3.5 rounded-xl border border-blue-500/20 mb-4 text-left">
+                <Info className="w-4 h-4 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-white">✓ Certificate Verification Temporarily Disabled</p>
+                  <p className="text-gray-400 mt-1 font-normal leading-relaxed">
+                    Due to ongoing email service maintenance, OTP verification is temporarily unavailable. You may continue normally.
+                  </p>
+                </div>
+              </div>
+            )}
             {/* Full Name */}
             <div>
               <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
@@ -217,6 +241,8 @@ const ClaimCertificate = () => {
             >
               {loading ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true' ? (
+                'Generate Certificate'
               ) : (
                 'Request Verification OTP'
               )}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2, Gift, Sparkles, Award, ArrowRight } from 'lucide-react';
+import { programsContent } from '../../data/content';
 
 const BenefitsModal = ({ program = 'infrastructure' }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,37 +45,10 @@ const BenefitsModal = ({ program = 'infrastructure' }) => {
     };
   }, [isOpen]);
 
-  const isCloud = program === 'cloud-computing';
-
-  const keyTakeaways = isCloud ? [
-    "Clear Cloud Computing Career Roadmap",
-    "Step-by-Step Learning Path From 0 to Job Ready",
-    "Understanding of Real Cloud Job Roles",
-    "Practical Exposure Through Live Demo",
-    "Interview & Job Readiness Insights",
-    "Certificate of Participation"
-  ] : [
-    "Clear IT Infrastructure Career Roadmap",
-    "Step-by-Step Learning Path From 0 to Job Ready",
-    "Understanding of Real IT Job Roles",
-    "Practical Exposure Through Live Demo",
-    "Interview & Job Readiness Insights",
-    "Certificate of Participation"
-  ];
-
-  const bonusTakeaways = isCloud ? [
-    "Community Access",
-    "Cloud Tools Starter Kit",
-    "Cloud Career Roadmap PDF",
-    "Live Resume Review Opportunity",
-    "LinkedIn & Naukri Optimization Guide"
-  ] : [
-    "Community Access",
-    "IT Tools Starter Kit",
-    "IT Career Roadmap PDF",
-    "Live Resume Review Opportunity",
-    "LinkedIn & Naukri Optimization Guide"
-  ];
+  const programData = programsContent[program] || programsContent.infrastructure;
+  const keyTakeaways = programData.keyTakeaways || [];
+  const bonusTakeaways = programData.bonusTakeaways || [];
+  const shortTitle = programData.shortTitle || 'IT Infrastructure';
 
   const handleCtaClick = () => {
     handleClose();
@@ -162,7 +136,7 @@ const BenefitsModal = ({ program = 'infrastructure' }) => {
                   What You'll Gain From This Webinar
                 </h2>
                 <p className="text-gray-400 text-xs md:text-sm font-medium mt-0.5 md:mt-1">
-                  A complete roadmap to start and grow your career in {isCloud ? 'Cloud Computing' : 'IT Infrastructure'}.
+                  A complete roadmap to start and grow your career in {shortTitle}.
                 </p>
               </div>
 

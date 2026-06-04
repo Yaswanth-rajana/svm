@@ -1,14 +1,25 @@
 import { useRef, useState } from 'react';
 import { programsContent } from '../../data/content';
-import { ArrowRight, CheckCircle2, ChevronDown } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronDown, Server, Database, Monitor, Settings, TrendingUp, Cloud } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
 function RoadmapSection({ program = 'infrastructure' }) {
   const data = programsContent[program] || programsContent.infrastructure;
   const { roadmap } = data;
+
+  const scrollToWebinar = () => {
+    const webinarElement = document.getElementById("webinar");
+    if (webinarElement) {
+      webinarElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   const containerRef = useRef(null);
   const [showAll, setShowAll] = useState(false);
-  const isCloud = program === 'cloud-computing';
+  const isSpecializedProgram = program !== 'it-infrastructure' && program !== 'infrastructure';
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -21,21 +32,13 @@ function RoadmapSection({ program = 'infrastructure' }) {
     restDelta: 0.001
   });
 
-  const visibleSteps = (isCloud || showAll) ? roadmap.steps : roadmap.steps.slice(0, 4);
+  const visibleSteps = (showAll || roadmap.steps.length <= 4) ? roadmap.steps : roadmap.steps.slice(0, 4);
 
   const getStepBadge = (step, index) => {
     return index + 1;
   };
 
-  const scrollToWebinar = () => {
-    const webinarElement = document.getElementById("webinar");
-    if (webinarElement) {
-      webinarElement.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  };
+
 
   return (
     <section className="bg-white py-20 md:py-32 overflow-hidden text-gray-900" id="roadmap">
@@ -61,7 +64,7 @@ function RoadmapSection({ program = 'infrastructure' }) {
             <motion.div 
               style={{ scaleY, originY: 0 }}
               className={`hidden md:block absolute left-1/2 -translate-x-1/2 top-6 bottom-6 w-1 rounded-full z-10 ${
-                isCloud 
+                isSpecializedProgram 
                   ? 'bg-gradient-to-b from-pink-500 via-purple-500 to-orange-500' 
                   : 'bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600'
               }`}
@@ -93,7 +96,7 @@ function RoadmapSection({ program = 'infrastructure' }) {
                     {/* Floating Badge - DESKTOP ONLY */}
                     <div className="hidden md:flex absolute md:left-1/2 md:-translate-x-1/2 flex-shrink-0 z-20">
                       <div className={`w-12 h-12 rounded-full bg-white flex items-center justify-center font-bold text-gray-900 shadow-xl border-2 group-hover:scale-110 transition-transform duration-300 ${
-                        isCloud ? 'border-pink-500' : 'border-blue-600'
+                        isSpecializedProgram ? 'border-pink-500' : 'border-blue-600'
                       }`}>
                         {getStepBadge(step, index)}
                       </div>
@@ -104,12 +107,12 @@ function RoadmapSection({ program = 'infrastructure' }) {
                       <motion.div 
                         whileTap={{ scale: 0.98 }}
                         className={`bg-white rounded-[2rem] px-5 py-6 md:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-gray-100 hover:shadow-[0_20px_50px_rgb(0,0,0,0.08)] transition-all duration-500 group relative overflow-hidden cursor-pointer ${
-                          isCloud ? 'hover:border-pink-500/50' : 'hover:border-blue-600/50'
+                          isSpecializedProgram ? 'hover:border-pink-500/50' : 'hover:border-blue-600/50'
                         }`}
                       >
                         {/* Hover Gradient Background */}
                         <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${
-                          isCloud 
+                          isSpecializedProgram 
                             ? 'from-pink-50/40 to-orange-50/40' 
                             : 'from-blue-50/40 to-purple-50/40'
                         }`} />
@@ -120,14 +123,14 @@ function RoadmapSection({ program = 'infrastructure' }) {
                             <div className="flex items-center gap-4">
                               {/* Step Number Badge - MOBILE ONLY */}
                               <div className={`flex md:hidden w-7 h-7 rounded-full items-center justify-center text-[13px] font-bold flex-shrink-0 shadow-lg text-white ${
-                                isCloud 
+                                isSpecializedProgram 
                                   ? 'bg-pink-500 shadow-pink-500/20' 
                                   : 'bg-blue-600 shadow-blue-500/20'
                               }`}>
                                 {getStepBadge(step, index)}
                               </div>
                               <h3 className={`text-[18px] md:text-xl font-bold transition-colors leading-tight text-gray-900 ${
-                                isCloud 
+                                isSpecializedProgram 
                                   ? 'group-hover:text-pink-600' 
                                   : 'group-hover:text-blue-600'
                               }`}>
@@ -136,7 +139,7 @@ function RoadmapSection({ program = 'infrastructure' }) {
                             </div>
                             {step.duration && (
                               <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] md:text-xs font-bold whitespace-nowrap uppercase tracking-wider ${
-                                isCloud 
+                                isSpecializedProgram 
                                   ? 'bg-pink-50 text-pink-700' 
                                   : 'bg-blue-50 text-blue-700'
                               }`}>
@@ -154,7 +157,7 @@ function RoadmapSection({ program = 'infrastructure' }) {
                           <div className="flex flex-wrap gap-3">
                             {step.tags.map((tag, tIdx) => (
                               <div key={tIdx} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gray-50 group-hover:bg-white text-gray-600 text-[10px] md:text-[11px] font-semibold border border-gray-100 transition-colors">
-                                <CheckCircle2 size={12} className={isCloud ? 'text-pink-500' : 'text-blue-500'} />
+                                <CheckCircle2 size={12} className={isSpecializedProgram ? 'text-pink-500' : 'text-blue-500'} />
                                 {tag}
                               </div>
                             ))}
@@ -175,7 +178,7 @@ function RoadmapSection({ program = 'infrastructure' }) {
 
           {/* Show More Button & Mid-Section CTA */}
           <div className="mt-16 text-center space-y-8 relative z-20">
-            {!isCloud && !showAll && (
+            {!showAll && roadmap.steps.length > 4 && (
               <>
                 <button 
                   onClick={() => setShowAll(true)}
@@ -203,7 +206,7 @@ function RoadmapSection({ program = 'infrastructure' }) {
 
         {/* Final CTA (Always visible or only at the very end) */}
         <AnimatePresence>
-          {(isCloud || showAll) && (
+          {(showAll || roadmap.steps.length <= 4) && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -214,7 +217,7 @@ function RoadmapSection({ program = 'infrastructure' }) {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className={`px-12 py-5 rounded-full font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 mx-auto shadow-2xl ${
-                  isCloud 
+                  isSpecializedProgram 
                     ? 'bg-gradient-to-r from-pink-500 to-orange-500 text-white hover:opacity-90 shadow-pink-500/20' 
                     : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-blue-500/25 hover:shadow-blue-500/40'
                 }`}

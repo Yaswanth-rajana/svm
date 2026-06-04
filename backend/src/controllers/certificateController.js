@@ -5,6 +5,7 @@ import { webinarConfig } from '../config/webinarConfig.js';
 import { sendEmailOTP } from '../services/emailService.js';
 import { generateCertificatePDF, sendCertificateEmail } from '../services/certificateService.js';
 import { getProgramConfig } from '../config/programConfig.js';
+import { env } from '../config/env.js';
 
 /**
  * @desc    Send verification OTP for certificate claim
@@ -86,6 +87,14 @@ export const sendCertificateOtp = async (req, res) => {
       });
     }
 
+    if (env.DISABLE_OTP_VALIDATION === "true") {
+      return res.status(200).json({
+        success: true,
+        bypass: true,
+        message: "Certificate OTP verification temporarily disabled"
+      });
+    }
+
     // Cooldown check: 30 seconds
     const existingOtp = await OTP.findOne({ contact: emailLower }).sort({ createdAt: -1 });
     if (existingOtp) {
@@ -149,7 +158,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
   try {
     const { fullName, email, webinarCode, otp } = req.body;
 
-    if (!fullName || !email || !webinarCode || !otp) {
+    if (!fullName || !email || !webinarCode || (env.DISABLE_OTP_VALIDATION !== "true" && !otp)) {
       return res.status(400).json({ 
         success: false, 
         message: "All fields are required" 
@@ -177,42 +186,44 @@ export const verifyAndGenerateCertificate = async (req, res) => {
     }
 
     // 3. Verify OTP
-    const otpRecord = await OTP.findOne({ contact: emailLower }).sort({ createdAt: -1 });
+    if (env.DISABLE_OTP_VALIDATION !== "true") {
+      const otpRecord = await OTP.findOne({ contact: emailLower }).sort({ createdAt: -1 });
 
-    if (!otpRecord) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "OTP not found or expired. Please request a new one." 
-      });
-    }
+      if (!otpRecord) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "OTP not found or expired. Please request a new one." 
+        });
+      }
 
-    if (otpRecord.expiresAt < new Date()) {
+      if (otpRecord.expiresAt < new Date()) {
+        await OTP.deleteOne({ _id: otpRecord._id });
+        return res.status(400).json({ 
+          success: false, 
+          message: "OTP has expired. Please request a new one." 
+        });
+      }
+
+      if (otpRecord.attempts >= 5) {
+        await OTP.deleteOne({ _id: otpRecord._id });
+        return res.status(429).json({ 
+          success: false, 
+          message: "Maximum verification attempts reached. Please request a new OTP." 
+        });
+      }
+
+      if (otpRecord.otp !== otp.toString()) {
+        otpRecord.attempts += 1;
+        await otpRecord.save();
+        return res.status(400).json({ 
+          success: false, 
+          message: "Invalid verification code. Please check and try again." 
+        });
+      }
+
+      // Delete the verified OTP record immediately to prevent reuse
       await OTP.deleteOne({ _id: otpRecord._id });
-      return res.status(400).json({ 
-        success: false, 
-        message: "OTP has expired. Please request a new one." 
-      });
     }
-
-    if (otpRecord.attempts >= 5) {
-      await OTP.deleteOne({ _id: otpRecord._id });
-      return res.status(429).json({ 
-        success: false, 
-        message: "Maximum verification attempts reached. Please request a new OTP." 
-      });
-    }
-
-    if (otpRecord.otp !== otp.toString()) {
-      otpRecord.attempts += 1;
-      await otpRecord.save();
-      return res.status(400).json({ 
-        success: false, 
-        message: "Invalid verification code. Please check and try again." 
-      });
-    }
-
-    // Delete the verified OTP record immediately to prevent reuse
-    await OTP.deleteOne({ _id: otpRecord._id });
 
     // 4. PREVENT RACE CONDITIONS: Atomic Claim Lock
     const lead = await Lead.findOneAndUpdate(

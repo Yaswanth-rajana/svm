@@ -1,5 +1,6 @@
 import Lead from "../models/Lead.js";
 import OTP from "../models/OTP.js";
+import { env } from "../config/env.js";
 import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail, sendCallRequestAdminEmail, sendPendingPaymentAdminEmail } from "../services/emailService.js";
 import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { normalizePhone } from "../utils/phone.js";
@@ -31,16 +32,18 @@ export const createLead = async (req, res) => {
     }
 
     // 1.5 Verify OTP first (except for brochure downloads)
-    if (source !== 'brochure') {
-      const verifiedOtp = await OTP.findOne({ 
-        contact: { $in: [phone, email].filter(Boolean) }, 
-        isVerified: true 
-      });
-      if (!verifiedOtp) {
-        return res.status(400).json({
-          success: false,
-          message: "Please verify OTP first",
+    if (env.DISABLE_OTP_VALIDATION !== "true") {
+      if (source !== 'brochure') {
+        const verifiedOtp = await OTP.findOne({ 
+          contact: { $in: [phone, email].filter(Boolean) }, 
+          isVerified: true 
         });
+        if (!verifiedOtp) {
+          return res.status(400).json({
+            success: false,
+            message: "Please verify OTP first",
+          });
+        }
       }
     }
 
@@ -169,15 +172,17 @@ export const requestCall = async (req, res) => {
     }
 
     // 1.5 Verify OTP first
-    const verifiedOtp = await OTP.findOne({ 
-      contact: { $in: [phone, email].filter(Boolean) }, 
-      isVerified: true 
-    });
-    if (!verifiedOtp) {
-      return res.status(400).json({
-        success: false,
-        message: "Please verify OTP first",
+    if (env.DISABLE_OTP_VALIDATION !== "true") {
+      const verifiedOtp = await OTP.findOne({ 
+        contact: { $in: [phone, email].filter(Boolean) }, 
+        isVerified: true 
       });
+      if (!verifiedOtp) {
+        return res.status(400).json({
+          success: false,
+          message: "Please verify OTP first",
+        });
+      }
     }
 
     console.log("📥 Request Call reached backend:", { name, email: maskEmail(email), phone: maskPhone(phone) });

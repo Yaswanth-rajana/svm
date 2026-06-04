@@ -4,6 +4,7 @@ import OTP from "../models/OTP.js";
 import { sendWhatsAppOTP } from "../services/whatsappService.js";
 import { sendEmailOTP } from "../services/emailService.js";
 import { normalizePhone } from "../utils/phone.js";
+import { env } from "../config/env.js";
 
 /**
  * @desc    Send OTP via WhatsApp with Email fallback
@@ -12,6 +13,14 @@ import { normalizePhone } from "../utils/phone.js";
  */
 export const sendOtp = async (req, res) => {
   try {
+    if (env.DISABLE_OTP_VALIDATION === "true") {
+      return res.status(200).json({
+        success: true,
+        bypass: true,
+        message: "OTP verification temporarily disabled"
+      });
+    }
+
     const { phone, email, channel = 'whatsapp' } = req.body;
 
     if (!phone && !email) {
@@ -118,6 +127,14 @@ export const sendOtp = async (req, res) => {
  */
 export const verifyOtp = async (req, res) => {
   try {
+    if (env.DISABLE_OTP_VALIDATION === "true") {
+      return res.status(200).json({
+        success: true,
+        verified: true,
+        bypass: true
+      });
+    }
+
     const { contact, otp } = req.body;
 
     if (!contact || !otp) {

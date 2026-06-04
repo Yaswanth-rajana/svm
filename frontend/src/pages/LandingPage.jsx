@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import Navbar from '../components/layout/Navbar'
 import HeroSection from '../components/sections/HeroSection'
 import DemandSection from '../components/sections/DemandSection'
+import { programsContent } from '../data/content'
 import InfrastructureSection from '../components/sections/InfrastructureSection'
 import WhatIsInfra from '../components/sections/WhatIsInfra'
 import ComponentsSection from '../components/sections/ComponentsSection'
@@ -20,16 +21,10 @@ import AnnouncementBar from '../components/layout/AnnouncementBar'
 function LandingPage({ program = 'it-infrastructure' }) {
   useEffect(() => {
     window.scrollTo(0, 0);
-    let title;
-    let description;
-
-    if (program === 'cloud-computing') {
-      title = "Cloud Computing Training | Become a Cloud Engineer | SMVEN";
-      description = "Become a Cloud Engineer and build the future of IT. Learn cloud technologies, industry best practices, and start your cloud career with SMVEN.";
-    } else {
-      title = "IT Infrastructure Training | Start Your Career | SMVEN";
-      description = "Master IT Infrastructure fundamentals, servers, virtualization, storage, and cloud systems to start a successful IT career.";
-    }
+    const programKey = program === 'it-infrastructure' ? 'infrastructure' : program;
+    const programData = programsContent[programKey] || programsContent.infrastructure;
+    const title = programData.meta?.title || `${programData.shortTitle} Training | SMVEN`;
+    const description = programData.meta?.description || `Master ${programData.shortTitle} engineering with SMVEN.`;
 
     document.title = title;
 
@@ -51,7 +46,7 @@ function LandingPage({ program = 'it-infrastructure' }) {
 
       <main className="pt-[86px] md:pt-[114px]">
         <div id="hero"><HeroSection program={program} /></div>
-        {program !== 'cloud-computing' && (
+        {(program === 'infrastructure' || program === 'it-infrastructure') && (
           <div id="demand"><DemandSection program={program} /></div>
         )}
         <InfrastructureSection program={program} />

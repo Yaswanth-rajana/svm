@@ -50,9 +50,9 @@ function ComponentsSection({ program = 'infrastructure' }) {
   const data = programsContent[program] || programsContent.infrastructure;
   const sectionData = data.components;
 
-  const isCloud = program === 'cloud-computing';
+  const isSpecializedProgram = program !== 'it-infrastructure' && program !== 'infrastructure';
 
-  if (isCloud) {
+  if (isSpecializedProgram) {
     const highlights = sectionData.highlights || [];
 
     // Animation variants for checklist staggering
@@ -132,9 +132,11 @@ function ComponentsSection({ program = 'infrastructure' }) {
                         <h4 className="text-lg md:text-xl font-bold text-slate-950 group-hover:text-pink-600 transition-colors duration-200">
                           {item.name}
                         </h4>
-                        <p className="text-gray-500 text-sm mt-1.5 leading-relaxed font-semibold">
-                          {item.description}
-                        </p>
+                        {item.description && (
+                          <p className="text-gray-500 text-sm mt-1.5 leading-relaxed font-semibold">
+                            {item.description}
+                          </p>
+                        )}
                       </div>
                     </motion.div>
                   );
@@ -235,9 +237,11 @@ function ComponentsSection({ program = 'infrastructure' }) {
                   <h3 className="text-xl font-bold text-gray-900 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-pink-600 group-hover:to-orange-500 transition-all duration-300">
                     {item.name}
                   </h3>
-                  <p className="text-gray-500 text-sm mt-1.5 leading-relaxed font-medium">
-                    {item.description}
-                  </p>
+                  {item.description && (
+                    <p className="text-gray-500 text-sm mt-1.5 leading-relaxed font-medium">
+                      {item.description}
+                    </p>
+                  )}
                 </div>
               </div>
             );

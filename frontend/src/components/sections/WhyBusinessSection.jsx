@@ -20,14 +20,14 @@ const iconMap = {
 function WhyBusinessSection({ program = 'infrastructure' }) {
   const data = programsContent[program] || programsContent.infrastructure;
   const sectionData = data.whyBusiness;
-  const isCloud = program === 'cloud-computing';
+  const isSpecializedProgram = program !== 'it-infrastructure' && program !== 'infrastructure';
 
   return (
-    <section className={`py-24 lg:py-32 overflow-hidden ${isCloud ? 'bg-white' : 'bg-gradient-to-b from-white to-gray-50'}`}>
+    <section className={`py-24 lg:py-32 overflow-hidden ${isSpecializedProgram ? 'bg-white' : 'bg-gradient-to-b from-white to-gray-50'}`}>
       <div className="max-w-7xl mx-auto px-4 md:px-8 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-20">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 tracking-tight max-w-[1000px] mx-auto leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-[42px] xl:text-[46px] font-bold text-gray-900 tracking-tight max-w-[1200px] mx-auto leading-tight">
             {sectionData.title}
           </h2>
           {sectionData.subtitle && (
@@ -62,9 +62,11 @@ function WhyBusinessSection({ program = 'infrastructure' }) {
                 </h3>
 
                 {/* Description */}
-                <p className="text-gray-500 text-sm leading-relaxed max-w-[200px] font-medium">
-                  {reason.description}
-                </p>
+                {reason.description && (
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-[200px] font-medium">
+                    {reason.description}
+                  </p>
+                )}
               </div>
             );
           })}

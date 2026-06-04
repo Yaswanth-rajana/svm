@@ -71,7 +71,7 @@ export const verifyPayment = async (req, res) => {
     }
 
     logger.info("Calling verification API logic");
-    
+
     console.log("Received payment id:", razorpay_payment_id);
     console.log("Received order id:", razorpay_order_id);
     console.log("Received signature:", razorpay_signature);
@@ -84,8 +84,8 @@ export const verifyPayment = async (req, res) => {
 
     console.log("Generated signature:", generatedSignature);
     console.log(
-       "Signature Match:",
-       generatedSignature === razorpay_signature
+      "Signature Match:",
+      generatedSignature === razorpay_signature
     );
 
     if (generatedSignature === razorpay_signature) {

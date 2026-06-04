@@ -5,6 +5,7 @@ import OtpVerification from './OtpVerification';
 import { handleRazorpayPayment } from '../../utils/payment';
 import { normalizePhone } from '../../utils/phone';
 import BenefitsLink from './BenefitsLink';
+import { programsContent } from '../../data/content';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -47,6 +48,7 @@ function ExperienceDropdown({ value, onChange }) {
 
 
 const LeadModal = ({ program }) => {
+  const isBypass = import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true';
   const [isOpen, setIsOpen] = useState(false);
   const [isRendered, setIsRendered] = useState(false);
   const [type, setType] = useState('pdf'); // 'pdf' or 'call'
@@ -194,7 +196,8 @@ const LeadModal = ({ program }) => {
 
         // If it's a PDF request, trigger the download (safely in new tab for mobile/popup blocker bypass)
         if (type === 'pdf') {
-          const pdfPath = program === 'cloud-computing' ? '/cloud-brochure.pdf' : '/brochure.pdf';
+          const programData = programsContent[program] || programsContent.infrastructure;
+          const pdfPath = programData.brochure || '/brochure.pdf';
           window.open(pdfPath, '_blank');
         }
 
@@ -323,8 +326,8 @@ const LeadModal = ({ program }) => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      disabled={isPhoneVerified}
-                      className={`!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all text-sm ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
+                      disabled={isPhoneVerified && !isBypass}
+                      className={`!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all text-sm ${isPhoneVerified && !isBypass ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                     />
                   </div>
                 </div>
@@ -341,8 +344,8 @@ const LeadModal = ({ program }) => {
                         onChange={handleChange}
                         required
                         maxLength={10}
-                        disabled={isPhoneVerified}
-                        className={`!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all text-sm ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
+                        disabled={isPhoneVerified && !isBypass}
+                        className={`!py-3 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all text-sm ${isPhoneVerified && !isBypass ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                       />
                     </div>
                   </div>

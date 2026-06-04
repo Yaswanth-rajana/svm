@@ -13,6 +13,8 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<LandingPage program="it-infrastructure" />} />
         <Route path="/cloud-computing" element={<LandingPage program="cloud-computing" />} />
+        <Route path="/devops-engineering" element={<LandingPage program="devops-engineering" />} />
+        <Route path="/virtualization-engineering" element={<LandingPage program="virtualization-engineering" />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failed" element={<PaymentFailed />} />
         <Route path="/claim-certificate" element={<ClaimCertificate />} />

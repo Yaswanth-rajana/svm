@@ -53,11 +53,11 @@ function ExperienceDropdown({ value, onChange }) {
 }
 
 function HeroSection({ program }) {
+  const isBypass = import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true';
   const data = programsContent[program] || programsContent.infrastructure;
   const { hero } = data;
-  const isCloud = program === 'cloud-computing';
+  const isSpecializedProgram = program !== 'it-infrastructure' && program !== 'infrastructure';
   const badgeText = hero.badge;
-  const titleText = isCloud ? "in Cloud Computing" : "in IT Infrastructure";
   const subtitleText = hero.subtitle;
 
   const [formData, setFormData] = useState({
@@ -185,22 +185,16 @@ function HeroSection({ program }) {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-orange-900/20 blur-[120px] rounded-full"></div>
       </div>
 
-      <Container>
+      <Container pxClasses={program === 'devops-engineering' ? "px-6 md:px-12 lg:px-12" : "px-6 md:px-16 lg:px-24"}>
         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 pt-0 lg:pt-0 pb-6 lg:pb-10">
           {/* Left Content */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left w-full lg:w-[65%]">
-            
-            <h1 className={`${isCloud ? 'text-[32px] sm:text-4xl md:text-5xl lg:text-6xl' : 'text-[40px] sm:text-5xl md:text-6xl lg:text-7xl'} font-extrabold text-white leading-[1.1] mb-6 tracking-tight`}>
-              {isCloud ? (
-                <>
-                  <span className="block md:whitespace-nowrap">Become a Cloud Engineer</span>
-                  <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block md:whitespace-nowrap">{"& Build the Future of IT"}</span>
-                </>
-              ) : (
-                <>
-                  <span className="block">Start Your Career</span>
-                  <span className="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block lg:inline">{titleText}</span>
-                </>
+          <div className={`flex flex-col items-center lg:items-start text-center lg:text-left w-full ${hero.leftWidth || 'lg:w-[65%]'}`}>
+
+            <h1 className={`${hero.titleSize || (isSpecializedProgram ? 'text-[32px] sm:text-4xl md:text-5xl lg:text-6xl' : 'text-[40px] sm:text-5xl md:text-6xl lg:text-7xl')} font-extrabold text-white leading-[1.1] mb-6 tracking-tight`}>
+              <span className={`block ${hero.noWrap ? 'md:whitespace-nowrap' : ''}`}>{hero.titlePart1} </span>
+              <span className={`bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block ${hero.noWrap ? 'md:whitespace-nowrap' : 'sm:inline'}`}>{hero.titlePart2}</span>
+              {hero.titlePart3 && (
+                <span className={`bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block ${hero.noWrap ? 'md:whitespace-nowrap' : 'sm:inline'}`}>{hero.titlePart3}</span>
               )}
             </h1>
 
@@ -218,7 +212,7 @@ function HeroSection({ program }) {
             </p>
 
             {/* Mobile-only Centered Arrow */}
-            {!isCloud && (
+            {!isSpecializedProgram && (
               <div className="lg:hidden flex justify-center mb-4">
                 <span className="arrow-down">↓</span>
               </div>
@@ -226,7 +220,7 @@ function HeroSection({ program }) {
 
             <div className="mt-1 lg:mt-4 relative">
               {/* Refined Premium SVG Arrow */}
-              {!isCloud && (
+              {!isSpecializedProgram && (
                 <div className="cta-hint hidden lg:block absolute -top-14 -right-32 pointer-events-none z-20 rotate-[-15deg]">
                   <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="animate-bounce-slow">
                     <path
@@ -261,7 +255,7 @@ function HeroSection({ program }) {
                 <span>
                   <AnimatedText text={hero.ctaPrimary} />
                 </span>
-                {!isCloud && (
+                {!isSpecializedProgram && (
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 group-hover:translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
@@ -271,7 +265,7 @@ function HeroSection({ program }) {
           </div>
 
           {/* Right Form Card */}
-          <div id="form-section" className="flex justify-center lg:justify-end w-full lg:w-[45%] lg:translate-y-12">
+          <div id="form-section" className={`flex justify-center lg:justify-end w-full ${hero.rightWidth || 'lg:w-[45%]'} lg:translate-y-12`}>
             <div className="w-full max-w-[480px]">
               <div className="bg-[#0b0f14] border border-white/10 rounded-3xl shadow-2xl overflow-visible relative" style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)' }}>
                 {/* Top Strip */}
@@ -303,8 +297,8 @@ function HeroSection({ program }) {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        disabled={isPhoneVerified}
-                        className={`!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
+                        disabled={isPhoneVerified && !isBypass}
+                        className={`!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all ${isPhoneVerified && !isBypass ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                       />
                     </div>
                   </div>
@@ -319,17 +313,17 @@ function HeroSection({ program }) {
                       onChange={handleChange}
                       required
                       maxLength={10}
-                      disabled={isPhoneVerified}
-                      className={`!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all ${isPhoneVerified ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
+                      disabled={isPhoneVerified && !isBypass}
+                      className={`!py-3.5 !px-4 !bg-white/5 border-white/10 !text-white rounded-xl transition-all ${isPhoneVerified && !isBypass ? 'opacity-50' : 'focus:!border-pink-500/50'}`}
                     />
                   </div>
 
                   <div className="flex flex-col gap-2">
                     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
-                    <OtpVerification 
+                    <OtpVerification
                       key={`otp-hero-${resetKey}`}
-                      phone={formData.phone} 
-                      email={formData.email} 
+                      phone={formData.phone}
+                      email={formData.email}
                       onVerified={() => setIsPhoneVerified(true)}
                       onReset={() => setIsPhoneVerified(false)}
                     />

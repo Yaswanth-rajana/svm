@@ -1,9 +1,33 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail } from 'lucide-react';
+import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail, Info } from 'lucide-react';
 import { normalizePhone } from '../../utils/phone';
 
 const OtpVerification = ({ phone, email, onVerified, onReset }) => {
+  const isBypass = import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true';
+
+  useEffect(() => {
+    if (isBypass) {
+      onVerified && onVerified();
+    }
+  }, [isBypass, onVerified]);
+
+  if (isBypass) {
+    return (
+      <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400">
+        <div className="flex items-start gap-2.5">
+          <Info className="w-5 h-5 shrink-0 text-blue-400 mt-0.5" />
+          <div>
+            <p className="text-sm font-bold text-white">Verification Temporarily Disabled</p>
+            <p className="text-xs text-gray-400 mt-1">
+              Due to ongoing email service maintenance, OTP verification is temporarily unavailable. You may continue normally.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const [step, setStep] = useState(1); // 1: Send OTP, 2: Verify OTP, 3: Verified
   const [otp, setOtp] = useState('');
   

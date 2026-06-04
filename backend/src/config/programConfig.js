@@ -20,6 +20,30 @@ export const PROGRAM_CONFIG = {
       "Build hands-on cloud infrastructure projects.",
       "Prepare for Cloud Engineer interview opportunities."
     ]
+  },
+
+  "devops-engineering": {
+    title: "DevOps Engineering Roadmap",
+    shortTitle: "DevOps Engineering",
+    emailSubject: "🎉 Registration Confirmed - DevOps Engineering Roadmap",
+    learningPoints: [
+      "Master CI/CD pipelines, Docker, Kubernetes, and IaC (Terraform).",
+      "Understand software development lifecycles and automated testing.",
+      "Build production-ready deployment workflows.",
+      "Prepare for DevOps & Site Reliability Engineer (SRE) job roles."
+    ]
+  },
+
+  "virtualization-engineering": {
+    title: "Virtualization Engineering Roadmap",
+    shortTitle: "Virtualization Engineering",
+    emailSubject: "🎉 Registration Confirmed - Virtualization Engineering Roadmap",
+    learningPoints: [
+      "Master VMware vSphere, ESXi, and Microsoft Hyper-V.",
+      "Configure virtualization clusters, resource allocation, and datastores.",
+      "Implement high availability, fault tolerance, and load distribution.",
+      "Design robust backup strategies and disaster recovery plans."
+    ]
   }
 };
 

@@ -4,9 +4,8 @@ import { programsContent } from '../../data/content';
 function JobRolesSection({ program = 'infrastructure' }) {
   const data = programsContent[program] || programsContent.infrastructure;
   const sectionData = data.jobRoles;
-  const isCloud = program === 'cloud-computing';
 
-  if (isCloud) {
+  if (sectionData.tiers) {
     return (
       <section className="bg-black py-32 lg:py-44 select-none overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">

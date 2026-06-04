@@ -26,6 +26,7 @@ const envSchema = z.object({
   ZEPTO_API_KEY: z.string().optional(),
   FROM_EMAIL: z.string().default("notify@smven.com"),
   ADMIN_EMAIL: z.string().email(),
+  DISABLE_OTP_VALIDATION: z.string().default("false"),
 });
 
 
