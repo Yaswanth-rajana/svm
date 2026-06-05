@@ -47,38 +47,32 @@ export const programsContent = {
         {
           title: "Cloud Engineer",
           description: "Manage and oversee cloud-based systems and services.",
-          salary: "₹10-15 LPA",
-          route: "/cloud-computing"
+          salary: "₹10-15 LPA"
         },
         {
           title: "DevOps Engineer",
           description: "Design, implement, and maintain computer networks.",
-          salary: "₹8-15 LPA",
-          route: "/devops-engineering"
+          salary: "₹8-15 LPA"
         },
         {
           title: "Virtualization Engineer",
           description: "Bridge the gap between development and IT operations.",
-          salary: "₹15-18 LPA",
-          route: "/virtualization-engineering"
+          salary: "₹15-18 LPA"
         },
         {
           title: "Server Engineer",
           description: "deploy, optimize, and support enterprise server infrastructure.",
-          salary: "₹8-12 LPA",
-          route: "/server-engineering"
+          salary: "₹8-12 LPA"
         },
         {
           title: "Storage Engineer",
           description: "Manages and maintains enterprise storage systems to ensure data availability.",
-          salary: "₹10-12 LPA",
-          route: "/storage-engineering"
+          salary: "₹10-12 LPA"
         },
         {
           title: "Backup Engineer",
           description: "Protects and restores business data through backup and disaster recovery solutions.",
-          salary: "₹12-15 LPA",
-          route: "/backup-engineering"
+          salary: "₹12-15 LPA"
         }
       ]
     },
