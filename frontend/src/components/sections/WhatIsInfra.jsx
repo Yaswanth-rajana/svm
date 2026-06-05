@@ -1,7 +1,8 @@
-import { Server, Cloud, RefreshCw, Shield, Globe } from 'lucide-react';
+import { Server, Cloud, RefreshCw, Shield, Globe, Database, Mail, FolderOpen, Network, HardDrive, Cpu, Layers } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { programsContent } from '../../data/content';
 import InfraTypeCircle from '../ui/InfraTypeCircle';
+import veeamLogoImg from '../../assets/brand-logos/veeam.png';
 
 // Official Brand Logos (styled with their official brand colors, ignoring parent text-color overrides)
 const AWSLogo = ({ size = 24 }) => (
@@ -145,6 +146,224 @@ const ProxmoxLogo = ({ size = 24 }) => (
   </svg>
 );
 
+const DellLogo = ({ size = 24 }) => (
+  <svg role="img" viewBox="0 0 24 24" width={size} height={size} className="text-[#007db8]" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <title>Dell</title>
+    <path d="M17.963 14.6V9.324h1.222v4.204h2.14v1.07h-3.362zm-9.784-3.288l2.98-2.292c.281.228.56.458.841.687l-2.827 2.14.611.535 2.827-2.216c.281.228.56.458.841.688a295.83 295.83 0 0 1-2.827 2.216l.61.536 2.83-2.295-.001-1.986h1.223v4.204h2.216v1.07h-3.362v-1.987c-.995.763-1.987 1.529-2.981 2.292l-2.981-2.292c-.144.729-.653 1.36-1.312 1.694-.285.147-.597.24-.915.276-.183.022-.367.017-.551.017H3.516V9.325H5.69a2.544 2.544 0 0 1 1.563.557c.454.36.778.872.927 1.43m-3.516-.917v3.21l.953-.001a1.377 1.377 0 0 0 1.036-.523 1.74 1.74 0 0 0 .182-1.889 1.494 1.494 0 0 0-.976-.766c-.166-.04-.338-.03-.507-.032h-.688zM11.82 0h.337a11.94 11.94 0 0 1 5.405 1.373 12.101 12.101 0 0 1 4.126 3.557A11.93 11.93 0 0 1 24 11.82v.36a11.963 11.963 0 0 1-3.236 8.033A11.967 11.967 0 0 1 12.182 24h-.361a11.993 11.993 0 0 1-4.145-.806 12.04 12.04 0 0 1-4.274-2.836A12.057 12.057 0 0 1 .576 15.67 12.006 12.006 0 0 1 0 12.181v-.361a11.924 11.924 0 0 1 1.992-6.396 12.211 12.211 0 0 1 4.71-4.172A11.875 11.875 0 0 1 11.82 0m-.153 1.23a10.724 10.724 0 0 0-6.43 2.375 10.78 10.78 0 0 0-3.319 4.573 10.858 10.858 0 0 0 .193 8.12 10.788 10.788 0 0 0 3.546 4.421 10.698 10.698 0 0 0 4.786 1.946c1.456.209 2.955.124 4.376-.26a10.756 10.756 0 0 0 5.075-3.062 10.742 10.742 0 0 0 2.686-5.28 10.915 10.915 0 0 0-.122-4.682 10.77 10.77 0 0 0-7.098-7.626 10.78 10.78 0 0 0-3.693-.525z" />
+  </svg>
+);
+
+const HPELogo = ({ size = 24 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="3.5" className="text-[#00b188]">
+    <title>HPE</title>
+    <rect x="2" y="7" width="20" height="10" />
+  </svg>
+);
+
+const NetAppLogo = ({ size = 24 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} className="text-[#0078D4]" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <title>NetApp</title>
+    <path d="M0 2v20h9.33V10h5.34v12H24V2Z"/>
+  </svg>
+);
+
+const IBMLogo = ({ size = 24 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} className="text-[#0062FF]" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <title>IBM</title>
+    <path d="M23.544 15.993c.038 0 .06-.017.06-.053v-.036c0-.035-.022-.052-.06-.052h-.09v.14zm-.09.262h-.121v-.498h.225c.112 0 .169.066.169.157 0 .079-.036.129-.09.15l.111.19h-.133l-.092-.17h-.07zm.434-.222v-.062c0-.2-.157-.357-.363-.357a.355.355 0 00-.363.357v.062c0 .2.156.358.363.358a.355.355 0 00.363-.358zm-.838-.03c0-.28.212-.492.475-.492.264 0 .475.213.475.491 0 .279-.211.491-.475.491a.477.477 0 01-.475-.49zM16.21 8.13l-.216-.624h-3.56v.624zm.413 1.19l-.216-.623h-3.973v.624zm2.65 7.147h3.107v-.624h-3.108zm0-1.192h3.107v-.623h-3.108zm0-1.19h1.864v-.624h-1.865zm0-1.191h1.864v-.624h-1.865zm0-1.191h1.864v-.624h-3.555l-.175.504-.175-.504h-3.555v.624h1.865v-.574l.2.574h3.33l.2-.574zm1.864-1.815h-3.142l-.217.624h3.359zm-7.46 3.006h1.865v-.624h-1.865zm0 1.19h1.865v-.623h-1.865zm-1.243 1.191h3.108v-.623h-3.108zm0 1.192h3.108v-.624h-3.108zm6.386-8.961l-.216.624h3.776v-.624zm-.629 1.815h4.19v-.624h-3.974zm-4.514 1.19h3.359l-.216-.623h-3.143zm2.482 2.383h2.496l.218-.624h-2.932zm.417 1.19h1.662l.218-.623h-2.098zm.416 1.191h.83l.218-.623h-1.266zm.414 1.192l.217-.624h-.432zm-12.433-.006l4.578.006c.622 0 1.18-.237 1.602-.624h-6.18zm4.86-3v.624h2.092c0-.216-.03-.425-.083-.624zm-3.616.624h1.865v-.624H6.217zm3.617-3.573h2.008c.053-.199.083-.408.083-.624H9.834zm-3.617 0h1.865v-.624H6.217zM9.55 7.507H4.973v.624h6.18a2.36 2.36 0 00-1.602-.624zm2.056 1.191H4.973v.624h6.884a2.382 2.382 0 00-.25-.624zm-5.39 2.382v.624h4.87c.207-.176.382-.387.519-.624zm4.87 1.191h-4.87v.624h5.389a2.39 2.39 0 00-.519-.624zm-6.114 3.006h6.634c.11-.193.196-.402.25-.624H4.973zM0 8.13h4.352v-.624H0zm0 1.191h4.352v-.624H0zm1.243 1.191h1.865v-.624H1.243zm0 1.191h1.865v-.624H1.243zm0 1.19h1.865v-.623H1.243zm0 1.192h1.865v-.624H1.243zM0 15.276h4.352v-.623H0zm0 1.192h4.352v-.624H0Z"/>
+  </svg>
+);
+
+const PureStorageLogo = ({ size = 24 }) => (
+  <svg viewBox="100 160 670 940" width={size} height={size}>
+    <title>Pure Storage</title>
+    <path fill="#CB3027" d="m489.35,1100l-282.35-165.69,282.35-166.14v331.83Z"/>
+    <path fill="#FE5000" d="m250.55,623.05c-27.2,16.02-43.55,43.08-43.55,72.07v239.19l519.45-305.84c27.15-16.02,43.46-43.06,43.46-72.01v-239.25L250.55,623.05Z"/>
+    <path fill="#F28720" d="m526.76,460.41l243.16-143.2-264.17-155.78c-32.61-19.23-75.01-19.24-107.63-.03l-189.33,111.5,1.78.79,316.2,186.71Z"/>
+  </svg>
+);
+
+const CloudLogo = ({ size = 24 }) => (
+  <Cloud size={size} className="text-sky-500" strokeWidth={2.5} />
+);
+
+const VeeamLogo = ({ size = 24 }) => (
+  <img src={veeamLogoImg} alt="Veeam" style={{ width: size, height: size, objectFit: 'contain' }} />
+);
+
+const CommvaultLogo = ({ size = 24 }) => (
+  <svg viewBox="0 0 70 70" width={size} height={size}>
+    <title>Commvault</title>
+    <path fill="#0095D9" d="M30,46.4H25V33.9h5ZM44,18.6l3.9-5.1a24.8,24.8,0,0,0-10-3.4v6.4A18.5,18.5,0,0,1,44,18.6Z"/>
+    <path fill="#1e79b3" d="M37.6,46.4h-5V29.3h5ZM53.6,35a18.7,18.7,0,0,1-.4,3.9L59,42.1a25,25,0,0,0-8-26.4l-3.9,5.1A18.6,18.6,0,0,1,53.6,35Z"/>
+    <path fill="#444545" d="M45.3,46.4h-5V24h5ZM35,53.6a18.6,18.6,0,0,1-.9-37.2V10A25,25,0,1,0,57.6,45.7L52,42.5A18.6,18.6,0,0,1,35,53.6Z"/>
+  </svg>
+);
+
+const RubrikLogo = ({ size = 24 }) => (
+  <svg viewBox="0 0 37 36" width={size} height={size} xmlns="http://www.w3.org/2000/svg">
+    <title>Rubrik</title>
+    <defs>
+      <linearGradient x1="-3.467%" y1="-4.306%" x2="210.392%" y2="212.161%" id="rubrik-a">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-110.425%" y1="-109.345%" x2="103.434%" y2="104.514%" id="rubrik-b">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-110.655%" y1="-109.117%" x2="103.204%" y2="104.742%" id="rubrik-c">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-480.077%" y1="-332.966%" x2="349.632%" y2="250.643%" id="rubrik-d">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-762.162%" y1="-487.336%" x2="67.552%" y2="88.137%" id="rubrik-e">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-301.557%" y1="-301.641%" x2="101.859%" y2="101.775%" id="rubrik-f">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-328.292%" y1="-480.073%" x2="247.159%" y2="349.604%" id="rubrik-g">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-249.244%" y1="-150.288%" x2="580.442%" y2="433.302%" id="rubrik-h">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="13.253%" y1="34.814%" x2="580.333%" y2="905.173%" id="rubrik-i">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-1.67%" y1="-1.53%" x2="401.752%" y2="401.895%" id="rubrik-j">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="34.126%" y1="12.206%" x2="847.967%" y2="587.686%" id="rubrik-k">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-493.976%" y1="-766.939%" x2="89.538%" y2="62.639%" id="rubrik-l">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-151.947%" y1="-151.257%" x2="251.475%" y2="252.164%" id="rubrik-m">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-151.808%" y1="-249.109%" x2="442.927%" y2="580.577%" id="rubrik-n">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-151.284%" y1="-151.916%" x2="252.132%" y2="251.5%" id="rubrik-o">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+      <linearGradient x1="-3.101%" y1="-3.457%" x2="210.758%" y2="213.01%" id="rubrik-p">
+        <stop stopColor="#00B388" offset="0%"/>
+        <stop stopColor="#00B097" offset="13.16%"/>
+        <stop stopColor="#00A9BF" offset="51.16%"/>
+        <stop stopColor="#00A5D7" offset="81.43%"/>
+        <stop stopColor="#00A3E0" offset="100%"/>
+      </linearGradient>
+    </defs>
+    <g fill="none" transform="translate(.487 .07)">
+      <path d="M18.745 11.146c-.28.277-.836.277-1.115 0L12.613 6.16c-.28-.276-.28-.83 0-1.107L17.63.208c.28-.277.836-.277 1.115 0l5.017 4.985c.277.276.277.83 0 1.107l-5.018 4.845h.001z" fill="url(#rubrik-a)"/>
+      <path d="M18.745 35.654c-.28.277-.836.277-1.115 0l-5.017-4.985c-.28-.276-.28-.83 0-1.107l5.017-4.984c.28-.277.836-.277 1.115 0l5.017 4.985c.277.278.277.832 0 1.108l-5.018 4.985.001-.002z" fill="url(#rubrik-b)"/>
+      <path d="M31.148 23.33c-.28.278-.836.278-1.115 0l-5.017-4.984c-.28-.277-.28-.83 0-1.107l5.017-4.985c.28-.277.836-.277 1.115 0l5.017 4.985c.28.277.28.83 0 1.107l-5.017 4.985z" fill="url(#rubrik-c)"/>
+      <path d="M11.916 31.085c0-.416-.28-.554-.557-.277l-2.09 2.215c-.28.277-.28.693.14.97l1.95.83c.418.14.696 0 .696-.415v-3.323h-.14.001z" fill="url(#rubrik-d)"/>
+      <path d="M26.967 33.993c.418-.14.418-.554.14-.97l-2.23-2.215c-.28-.277-.558-.14-.558.277v3.323c0 .415.28.692.697.415l1.95-.83h.001z" fill="url(#rubrik-e)"/>
+      <path d="M30.451 24.854c0-.415-.418-.83-.836-.83h-4.46c-.418 0-.836.415-.836.83v4.43c0 .416.418.832.836.832h4.46c.418 0 .836-.416.836-.83v-4.432z" fill="url(#rubrik-f)"/>
+      <path d="M34.353 9.208c-.14-.415-.557-.415-.975-.14l-2.23 2.217c-.28.277-.14.554.28.554h3.343c.418 0 .697-.277.418-.693l-.836-1.938z" fill="url(#rubrik-g)"/>
+      <path d="M27.106 2.839c.28-.416.28-.83-.14-.97l-1.95-.83c-.418-.14-.697 0-.697.415v3.323c0 .416.28.554.558.277l2.23-2.215h-.001z" fill="url(#rubrik-h)"/>
+      <path d="M2.997 9.069c-.418-.276-.836-.276-.976.14l-.975 1.8c-.14.414.14.69.557.69h3.345c.418 0 .558-.276.28-.553l-2.23-2.077h-.001z" fill="url(#rubrik-i)"/>
+      <path d="M11.916 6.577c0-.415-.418-.83-.836-.83H6.76c-.418 0-.836.415-.836.83v4.43c0 .416.42.832.837.832h4.46c.417 0 .835-.416.835-.83V6.576h-.14z" fill="url(#rubrik-j)"/>
+      <path d="M11.916 1.454c0-.415-.28-.692-.697-.415l-1.81.83c-.42.14-.56.554-.14.97l2.23 2.215c.278.277.556.14.556-.277V1.454h-.14.001z" fill="url(#rubrik-k)"/>
+      <path d="M35.189 24.854c.14-.415 0-.692-.418-.692h-3.344c-.418 0-.558.278-.28.555l2.231 2.214c.28.277.697.277.976-.138l.836-1.94h-.001z" fill="url(#rubrik-l)"/>
+      <path d="M11.916 24.854c0-.415-.418-.83-.836-.83H6.76c-.418 0-.836.415-.836.83v4.43c0 .416.42.832.837.832h4.46c.417 0 .835-.416.835-.83v-4.432h-.14z" fill="url(#rubrik-m)"/>
+      <path d="M5.087 24.577c.28-.277.14-.554-.278-.554H1.603c-.418 0-.696.277-.418.693l.836 1.938c.14.415.558.415.976.14l2.09-2.217z" fill="url(#rubrik-n)"/>
+      <path d="M30.451 11.008c0 .415-.418.83-.836.83h-4.46c-.418 0-.836-.415-.836-.83v-4.43c0-.416.418-.832.836-.832h4.46c.418 0 .836.416.836.83v4.432z" fill="url(#rubrik-o)"/>
+      <path d="M6.343 23.33c-.28.278-.837.278-1.116 0L.21 18.347c-.28-.277-.28-.83 0-1.107l5.017-4.846c.28-.277.836-.277 1.115 0l5.016 4.984c.278.277.278.83 0 1.108L6.343 23.33z" fill="url(#rubrik-p)"/>
+    </g>
+  </svg>
+);
+
+const CohesityLogo = ({ size = 24 }) => (
+  <svg viewBox="-34 -2 60 63" width={size} height={size} xmlns="http://www.w3.org/2000/svg" className="text-[#96C93D]" fill="currentColor">
+    <title>Cohesity</title>
+    <g fill="currentColor" fillRule="evenodd">
+      <path d="M0,41.918L-11.843,41.918C-23.399,41.918 -32.802,32.516 -32.802,20.959C-32.802,9.402 -23.399,0 -11.843,0L14.816,0C16.57,0 17.991,1.421 17.991,3.174C17.991,4.928 16.57,6.349 14.816,6.349L-11.843,6.349C-19.898,6.349 -26.452,12.903 -26.452,20.959C-26.452,29.014 -19.898,35.569 -11.843,35.569L0,35.569C1.753,35.569 3.175,36.99 3.175,38.743C3.175,40.497 1.753,41.918 0,41.918" />
+      <path transform="translate(2.524, 17.571)" d="M0,41.918L-26.659,41.918C-28.412,41.918 -29.833,40.497 -29.833,38.743C-29.833,36.99 -28.412,35.569 -26.659,35.569L0,35.569C8.056,35.569 14.61,29.014 14.61,20.959C14.61,12.903 8.056,6.349 0,6.349L-11.842,6.349C-13.596,6.349 -15.017,4.928 -15.017,3.174C-15.017,1.421 -13.596,0 -11.842,0L0,0C11.557,0 20.959,9.402 20.959,20.959C20.959,32.516 11.557,41.918 0,41.918" />
+    </g>
+  </svg>
+);
+
+const NetBackupLogo = ({ size = 24 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} className="text-[#E31837]" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <title>Veritas NetBackup</title>
+    <path d="M2.5 3h3.2l5.3 15.2c.1.3.3.5.6.5s.5-.2.6-.5L17.5 3h3.2l-6.8 18.5c-.3.8-1 1.3-1.9 1.3s-1.6-.5-1.9-1.3L2.5 3z" />
+  </svg>
+);
+
+const CloudBackupLogo = ({ size = 24 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-sky-500">
+    <title>Cloud Backup</title>
+    <path d="M17.5 19A4.5 4.5 0 0 0 22 14.5c0-2-1.3-3.7-3.1-4.3C18.5 6 14.8 3 10.5 3 6.7 3 3.5 5.5 2.2 9c-1.2.6-2.2 2-2.2 3.5C0 15 2 17 4.5 17h1" />
+    <path d="M12 11l-3 3h6l-3-3z" fill="currentColor" />
+    <path d="M12 14v5" />
+  </svg>
+);
+
 const logoMap = {
   AWS: AWSLogo,
   Azure: AzureLogo,
@@ -162,12 +381,135 @@ const logoMap = {
   Git: GitLogo,
   Microsoft: MicrosoftLogo,
   Nutanix: NutanixLogo,
-  Proxmox: ProxmoxLogo
+  Proxmox: ProxmoxLogo,
+  Dell: DellLogo,
+  HPE: HPELogo,
+  NetApp: NetAppLogo,
+  IBM: IBMLogo,
+  "Pure Storage": PureStorageLogo,
+  Veeam: VeeamLogo,
+  Commvault: CommvaultLogo,
+  Rubrik: RubrikLogo,
+  Cohesity: CohesityLogo,
+  NetBackup: NetBackupLogo,
+  "Cloud Backup": CloudBackupLogo,
+  Database: Database,
+  Mail: Mail,
+  FolderOpen: FolderOpen,
+  Network: Network,
+  Globe: Globe,
+  Server: Server,
+  HardDrive: HardDrive,
+  Cpu: Cpu,
+  Cloud: CloudLogo,
+  Layers: Layers
 };
 
 function WhatIsInfra({ program = 'infrastructure' }) {
   const data = programsContent[program] || programsContent.infrastructure;
   const sectionData = data.infraTypes;
+
+  if (program === 'server-engineering') {
+    return (
+      <section className="bg-white py-24 lg:py-32 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+              {sectionData.title}
+            </h2>
+            {sectionData.subtitle && (
+              <p className="text-gray-500 text-lg md:text-xl max-w-3xl mx-auto mt-5 leading-relaxed font-semibold">
+                {sectionData.subtitle}
+              </p>
+            )}
+          </div>
+
+          {/* Cards Grid */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 items-stretch"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+          >
+            {sectionData.types.map((provider, index) => {
+              const Logo = logoMap[provider.icon] || logoMap[provider.name] || Server;
+              const glowStyle = {
+                '--glow-color': provider.glowColor || 'rgba(0,0,0,0.02)',
+              };
+
+              return (
+                <motion.div
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, y: 40 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }
+                  }}
+                  whileHover={{ scale: 1.02, y: -8 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  style={glowStyle}
+                  className="group relative flex flex-col justify-between bg-white border border-gray-200/80 rounded-[24px] p-8 transition-shadow duration-200 ease-out cursor-pointer shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_20px_50px_var(--glow-color)] h-full overflow-hidden"
+                >
+                  {/* Subtle Gradient Glow Background on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+
+                  {/* Subtle Top Gradient Accent Line */}
+                  <div className="absolute top-0 left-0 right-0 h-[6px] bg-gradient-to-r from-pink-500 to-orange-500"></div>
+
+                  <div className="flex flex-col h-full justify-between relative z-10">
+                    <div>
+                      {/* Logo Wrapper */}
+                      <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-pink-50 to-orange-50 text-pink-500 group-hover:from-pink-500 group-hover:to-orange-500 group-hover:text-white transition-all duration-300 ease-out mb-5 shadow-sm group-hover:scale-110">
+                        <Logo size={28} />
+                      </div>
+
+                      {/* Small Category Label */}
+                      {provider.label && (
+                        <span className="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-1.5 block">
+                          {provider.label}
+                        </span>
+                      )}
+
+                      {/* Title */}
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {provider.name}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-gray-500 text-sm leading-relaxed mb-6 font-medium">
+                        {provider.description}
+                      </p>
+
+                      {/* Technology Tags */}
+                      {provider.tags && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {provider.tags.map((tag, tIdx) => (
+                            <span 
+                              key={tIdx} 
+                              className="px-3 py-1 bg-gray-50 border border-gray-100 text-gray-600 rounded-full text-xs font-bold hover:bg-gray-100 hover:border-gray-200 transition-colors"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
 
   const isSpecializedProgram = program !== 'it-infrastructure' && program !== 'infrastructure';
 
