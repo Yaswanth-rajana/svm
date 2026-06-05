@@ -44,6 +44,42 @@ export const PROGRAM_CONFIG = {
       "Implement high availability, fault tolerance, and load distribution.",
       "Design robust backup strategies and disaster recovery plans."
     ]
+  },
+
+  "server-engineering": {
+    title: "Server Engineering Roadmap",
+    shortTitle: "Server Engineering",
+    emailSubject: "🎉 Registration Confirmed - Server Engineering Roadmap",
+    learningPoints: [
+      "Master Windows Server and Linux administration fundamentals.",
+      "Configure Active Directory, Group Policies, DNS, and DHCP services.",
+      "Perform server hardening, security configurations, and updates.",
+      "Build automated server deployment and administration scripts."
+    ]
+  },
+
+  "storage-engineering": {
+    title: "Storage Engineering Roadmap",
+    shortTitle: "Storage Engineering",
+    emailSubject: "🎉 Registration Confirmed - Storage Engineering Roadmap",
+    learningPoints: [
+      "Master SAN and NAS enterprise storage networks and protocols.",
+      "Configure RAID configurations, volume management, and pools.",
+      "Administer Fibre Channel switch fabrics and host bus adapters (HBAs).",
+      "Analyze latency, IOPS, and optimize data storage performance."
+    ]
+  },
+
+  "backup-engineering": {
+    title: "Backup Engineering Roadmap",
+    shortTitle: "Backup Engineering",
+    emailSubject: "🎉 Registration Confirmed - Backup Engineering Roadmap",
+    learningPoints: [
+      "Master Veeam Backup & Replication and enterprise Commvault solutions.",
+      "Configure backup policies, retention schedules, and immutable vaults.",
+      "Design high availability VM replicas and disaster recovery orchestrations.",
+      "Execute restore tests and business continuity failover drills."
+    ]
   }
 };
 

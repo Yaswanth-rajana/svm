@@ -66,17 +66,19 @@ export const programsContent = {
           title: "Server Engineer",
           description: "deploy, optimize, and support enterprise server infrastructure.",
           salary: "₹8-12 LPA",
-          comingSoon: true
+          route: "/server-engineering"
         },
         {
           title: "Storage Engineer",
           description: "Manages and maintains enterprise storage systems to ensure data availability.",
-          salary: "₹10-12 LPA"
+          salary: "₹10-12 LPA",
+          route: "/storage-engineering"
         },
         {
           title: "Backup Engineer",
           description: "Protects and restores business data through backup and disaster recovery solutions.",
-          salary: "₹12-15 LPA"
+          salary: "₹12-15 LPA",
+          route: "/backup-engineering"
         }
       ]
     },
@@ -574,21 +576,7 @@ export const programsContent = {
             "Cloud Automation"
           ]
         }
-      ],
-      outcome: {
-        title: "🎯 Outcome After Completion",
-        subtitle: "You will be ready for roles such as:",
-        roles: [
-          "Cloud Engineer",
-          "AWS Administrator",
-          "Azure Administrator",
-          "Cloud Operations Engineer",
-          "Infrastructure Engineer",
-          "Cloud Support Engineer"
-        ],
-        salaryLabel: "Expected Salary Range:",
-        salaryValue: "₹8 LPA – ₹15+ LPA"
-      }
+      ]
     },
     mentors: {
       title: "Meet Your Mentor",
@@ -912,21 +900,7 @@ export const programsContent = {
             "Production Deployments"
           ]
         }
-      ],
-      outcome: {
-        title: "🎯 Outcome After Completion",
-        subtitle: "You will be ready for roles such as:",
-        roles: [
-          "DevOps Engineer",
-          "Kubernetes Administrator",
-          "SRE Associate",
-          "Platform Engineer",
-          "Build & Release Engineer",
-          "Cloud Automation Specialist"
-        ],
-        salaryLabel: "Expected Salary Range:",
-        salaryValue: "₹10 LPA – ₹20+ LPA"
-      }
+      ]
     },
     mentors: {
       title: "Meet Your Mentor",
@@ -1217,21 +1191,7 @@ export const programsContent = {
             "Hybrid Cloud Architecture"
           ]
         }
-      ],
-      outcome: {
-        title: "🎯 Outcome After Completion",
-        subtitle: "You will be ready for roles such as:",
-        roles: [
-          "Virtualization Engineer",
-          "VMware Administrator",
-          "Hyper-V Systems Specialist",
-          "HCI Infrastructure Engineer",
-          "System & Virtualization Admin",
-          "Infrastructure Support Specialist"
-        ],
-        salaryLabel: "Expected Salary Range:",
-        salaryValue: "₹15 LPA – ₹18+ LPA"
-      }
+      ]
     },
     mentors: {
       title: "Meet Your Mentor",
@@ -1288,6 +1248,1012 @@ export const programsContent = {
         {
           question: "Will I get hands-on lab access?",
           answer: "Yes! You will get hands-on experience in sandbox labs, creating VMs, setting up clusters, configuring virtual switches, and simulating high-availability failover."
+        }
+      ]
+    }
+  },
+
+  // Server Engineering Program Data
+  'server-engineering': {
+    shortTitle: "Server Engineering",
+    brochure: "/virtualization-brochure.pdf",
+    meta: {
+      title: "Server Engineering Training | Become a Server Engineer | SMVEN",
+      description: "Master Windows Server, Linux administration, and active directory configurations. Start your career in server engineering with SMVEN."
+    },
+    keyTakeaways: [
+      "Clear Server Engineering Career Roadmap",
+      "Step-by-Step Learning Path From 0 to Job Ready",
+      "Understanding of Real Server Engineering Job Roles",
+      "Practical Exposure Through Live Demo",
+      "Interview & Job Readiness Insights",
+      "Certificate of Participation"
+    ],
+    bonusTakeaways: [
+      "Community Access",
+      "Server Tools Starter Kit",
+      "Server Career Roadmap PDF",
+      "Live Resume Review Opportunity",
+      "LinkedIn & Naukri Optimization Guide"
+    ],
+    hero: {
+      leftWidth: "lg:w-[57%]",
+      rightWidth: "lg:w-[37%]",
+      titleSize: "text-[32px] sm:text-4xl md:text-5xl lg:text-6xl",
+      badge: "AI-Proof Server Roles",
+      titlePart1: "Become a Server",
+      titlePart2: "Engineer & Manage",
+      titlePart3: "Enterprise IT Infrastructure",
+      noWrap: true,
+      title: "Become a Server Engineer & Manage Enterprise IT Infrastructure",
+      subtitle: "Every organization depends on servers to run business applications, user services, security systems, and enterprise workloads.",
+      addonBadge: "AI-Proof Career Path",
+      ctaPrimary: "Connect With Trainer",
+      stats: [
+        { text: "₹8-12 LPA Avg Salary" },
+        { text: "Server Lab Partner" },
+        { text: "Duration: 6 Months" }
+      ],
+      formHeader: "Limited seats — Register Now"
+    },
+    infrastructure: {
+      title: "What is a Server Engineer?",
+      description: "Server Engineers are responsible for maintaining the backbone of modern IT environments.",
+      highlights: [
+        "Windows Server Administration",
+        "Linux Server Administration",
+        "Active Directory Management",
+        "User & Access Management",
+        "DNS & DHCP Services",
+        "Server Security & Monitoring"
+      ],
+      image: "/server.png"
+    },
+    infraTypes: {
+      title: "Critical Enterprise Server",
+      subtitle: "Learn to deploy, configure, manage, and troubleshoot the most widely used server roles in enterprise IT environments.",
+      types: [
+        {
+          label: "DATABASE",
+          name: "Database Servers",
+          description: "Manage SQL Server, MySQL, PostgreSQL, and Oracle databases.",
+          tags: ["Backup & Replication", "Performance Tuning", "Database Security"],
+          icon: "Database",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          label: "APPLICATION",
+          name: "Application Servers",
+          description: "Host enterprise applications and middleware platforms.",
+          tags: ["App Deployment", "Monitoring", "Scalability"],
+          icon: "Server",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          label: "WEB",
+          name: "Web Servers",
+          description: "Configure IIS, Apache, and Nginx web servers.",
+          tags: ["SSL Certificates", "Virtual Hosts", "Load Balancing"],
+          icon: "Globe",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          label: "MAIL",
+          name: "Mail Servers",
+          description: "Deploy and administer Microsoft Exchange and enterprise email systems.",
+          tags: ["Mail Routing", "Spam Filtering", "Mailbox Management"],
+          icon: "Mail",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          label: "STORAGE",
+          name: "File & FTP Servers",
+          description: "Configure centralized file sharing and secure data transfers.",
+          tags: ["Permissions", "Storage Quotas", "FTP Services"],
+          icon: "FolderOpen",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          label: "NETWORKING",
+          name: "DNS Servers",
+          description: "Configure domain name resolution and internal DNS infrastructure.",
+          tags: ["Zones & Records", "Forwarding", "Troubleshooting"],
+          icon: "Network",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        }
+      ]
+    },
+    components: {
+      title: "How We Help You Succeed",
+      subtitle: "We focus on practical server training through real enterprise labs and production-like environments.",
+      differentTitle: "What Makes Us Different?",
+      items: [
+        { name: "Industry-oriented curriculum", description: "Learn enterprise server administration concepts aligned with real-world infrastructure and data center environments.", icon: "Award" },
+        { name: "Real-world server deployment scenarios", description: "Work on production-like server setups involving Windows Server, Linux, Active Directory, DNS, and DHCP.", icon: "Terminal" },
+        { name: "Hands-on lab environment", description: "Practice configuring servers, managing users, deploying services, and troubleshooting infrastructure issues.", icon: "Globe" },
+        { name: "Career roadmap guidance", description: "Follow a structured learning path from server fundamentals to enterprise administration roles.", icon: "Layers" },
+        { name: "Live practical demonstrations", description: "Watch and perform real-time server installations, configurations, migrations, and administration tasks.", icon: "Activity" },
+        { name: "Interview preparation & mentorship", description: "Receive technical interview guidance, mock sessions, and mentoring from experienced infrastructure professionals.", icon: "Users" },
+        { name: "Enterprise IT Infrastructure exposure", description: "Gain hands-on experience with enterprise-grade server environments, virtualization platforms, and infrastructure services.", icon: "Award" }
+      ],
+      highlights: [
+        "Windows Server Administration",
+        "Linux Server Management",
+        "Active Directory",
+        "DNS & DHCP",
+        "Virtualization Basics",
+        "Server Security",
+        "Live Infrastructure Labs",
+        "Placement Assistance"
+      ]
+    },
+    whyBusiness: {
+      title: "Why Server Engineers Are in High Demand",
+      subtitle: "Organizations continuously require Server Engineers to manage and support business-critical infrastructure. Server administration remains one of the strongest entry points into enterprise IT careers.",
+      reasons: [
+        { title: "Hybrid and Cloud Computing Growth", description: "Connect on-premises infrastructure with AWS and Azure to support hybrid cloud environments.", icon: "Globe" },
+        { title: "Virtualization and Automation", description: "Automate server provisioning, virtual machine management, and infrastructure operations at scale.", icon: "TrendingUp" },
+        { title: "Disaster Recovery and Uptime", description: "Implement backup, failover, and recovery strategies to ensure business continuity.", icon: "Activity" },
+        { title: "Protection from CyberSecurity Threats", description: "Secure enterprise servers through patch management, access controls, hardening, and threat mitigation.", icon: "Shield" }
+      ]
+    },
+    jobRoles: {
+      title: "Job Roles and Payscale in Server Engineering",
+      subtitle: "Based on industry averages for systems and server professionals across India.",
+      tiers: [
+        {
+          badge: "Entry Level",
+          title: "Fresher",
+          salary: "₹3.5 – ₹6 LPA",
+          subtitle: "Start your career as an associate systems or server administrator.",
+          roles: ["Junior Server Administrator", "IT Support Specialist", "System Support Engineer"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        },
+        {
+          badge: "Mid Career",
+          title: "Mid-Level Professionals",
+          salary: "₹8 – ₹12 LPA",
+          subtitle: "Deploy and manage server architectures, directory structures, and service integrations.",
+          roles: ["Server Engineer", "Linux Administrator", "Systems Administrator"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        },
+        {
+          badge: "Senior / Expert",
+          title: "Experienced Systems Leads",
+          salary: "₹15 – ₹20+ LPA",
+          subtitle: "Architect multi-domain server forests, manage security hardening, and lead migrations.",
+          roles: ["Senior Systems Engineer", "Server Infrastructure Lead", "Platform Engineer"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        }
+      ]
+    },
+    roadmap: {
+      title: "Complete Roadmap to Become a Server Engineer",
+      subtitle: [
+        "A structured learning path covering Windows Administration, Linux Administration,",
+        "Enterprise Services, Security, Monitoring, and Backup Management."
+      ],
+      steps: [
+        {
+          phase: "🚀 Phase 1",
+          title: "Fundamentals",
+          description: "Build a strong foundation in computer systems, networking, and operating systems.",
+          tags: [
+            "Computer Basics",
+            "Networking Basics",
+            "Operating Systems"
+          ]
+        },
+        {
+          phase: "🖥️ Phase 2",
+          title: "Windows Administration",
+          description: "Understand and manage Windows Server environments and enterprise directory services.",
+          tags: [
+            "Windows Server Installation",
+            "Active Directory",
+            "DNS",
+            "DHCP",
+            "Group Policy"
+          ]
+        },
+        {
+          phase: "🐧 Phase 3",
+          title: "Linux Administration",
+          description: "Learn Linux system management, permissions, services, and storage administration.",
+          tags: [
+            "User Management",
+            "Service Management",
+            "Permissions",
+            "Storage Management"
+          ]
+        },
+        {
+          phase: "🏢 Phase 4",
+          title: "Enterprise Services",
+          description: "Configure and manage core enterprise server roles used in production environments.",
+          tags: [
+            "File Servers",
+            "Print Servers",
+            "Application Servers"
+          ]
+        },
+        {
+          phase: "🔒 Phase 5",
+          title: "Security & Monitoring",
+          description: "Protect enterprise systems and monitor infrastructure performance.",
+          tags: [
+            "Patch Management",
+            "Antivirus",
+            "Monitoring Tools",
+            "Performance Analysis"
+          ]
+        },
+        {
+          phase: "💾 Phase 6",
+          title: "Backup & Recovery",
+          description: "Implement backup strategies and disaster recovery solutions for business continuity.",
+          tags: [
+            "Backup Concepts",
+            "Disaster Recovery"
+          ]
+        }
+      ]
+    },
+    mentors: {
+      title: "Meet Your Mentor",
+      subtitle: "Learn from server engineering experts who design and run enterprise-grade platforms",
+      list: [
+        {
+          name: "Saurabh Singh",
+          role: "Senior Systems & Cloud Architect",
+          credibility: "10+ Years Experience in Enterprise Systems",
+          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
+          photo: "Saurabh singh.jpg"
+        }
+      ]
+    },
+    webinar: {
+      title: "🚀 Join Our Live Server Engineering Masterclass",
+      subtitle: "Learn Server Engineering from Industry Experts",
+      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      cta: "Claim Your Spot",
+      trustLine: "Hurry Up, Seats are limited",
+      urgencyLine: "Limited seats available – Filling fast!",
+      socialProof: "120+ Professionals already registered",
+      alreadyJoined: "Professionals already registered",
+      benefits: [
+        "Understand server architectures, directory structures, and how they function",
+        "Know why Server Engineering roles are highly resistant to AI",
+        "Explore job opportunities and career transition strategies"
+      ]
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      subtitle: "Everything you need to know about the Server Engineering training.",
+      questions: [
+        {
+          question: "What is Server Engineering?",
+          answer: "Server Engineering involves deploying, configuring, hardening, and maintaining enterprise server operating systems (Windows and Linux) along with foundational services like Active Directory, DNS, and DHCP."
+        },
+        {
+          question: "Is this training suitable for beginners?",
+          answer: "Yes! The program starts with basic IT infrastructure, operating systems, and networking before moving on to advanced directory configurations and security audits."
+        },
+        {
+          question: "Do I need coding/programming skills to start?",
+          answer: "No. Systems administration focuses on configuration, policy enforcement, and infrastructure design. While PowerShell and Bash are taught for automation, heavy coding is not required."
+        },
+        {
+          question: "What platforms will I learn?",
+          answer: "You will master Windows Server (Active Directory, Group Policy, DNS, DHCP, IIS) and enterprise Linux distributions (RedHat, CentOS, Ubuntu Server)."
+        },
+        {
+          question: "What is the career growth and salary range?",
+          answer: "Servers are the core of all IT systems. Server administrators earn between ₹8–12 LPA at mid-to-senior levels, with security and platform specialists earning even higher."
+        },
+        {
+          question: "Will I get hands-on lab access?",
+          answer: "Yes! You will get access to hands-on labs where you will configure domain controllers, write group policies, host websites, and perform security hardening audits."
+        }
+      ]
+    }
+  },
+
+  // Storage Engineering Program Data
+  'storage-engineering': {
+    shortTitle: "Storage Engineering",
+    brochure: "/virtualization-brochure.pdf",
+    meta: {
+      title: "Storage Engineering Training | Become a Storage Engineer | SMVEN",
+      description: "Master SAN, NAS, RAID, and enterprise storage arrays. Start your career in storage engineering with SMVEN."
+    },
+    keyTakeaways: [
+      "Clear Storage Engineering Career Roadmap",
+      "Step-by-Step Learning Path From 0 to Job Ready",
+      "Understanding of Real Storage Engineering Job Roles",
+      "Practical Exposure Through Live Demo",
+      "Interview & Job Readiness Insights",
+      "Certificate of Participation"
+    ],
+    bonusTakeaways: [
+      "Community Access",
+      "Storage Tools Starter Kit",
+      "Storage Career Roadmap PDF",
+      "Live Resume Review Opportunity",
+      "LinkedIn & Naukri Optimization Guide"
+    ],
+    hero: {
+      leftWidth: "lg:w-[57%]",
+      rightWidth: "lg:w-[37%]",
+      titleSize: "text-[32px] sm:text-4xl md:text-5xl lg:text-6xl",
+      badge: "AI-Proof Storage Roles",
+      titlePart1: "Become a Storage",
+      titlePart2: "Engineer & Protect",
+      titlePart3: "Business-Critical Data",
+      noWrap: true,
+      title: "Become a Storage Engineer & Protect Business-Critical Data",
+      subtitle: "Storage Engineers manage enterprise storage infrastructure that powers applications, databases, and business operations.",
+      addonBadge: "AI-Proof Career Path",
+      ctaPrimary: "Connect With Trainer",
+      stats: [
+        { text: "₹10-12 LPA Avg Salary" },
+        { text: "Storage Lab Partner" },
+        { text: "Duration: 6 Months" }
+      ],
+      formHeader: "Limited seats — Register Now"
+    },
+    infrastructure: {
+      title: "What is a Storage Engineer?",
+      description: "Storage Engineer designs, builds, and maintains an organization's data infrastructure. They ensure enterprise storage systems like SAN (Storage Area Network) and NAS (Network Attached Storage) are secure, highly available, and scalable.",
+      highlights: [
+        "SAN Administration",
+        "NAS Management",
+        "Storage Provisioning",
+        "Performance Monitoring",
+        "Capacity Planning",
+        "Storage Troubleshooting"
+      ],
+      image: "/storage.png"
+    },
+    infraTypes: {
+      title: "Enterprise Storage Vendors",
+      subtitle: "Gain hands-on exposure to the leading storage platforms and enterprise storage solutions used across modern data centers.",
+      types: [
+        {
+          name: "Dell",
+          description: "Learn enterprise storage management using Dell EMC storage arrays, SAN solutions, and scalable data center storage architectures.",
+          icon: "Dell",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "HPE",
+          description: "Understand HPE storage technologies, storage provisioning, performance optimization, and enterprise backup integration.",
+          icon: "HPE",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "NetApp",
+          description: "Work with NetApp storage systems, snapshots, replication, deduplication, and hybrid cloud storage solutions.",
+          icon: "NetApp",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "IBM",
+          description: "Explore enterprise storage infrastructure, high-availability storage systems, and IBM storage management tools.",
+          icon: "IBM",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "Pure Storage",
+          description: "Learn modern all-flash storage architectures, performance optimization, and scalable enterprise storage deployments.",
+          icon: "Pure Storage",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "Cloud Storage",
+          description: "Manage cloud-based storage services, object storage, backup repositories, and hybrid storage environments.",
+          icon: "Cloud",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        }
+      ]
+    },
+    components: {
+      title: "How We Help You Succeed",
+      subtitle: "We focus on practical storage training through real enterprise storage arrays and fabric switches.",
+      differentTitle: "What Makes Us Different?",
+      items: [
+        {
+          name: "Industry-oriented curriculum",
+          description: "Learn enterprise storage technologies and industry best practices.",
+          icon: "Award"
+        },
+        {
+          name: "Real-world cloud deployment scenarios",
+          description: "Work on storage deployments used in modern enterprise environments.",
+          icon: "Globe"
+        },
+        {
+          name: "Hands-on lab environment",
+          description: "Practice SAN, NAS, RAID, and storage administration in live labs.",
+          icon: "Terminal"
+        },
+        {
+          name: "Career roadmap guidance",
+          description: "Follow a structured path toward Storage Engineer roles.",
+          icon: "Layers"
+        },
+        {
+          name: "Live practical demonstrations",
+          description: "Watch real-time storage configuration and troubleshooting sessions.",
+          icon: "Activity"
+        },
+        {
+          name: "Interview preparation & mentorship",
+          description: "Prepare for technical interviews with expert guidance.",
+          icon: "Users"
+        },
+        {
+          name: "Enterprise IT Infrastructure exposure",
+          description: "Gain exposure to enterprise-grade storage ecosystems.",
+          icon: "Server"
+        }
+      ],
+      highlights: [
+        "SAN Fibre Channel Zoning",
+        "iSCSI Storage Configuration",
+        "RAID Management",
+        "LUN Provisioning",
+        "Multipathing (MPIO)",
+        "NAS Administration",
+        "Interview Preparation",
+        "Career Guidance"
+      ]
+    },
+    whyBusiness: {
+      title: "Why Storage Engineers Are in High Demand",
+      subtitle: "Data growth is increasing rapidly, making storage infrastructure a critical component of enterprise IT environments. Organizations need professionals who can manage scalable and reliable storage systems.",
+      reasons: [
+        {
+          title: "Data Security and Governance",
+          description: "Protect critical business data through access controls, compliance policies, encryption, and secure storage management.",
+          icon: "Shield"
+        },
+        {
+          title: "Disaster Recovery",
+          description: "Ensure business continuity through backup strategies, replication, failover planning, and rapid data recovery.",
+          icon: "Activity"
+        },
+        {
+          title: "Storage Automation",
+          description: "Automate provisioning, monitoring, capacity management, and routine storage administration tasks.",
+          icon: "TrendingUp"
+        },
+        {
+          title: "Cloud Optimization",
+          description: "Integrate on-premises and cloud storage solutions to improve performance, scalability, and cost efficiency.",
+          icon: "Globe"
+        }
+      ]
+    },
+    jobRoles: {
+      title: "Job Roles and Payscale in Storage Engineering",
+      subtitle: "Based on industry averages for storage professionals across India.",
+      tiers: [
+        {
+          badge: "Entry Level",
+          title: "Fresher",
+          salary: "₹4 – ₹8 LPA",
+          subtitle: "Start your career as an associate storage administrator or system operator.",
+          roles: ["Junior Storage Administrator", "Storage Support Associate", "System Operator"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        },
+        {
+          badge: "Mid Career",
+          title: "Mid-Level Professionals",
+          salary: "₹8 – ₹12 LPA",
+          subtitle: "Manage SAN zones, NAS file shares, RAID configurations, and performance tuning.",
+          roles: ["Storage Engineer", "SAN Administrator", "NAS Specialist"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        },
+        {
+          badge: "Senior / Expert",
+          title: "Experienced Storage Architects",
+          salary: "₹15 – ₹20+ LPA",
+          subtitle: "Architect multi-site storage environments, manage fabric topology, and lead migrations.",
+          roles: ["Senior Storage Architect", "Data Storage Consultant", "Infrastructure Lead"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        }
+      ]
+    },
+    roadmap: {
+      title: "Complete Roadmap to Become a Storage Engineer",
+      subtitle: "Master enterprise storage technologies from storage fundamentals and networking to replication, disaster recovery, performance tuning, and cloud storage platforms.",
+      steps: [
+        {
+          phase: "🚀 Phase 1",
+          title: "Storage Fundamentals",
+          description: "Build a strong foundation in enterprise storage concepts and architectures.",
+          tags: [
+            "RAID",
+            "SAN",
+            "NAS",
+            "Storage Protocols"
+          ]
+        },
+        {
+          phase: "🌐 Phase 2",
+          title: "Storage Networking",
+          description: "Learn how enterprise storage systems communicate across networks.",
+          tags: [
+            "Ethernet",
+            "Fibre Channel",
+            "iSCSI",
+            "SFP & HBA"
+          ]
+        },
+        {
+          phase: "🏢 Phase 3",
+          title: "Enterprise Storage Platforms",
+          description: "Gain hands-on experience with leading enterprise storage vendors.",
+          tags: [
+            "Dell EMC",
+            "NetApp",
+            "HPE"
+          ]
+        },
+        {
+          phase: "⚙️ Phase 4",
+          title: "Storage Administration",
+          description: "Manage storage resources, provisioning, and operational activities.",
+          tags: [
+            "Provisioning",
+            "Capacity Planning",
+            "Monitoring"
+          ]
+        },
+        {
+          phase: "🔄 Phase 5",
+          title: "Replication & Disaster Recovery",
+          description: "Implement data protection, replication, and business continuity strategies.",
+          tags: [
+            "Replication",
+            "Business Continuity"
+          ]
+        },
+        {
+          phase: "📊 Phase 6",
+          title: "Performance Tuning",
+          description: "Monitor and optimize storage infrastructure for maximum efficiency.",
+          tags: [
+            "Storage Tiering",
+            "IOPS",
+            "Throughput",
+            "Latency",
+            "Bandwidth",
+            "Cache"
+          ]
+        },
+        {
+          phase: "☁️ Phase 7",
+          title: "Cloud Storage",
+          description: "Extend storage expertise into modern cloud environments.",
+          tags: [
+            "AWS Storage",
+            "Azure Storage",
+            "GCP Storage"
+          ]
+        }
+      ]
+    },
+    mentors: {
+      title: "Meet Your Mentor",
+      subtitle: "Learn from storage engineering experts who design and run enterprise-grade data platforms",
+      list: [
+        {
+          name: "Saurabh Singh",
+          role: "Senior Storage & Cloud Architect",
+          credibility: "10+ Years Experience in Enterprise Systems",
+          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
+          photo: "Saurabh singh.jpg"
+        }
+      ]
+    },
+    webinar: {
+      title: "🚀 Join Our Live Storage Engineering Masterclass",
+      subtitle: "Learn Storage Engineering from Industry Experts",
+      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      cta: "Claim Your Spot",
+      trustLine: "Hurry Up, Seats are limited",
+      urgencyLine: "Limited seats available – Filling fast!",
+      socialProof: "120+ Professionals already registered",
+      alreadyJoined: "Professionals already registered",
+      benefits: [
+        "Understand storage architectures, fabrics, and how they function",
+        "Know why Storage Engineering roles are highly resistant to AI",
+        "Explore job opportunities and career transition strategies"
+      ]
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      subtitle: "Everything you need to know about the Storage Engineering training.",
+      questions: [
+        {
+          question: "What is Storage Engineering?",
+          answer: "Storage Engineering involves designing, provisioning, managing, and troubleshooting block and file storage arrays, as well as configuring SAN switch fabrics and NAS file-sharing protocols."
+        },
+        {
+          question: "Is this training suitable for beginners?",
+          answer: "Yes! We start with general operating system administration and disk management concepts before moving to high-speed storage fabric zoning."
+        },
+        {
+          question: "Do I need coding/programming skills to start?",
+          answer: "No. Storage engineering is heavily focused on storage controllers, switch configurations, and storage protocol optimization. Scripting is useful but not required."
+        },
+        {
+          question: "What platforms will I learn?",
+          answer: "You will gain familiarity with SAN switches, host configuration, RAID controllers, block storage provisioning, and NAS implementations using NFS and SMB protocols."
+        },
+        {
+          question: "What is the career growth and salary range?",
+          answer: "Storage engineers are highly specialized and sought after in large corporations. Mid-to-senior level salaries in India typically range from ₹10–12 LPA, with expert architects earning significantly more."
+        },
+        {
+          question: "Will I get hands-on lab access?",
+          answer: "Yes! You will work on real labs configuring storage pools, creating host zones, assigning LUNs, setting up shares, and diagnosing throughput limits."
+        }
+      ]
+    }
+  },
+
+  // Backup Engineering Program Data
+  'backup-engineering': {
+    shortTitle: "Backup Engineering",
+    brochure: "/virtualization-brochure.pdf",
+    meta: {
+      title: "Backup Engineering Training | Become a Backup Engineer | SMVEN",
+      description: "Master Veeam, Commvault, disaster recovery planning, and data replication. Start your career in backup engineering with SMVEN."
+    },
+    keyTakeaways: [
+      "Clear Backup Engineering Career Roadmap",
+      "Step-by-Step Learning Path From 0 to Job Ready",
+      "Understanding of Real Backup Engineering Job Roles",
+      "Practical Exposure Through Live Demo",
+      "Interview & Job Readiness Insights",
+      "Certificate of Participation"
+    ],
+    bonusTakeaways: [
+      "Community Access",
+      "Backup Tools Starter Kit",
+      "Backup Career Roadmap PDF",
+      "Live Resume Review Opportunity",
+      "LinkedIn & Naukri Optimization Guide"
+    ],
+    hero: {
+      leftWidth: "lg:w-[57%]",
+      rightWidth: "lg:w-[37%]",
+      titleSize: "text-[32px] sm:text-4xl md:text-5xl lg:text-6xl",
+      badge: "AI-Proof Backup Roles",
+      titlePart1: "Become a Backup",
+      titlePart2: "& Disaster Recovery",
+      titlePart3: "Engineer",
+      noWrap: true,
+      title: "Become a Backup & Disaster Recovery Engineer",
+      subtitle: "Data is one of the most valuable assets for every organization. Backup Engineers ensure business continuity and data protection.",
+      addonBadge: "AI-Proof Career Path",
+      ctaPrimary: "Connect With Trainer",
+      stats: [
+        { text: "₹12-15 LPA Avg Salary" },
+        { text: "Backup Lab Partner" },
+        { text: "Duration: 6 Months" }
+      ],
+      formHeader: "Limited seats — Register Now"
+    },
+    infrastructure: {
+      title: "What is a Backup Engineer?",
+      description: "Backup Engineer designs, manages, and optimizes an organization's data protection, storage, and disaster recovery infrastructure. They ensure data integrity, prevent data loss by verifying daily backups, and execute data restorations.",
+      highlights: [
+        "Backup Configuration",
+        "Backup Monitoring",
+        "Disaster Recovery Planning",
+        "Data Restoration",
+        "Backup Automation",
+        "Compliance Management"
+      ],
+      image: "/virtualization.png"
+    },
+    infraTypes: {
+      title: "Enterprise Backup Providers",
+      subtitle: "Gain hands-on experience with the leading backup, recovery, and data protection platforms used across enterprise environments.",
+      types: [
+        {
+          name: "Veeam",
+          description: "Industry-leading backup and recovery platform for virtual, physical, and cloud workloads.",
+          icon: "Veeam",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "Commvault",
+          description: "Enterprise data protection, backup automation, recovery, and compliance management.",
+          icon: "Commvault",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "Rubrik",
+          description: "Modern backup and ransomware recovery platform built for hybrid cloud environments.",
+          icon: "Rubrik",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "Cohesity",
+          description: "Unified data management platform combining backup, recovery, and archival services.",
+          icon: "Cohesity",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "NetBackup",
+          description: "Enterprise-grade backup and disaster recovery solution for critical business systems.",
+          icon: "NetBackup",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        },
+        {
+          name: "Cloud Backup",
+          description: "Protect workloads using AWS, Azure, and Google Cloud backup and recovery services.",
+          icon: "Cloud Backup",
+          accentColor: "from-pink-500 to-orange-500",
+          glowColor: "rgba(244, 63, 94, 0.08)"
+        }
+      ]
+    },
+    components: {
+      title: "How We Help You Succeed",
+      subtitle: "We focus on practical backup training with real-world scenarios, testing actual system recoveries.",
+      differentTitle: "What Makes Us Different?",
+      items: [
+        {
+          name: "Industry-oriented curriculum",
+          description: "Learn enterprise backup and recovery technologies used in modern organizations.",
+          icon: "Award"
+        },
+        {
+          name: "Real-world cloud deployment scenarios",
+          description: "Work with hybrid and cloud backup environments used in production.",
+          icon: "Globe"
+        },
+        {
+          name: "Hands-on lab environment",
+          description: "Practice backup, replication, and recovery operations in live labs.",
+          icon: "Terminal"
+        },
+        {
+          name: "Career roadmap guidance",
+          description: "Follow a structured path toward Backup Engineer roles.",
+          icon: "Layers"
+        },
+        {
+          name: "Live practical demonstrations",
+          description: "Watch real-time backup, restore, and disaster recovery workflows.",
+          icon: "Activity"
+        },
+        {
+          name: "Interview preparation & mentorship",
+          description: "Prepare for technical interviews with expert guidance.",
+          icon: "Users"
+        },
+        {
+          name: "Enterprise IT Infrastructure exposure",
+          description: "Gain exposure to enterprise backup and disaster recovery platforms.",
+          icon: "Server"
+        }
+      ],
+      highlights: [
+        "Veeam Backup & Recovery",
+        "Commvault Administration",
+        "Disaster Recovery Planning",
+        "Replication Configuration",
+        "Ransomware Protection",
+        "Cloud Backup Solutions",
+        "Interview Preparation",
+        "Career Guidance"
+      ]
+    },
+    whyBusiness: {
+      title: "Why Backup Engineers Are in High Demand",
+      subtitle: "With increasing cyber threats, ransomware attacks, and compliance requirements, organizations heavily invest in backup and disaster recovery solutions. Data protection professionals continue to remain highly valuable.",
+      reasons: [
+        {
+          title: "Exponential Data Growth",
+          description: "Organizations generate massive amounts of data, creating demand for scalable backup and recovery solutions.",
+          icon: "TrendingUp"
+        },
+        {
+          title: "Zero-Downtime Expectations",
+          description: "Businesses require continuous availability through rapid recovery and failover strategies.",
+          icon: "Activity"
+        },
+        {
+          title: "Stringent Regulatory Compliance",
+          description: "Companies must retain and protect data to meet industry regulations and audit requirements.",
+          icon: "Server"
+        },
+        {
+          title: "Ransomware & Cyber Threats",
+          description: "Modern backup platforms provide immutable recovery points to defend against cyberattacks.",
+          icon: "Shield"
+        }
+      ]
+    },
+    jobRoles: {
+      title: "Job Roles and Payscale in Backup Engineering",
+      subtitle: "Based on industry averages for backup and data protection professionals across India.",
+      tiers: [
+        {
+          badge: "Entry Level",
+          title: "Fresher",
+          salary: "₹4 – ₹8 LPA",
+          subtitle: "Start your career as an associate backup admin or system administrator trainee.",
+          roles: ["Junior Backup Administrator", "Data Protection Trainee", "Support Operator"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        },
+        {
+          badge: "Mid Career",
+          title: "Mid-Level Professionals",
+          salary: "₹8 – ₹12 LPA",
+          subtitle: "Configure backup policies, restore validation, replication jobs, and storage integrations.",
+          roles: ["Backup Engineer", "Disaster Recovery Specialist", "Veeam Administrator"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        },
+        {
+          badge: "Senior / Expert",
+          title: "Experienced Architects",
+          salary: "₹15 – ₹20+ LPA",
+          subtitle: "Architect enterprise business continuity systems, immutable repositories, and lead recovery operations.",
+          roles: ["Senior Data Protection Architect", "Business Continuity Lead", "Backup Infrastructure Lead"],
+          accent: "from-[#ff0080] via-[#7928ca] to-[#ff4d4d]"
+        }
+      ]
+    },
+    roadmap: {
+      title: "Complete Roadmap to Become a Backup & DR Engineer",
+      subtitle: "Master enterprise backup, disaster recovery, automation, and cloud data protection technologies used in modern organizations.",
+      steps: [
+        {
+          phase: "🚀 Phase 1",
+          title: "Storage Fundamentals",
+          description: "Build a strong foundation in systems, networking, storage, and backup concepts.",
+          tags: [
+            "Operating System",
+            "Networking",
+            "Storage",
+            "Backup"
+          ]
+        },
+        {
+          phase: "💾 Phase 2",
+          title: "Backup Concepts",
+          description: "Understand backup strategies, retention policies, and recovery methods.",
+          tags: [
+            "Full Backup",
+            "Incremental Backup",
+            "Differential Backup",
+            "Retention Policies"
+          ]
+        },
+        {
+          phase: "🏢 Phase 3",
+          title: "Enterprise Backup Solutions",
+          description: "Gain hands-on experience with industry-leading backup platforms.",
+          tags: [
+            "Veeam",
+            "Commvault",
+            "Rubrik",
+            "Cohesity"
+          ]
+        },
+        {
+          phase: "🔄 Phase 4",
+          title: "Disaster Recovery",
+          description: "Design and manage business continuity and disaster recovery strategies.",
+          tags: [
+            "DR Planning",
+            "Recovery Testing",
+            "Business Continuity",
+            "RTO & RPO"
+          ]
+        },
+        {
+          phase: "⚙️ Phase 5",
+          title: "Automation & Reporting",
+          description: "Automate backup operations and monitor backup health across environments.",
+          tags: [
+            "Monitoring",
+            "Scheduling",
+            "Reporting"
+          ]
+        },
+        {
+          phase: "☁️ Phase 6",
+          title: "Cloud Integration",
+          description: "Extend backup and recovery capabilities into cloud environments.",
+          tags: [
+            "AWS Backup",
+            "Azure Backup",
+            "GCP Backup"
+          ]
+        }
+      ]
+    },
+    mentors: {
+      title: "Meet Your Mentor",
+      subtitle: "Learn from backup engineering experts who design and run enterprise-grade data protection systems",
+      list: [
+        {
+          name: "Saurabh Singh",
+          role: "Senior Systems & Backup Architect",
+          credibility: "10+ Years Experience in Enterprise Systems",
+          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
+          photo: "Saurabh singh.jpg"
+        }
+      ]
+    },
+    webinar: {
+      title: "🚀 Join Our Live Backup Engineering Masterclass",
+      subtitle: "Learn Backup Engineering from Industry Experts",
+      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      cta: "Claim Your Spot",
+      trustLine: "Hurry Up, Seats are limited",
+      urgencyLine: "Limited seats available – Filling fast!",
+      socialProof: "120+ Professionals already registered",
+      alreadyJoined: "Professionals already registered",
+      benefits: [
+        "Understand backup architectures, recovery plans, and how they function",
+        "Know why Backup Engineering roles are highly resistant to AI",
+        "Explore job opportunities and career transition strategies"
+      ]
+    },
+    faq: {
+      title: "Frequently Asked Questions",
+      subtitle: "Everything you need to know about the Backup Engineering training.",
+      questions: [
+        {
+          question: "What is Backup Engineering?",
+          answer: "Backup Engineering focuses on configuring, managing, and maintaining backup jobs, backup storage nodes, host replications, and executing disaster recovery procedures to ensure business continuity."
+        },
+        {
+          question: "Is this training suitable for beginners?",
+          answer: "Yes! The program begins with basic systems and storage management concepts before advancing to configuring high-availability Veeam replication structures."
+        },
+        {
+          question: "Do I need coding/programming skills to start?",
+          answer: "No. Data protection focuses on software suites, storage policies, replication configurations, and failover validation. Code writing is not required."
+        },
+        {
+          question: "What platforms will I learn?",
+          answer: "You will gain hands-on experience with Veeam Backup & Replication, Commvault, Veritas, VM replication configurations, and disaster recovery orchestration."
+        },
+        {
+          question: "What is the career growth and salary range?",
+          answer: "Backup engineers are critical for disaster preparation and cyber resilience. Salaries in India range from ₹12–15 LPA at mid-to-senior levels, with security lead architects earning even higher."
+        },
+        {
+          question: "Will I get hands-on lab access?",
+          answer: "Yes! You will work in sandbox labs configuring backup repositories, running jobs, executing granular restorations, and testing automated VM failovers."
         }
       ]
     }

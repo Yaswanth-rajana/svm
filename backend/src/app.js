@@ -71,6 +71,19 @@ const certificateLimiter = rateLimit({
 
 app.use(express.json());
 
+// Log incoming requests to request_logs.txt for debugging
+import fs from 'fs';
+import path from 'path';
+app.use((req, res, next) => {
+  const logMsg = `[${new Date().toISOString()}] ${req.method} ${req.url} - Body: ${JSON.stringify(req.body)}\n`;
+  try {
+    fs.appendFileSync(path.join(process.cwd(), 'request_logs.txt'), logMsg);
+  } catch (err) {
+    console.error("Failed to write request_logs.txt:", err);
+  }
+  next();
+});
+
 // Express 5 Compatibility: Make req.query mutable for express-mongo-sanitize
 app.use((req, res, next) => {
   if (req.query) {

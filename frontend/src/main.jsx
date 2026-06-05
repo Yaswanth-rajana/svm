@@ -15,6 +15,9 @@ createRoot(document.getElementById('root')).render(
         <Route path="/cloud-computing" element={<LandingPage program="cloud-computing" />} />
         <Route path="/devops-engineering" element={<LandingPage program="devops-engineering" />} />
         <Route path="/virtualization-engineering" element={<LandingPage program="virtualization-engineering" />} />
+        <Route path="/server-engineering" element={<LandingPage program="server-engineering" />} />
+        <Route path="/storage-engineering" element={<LandingPage program="storage-engineering" />} />
+        <Route path="/backup-engineering" element={<LandingPage program="backup-engineering" />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failed" element={<PaymentFailed />} />
         <Route path="/claim-certificate" element={<ClaimCertificate />} />

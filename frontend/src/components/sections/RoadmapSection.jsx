@@ -48,9 +48,17 @@ function RoadmapSection({ program = 'infrastructure' }) {
           <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight max-w-3xl mx-auto leading-tight">
             {roadmap.title}
           </h2>
-          <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-            {roadmap.subtitle}
-          </p>
+          {Array.isArray(roadmap.subtitle) ? (
+            <p className="text-gray-500 text-lg md:text-xl max-w-4xl mx-auto leading-relaxed">
+              {roadmap.subtitle[0]}
+              <br className="hidden md:inline" />
+              {roadmap.subtitle[1]}
+            </p>
+          ) : (
+            <p className="text-gray-500 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+              {roadmap.subtitle}
+            </p>
+          )}
         </div>
 
         {/* Timeline Container */}

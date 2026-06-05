@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
 
 function JobCard({ title, description, salary, route }) {
-  const activeRoute = null; // Temporarily disabled redirection and Know More button
-
   const CardContent = (
     <>
       <div className="h-1 w-full bg-gradient-to-r from-pink-500 to-orange-400"></div>
@@ -15,7 +13,7 @@ function JobCard({ title, description, salary, route }) {
           <span className="inline-block bg-orange-400/10 text-orange-400 px-4 py-1.5 rounded-full text-sm font-semibold border border-orange-400/20">
             {salary}
           </span>
-          {activeRoute && (
+          {route && (
             <span className="inline-flex items-center gap-1.5 bg-orange-400/10 text-orange-400 px-4 py-1.5 rounded-full text-sm font-semibold border border-orange-400/20 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-pink-500 group-hover:to-orange-400 group-hover:text-white group-hover:border-transparent">
               Know More
               <span className="inline-block transform transition-transform duration-300 group-hover:translate-x-1">→</span>
@@ -28,10 +26,10 @@ function JobCard({ title, description, salary, route }) {
 
   const cardClasses = "bg-[#0b1a1f] bg-gradient-to-b from-white/5 to-transparent border border-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1 hover:scale-[1.02] transition duration-300 hover:border-orange-400 group block h-full";
 
-  if (activeRoute) {
+  if (route) {
     return (
       <Link 
-        to={activeRoute}
+        to={route}
         className={`${cardClasses} cursor-pointer`}
         style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}
       >
