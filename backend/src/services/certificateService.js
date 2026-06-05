@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import puppeteer from 'puppeteer';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import nodemailer from 'nodemailer';
 import { getProgramConfig } from '../config/programConfig.js';
 
@@ -23,7 +23,7 @@ const ensureTempDirExists = () => {
 };
 
 /**
- * Generate a PDF Certificate for a user using Puppeteer
+ * Generate a PDF Certificate for a user using pdf-lib (pure JS, no Puppeteer/Chrome required)
  * @param {Object} data - Participant data
  * @param {string} data.fullName - Participant's full name
  * @param {string} data.webinarTitle - Webinar Title
@@ -36,74 +36,66 @@ const ensureTempDirExists = () => {
 export const generateCertificatePDF = async (data) => {
   ensureTempDirExists();
 
-  const htmlPath = path.join(templatesDir, 'certificateTemplate.html');
-  const cssPath = path.join(templatesDir, 'certificateTemplate.css');
-
-  if (!fs.existsSync(htmlPath) || !fs.existsSync(cssPath)) {
-    throw new Error('Certificate HTML or CSS template is missing from backend/src/templates');
-  }
-
-  // Read template and style sheet
-  let htmlContent = fs.readFileSync(htmlPath, 'utf8');
-  const cssContent = fs.readFileSync(cssPath, 'utf8');
-
-  // Inject CSS style
-  htmlContent = htmlContent.replace('/* INJECT_CSS_HERE */', cssContent);
-
-  // Replace placeholders
   const bgImagePath = path.join(templatesDir, 'certificate_template.jpeg');
-  let dataUrl = "";
-  if (fs.existsSync(bgImagePath)) {
-    const bgImageBuffer = fs.readFileSync(bgImagePath);
-    const base64Image = bgImageBuffer.toString('base64');
-    dataUrl = `data:image/jpeg;base64,${base64Image}`;
+  if (!fs.existsSync(bgImagePath)) {
+    throw new Error('Certificate template background image is missing from backend/src/templates');
   }
 
-  const replacements = {
-    fullName: data.fullName,
-    webinarTitle: data.webinarTitle,
-    webinarDate: data.webinarDate,
-    mentorName: data.mentorName,
-    organizationName: data.organizationName,
-    certificateId: data.certificateId,
-    backgroundImagePath: dataUrl
-  };
+  // Create a new PDF document
+  const pdfDoc = await PDFDocument.create();
 
-  for (const [key, value] of Object.entries(replacements)) {
-    const placeholder = new RegExp(`{{${key}}}`, 'g');
-    htmlContent = htmlContent.replace(placeholder, value);
-  }
+  // A4 dimensions in points: 841.89 x 595.28 (landscape)
+  const pageWidth = 841.89;
+  const pageHeight = 595.28;
+  const page = pdfDoc.addPage([pageWidth, pageHeight]);
 
-  // Launch Puppeteer (configured for VPS / Hostinger compatibility)
-  const browser = await puppeteer.launch({
-    headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+  // Load the background image
+  const bgImageBytes = fs.readFileSync(bgImagePath);
+  const bgImage = await pdfDoc.embedJpg(bgImageBytes);
+
+  // Draw the background image to fill the page
+  page.drawImage(bgImage, {
+    x: 0,
+    y: 0,
+    width: pageWidth,
+    height: pageHeight,
   });
 
-  try {
-    const page = await browser.newPage();
-    
-    // Set HTML page content
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+  // Embed the HelveticaBold font
+  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // Format safe file name for participant
-    const safeName = data.fullName.trim().replace(/[^a-zA-Z0-9]/g, '_');
-    const pdfFilename = `SMVEN-Certificate-${safeName}-${data.certificateId}.pdf`;
-    const outputPath = path.join(tempDir, pdfFilename);
+  const fullName = data.fullName.trim();
+  let fontSize = 38;
+  let textWidth = font.widthOfTextAtSize(fullName, fontSize);
 
-    // Render A4 PDF Landscape
-    await page.pdf({
-      path: outputPath,
-      format: 'A4',
-      landscape: true,
-      printBackground: true,
-      margin: { top: 0, right: 0, bottom: 0, left: 0 }
-    });
-
-    return outputPath;
-  } finally {
-    await browser.close();
+  // Auto-scale font size if name is extremely long
+  while (textWidth > 550 && fontSize > 20) {
+    fontSize -= 2;
+    textWidth = font.widthOfTextAtSize(fullName, fontSize);
   }
+
+  const x = (pageWidth - textWidth) / 2;
+  const y = 268; // 54% from top (46% from bottom) of 595.28 is 273.8. Baseline adjustment to 268.
+
+  // Draw the text
+  page.drawText(fullName, {
+    x,
+    y,
+    size: fontSize,
+    font,
+    color: rgb(15 / 255, 23 / 255, 42 / 255), // Slate 900: #0f172a
+  });
+
+  // Save the PDF
+  const pdfBytes = await pdfDoc.save();
+
+  // Format safe file name for participant
+  const safeName = fullName.replace(/[^a-zA-Z0-9]/g, '_');
+  const pdfFilename = `SMVEN-Certificate-${safeName}-${data.certificateId}.pdf`;
+  const outputPath = path.join(tempDir, pdfFilename);
+
+  fs.writeFileSync(outputPath, pdfBytes);
+  return outputPath;
 };
 
 /**
