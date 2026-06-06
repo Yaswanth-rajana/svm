@@ -47,32 +47,38 @@ export const programsContent = {
         {
           title: "Cloud Engineer",
           description: "Manage and oversee cloud-based systems and services.",
-          salary: "₹10-15 LPA"
+          salary: "₹10-15 LPA",
+          route: "/cloud-computing"
         },
         {
           title: "DevOps Engineer",
           description: "Design, implement, and maintain computer networks.",
-          salary: "₹8-15 LPA"
+          salary: "₹8-15 LPA",
+          route: "/devops-engineering"
         },
         {
           title: "Virtualization Engineer",
           description: "Bridge the gap between development and IT operations.",
-          salary: "₹15-18 LPA"
+          salary: "₹15-18 LPA",
+          route: "/virtualization-engineering"
         },
         {
           title: "Server Engineer",
           description: "deploy, optimize, and support enterprise server infrastructure.",
-          salary: "₹8-12 LPA"
+          salary: "₹8-12 LPA",
+          route: "/server-engineering"
         },
         {
           title: "Storage Engineer",
           description: "Manages and maintains enterprise storage systems to ensure data availability.",
-          salary: "₹10-12 LPA"
+          salary: "₹10-12 LPA",
+          route: "/storage-engineering"
         },
         {
           title: "Backup Engineer",
           description: "Protects and restores business data through backup and disaster recovery solutions.",
-          salary: "₹12-15 LPA"
+          salary: "₹12-15 LPA",
+          route: "/backup-engineering"
         }
       ]
     },
@@ -1965,7 +1971,7 @@ export const programsContent = {
         "Backup Automation",
         "Compliance Management"
       ],
-      image: "/virtualization.png"
+      image: "/backup.png"
     },
     infraTypes: {
       title: "Enterprise Backup Providers",
