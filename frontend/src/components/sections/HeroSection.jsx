@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Container from '../layout/Container'
 import Input from '../ui/Input'
 import AnimatedText from '../ui/AnimatedText'
@@ -8,6 +8,7 @@ import OtpVerification from '../ui/OtpVerification'
 import { handleRazorpayPayment } from '../../utils/payment'
 import { normalizePhone } from '../../utils/phone'
 import BenefitsLink from '../ui/BenefitsLink'
+import TextType from '../ui/TextType'
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -71,6 +72,23 @@ function HeroSection({ program }) {
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [loadingAction, setLoadingAction] = useState(""); // "submit"
   const [resetKey, setResetKey] = useState(0);
+
+  const contentRef = useRef(null);
+  const [cardHeight, setCardHeight] = useState('auto');
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !contentRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const height = entry.borderBoxSize?.[0]?.blockSize || entry.contentRect.height;
+        setCardHeight(`${height}px`);
+      }
+    });
+
+    observer.observe(contentRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -190,11 +208,29 @@ function HeroSection({ program }) {
           {/* Left Content */}
           <div className={`flex flex-col items-center lg:items-start text-center lg:text-left w-full ${hero.leftWidth || 'lg:w-[65%]'}`}>
 
-            <h1 className={`${hero.titleSize || (isSpecializedProgram ? 'text-[32px] sm:text-4xl md:text-5xl lg:text-6xl' : 'text-[40px] sm:text-5xl md:text-6xl lg:text-7xl')} font-extrabold text-white leading-[1.1] mb-6 tracking-tight`}>
-              <span className={`block ${hero.noWrap ? 'md:whitespace-nowrap' : ''}`}>{hero.titlePart1} </span>
-              <span className={`bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block ${hero.noWrap ? 'md:whitespace-nowrap' : 'sm:inline'}`}>{hero.titlePart2}</span>
-              {hero.titlePart3 && (
-                <span className={`bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block ${hero.noWrap ? 'md:whitespace-nowrap' : 'sm:inline'}`}>{hero.titlePart3}</span>
+            <h1 className={`${hero.titleSize || (isSpecializedProgram ? 'text-[32px] sm:text-4xl md:text-5xl lg:text-6xl' : 'text-[40px] sm:text-5xl md:text-6xl lg:text-7xl')} font-extrabold text-white leading-[1.1] mb-6 tracking-tight min-h-[110px] sm:min-h-[140px] md:min-h-[150px] lg:min-h-[160px]`}>
+              {!isSpecializedProgram ? (
+                <TextType
+                  text={[
+                    "Start Your Career in IT Infrastructure",
+                    "Learn from the best trainer at lowest fee"
+                  ]}
+                  typingSpeed={75}
+                  deletingSpeed={30}
+                  pauseDuration={2000}
+                  showCursor={true}
+                  cursorCharacter="_"
+                  cursorClassName="text-pink-500 font-extrabold ml-1"
+                  contentClassName="bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent inline"
+                />
+              ) : (
+                <>
+                  <span className={`block ${hero.noWrap ? 'md:whitespace-nowrap' : ''}`}>{hero.titlePart1} </span>
+                  <span className={`bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block ${hero.noWrap ? 'md:whitespace-nowrap' : 'sm:inline'}`}>{hero.titlePart2}</span>
+                  {hero.titlePart3 && (
+                    <span className={`bg-gradient-to-r from-white via-white to-gray-400 bg-clip-text text-transparent block ${hero.noWrap ? 'md:whitespace-nowrap' : 'sm:inline'}`}>{hero.titlePart3}</span>
+                  )}
+                </>
               )}
             </h1>
 
@@ -267,8 +303,15 @@ function HeroSection({ program }) {
           {/* Right Form Card */}
           <div id="form-section" className={`flex justify-center lg:justify-end w-full ${hero.rightWidth || 'lg:w-[45%]'} lg:translate-y-12`}>
             <div className="w-full max-w-[480px]">
-              <div className="bg-[#0b0f14] border border-white/10 rounded-3xl shadow-2xl overflow-visible relative" style={{ boxShadow: '0 30px 100px rgba(0,0,0,0.8)' }}>
-                {/* Top Strip */}
+              <div 
+                className="bg-[#0b0f14] border border-white/10 rounded-3xl shadow-2xl overflow-visible relative transition-all duration-300 ease-in-out" 
+                style={{ 
+                  boxShadow: '0 30px 100px rgba(0,0,0,0.8)',
+                  height: cardHeight
+                }}
+              >
+                <div ref={contentRef}>
+                  {/* Top Strip */}
                 <div className="bg-gradient-to-r from-pink-600 to-orange-500 text-white text-center py-4 rounded-t-3xl">
                   <p className="font-bold tracking-wide text-sm">
                     {hero.formHeader}
@@ -388,6 +431,7 @@ function HeroSection({ program }) {
                     </Link>
                   </div>
                 </div> */}
+                </div>
               </div>
             </div>
           </div>
