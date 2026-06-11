@@ -37,16 +37,16 @@ function InfrastructureSection({ program = 'infrastructure' }) {
           </div>
 
           {/* Right Image */}
-          <div className={`w-full flex justify-center ${
+          <div className={`w-full flex justify-center min-w-0 ${
             isSpecializedProgram ? 'lg:flex-1 lg:justify-end' : 'lg:w-1/2'
           }`}>
-            <div className="relative group">
+            <div className={`relative group w-full ${
+              isSpecializedProgram ? 'max-w-[360px] lg:max-w-[640px]' : 'max-w-[360px] lg:max-w-[520px]'
+            }`}>
               <img
                 src={sectionData.image}
                 alt="IT Infrastructure Diagram"
-                className={`w-full h-auto mx-auto transition-transform duration-700 ease-out hover:scale-105 cursor-pointer ${
-                  isSpecializedProgram ? 'max-w-[360px] lg:max-w-[640px] lg:mx-0' : 'max-w-[360px] lg:max-w-[520px]'
-                }`}
+                className="w-full h-auto transition-transform duration-700 ease-out hover:scale-105 cursor-pointer"
               />
             </div>
           </div>
