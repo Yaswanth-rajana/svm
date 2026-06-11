@@ -65,27 +65,36 @@ export const createLead = async (req, res) => {
       }
     }
 
-    // 2. Check if lead already exists by phone and program
-    let lead = await Lead.findOne({ phone, program });
+    // 2. Check if lead already exists using (email + program) or (phone + program)
+    let lead = await Lead.findOne({
+      program,
+      $or: [
+        { email: email.toLowerCase() },
+        { phone }
+      ]
+    });
 
     if (lead) {
-      // ❌ If already registered for same source
-      if (lead.sources.includes(source)) {
-        if (source === "webinar" && lead.paymentStatus !== "paid") {
-          return res.json({
-            success: true,
-            message: "You have registered but payment is pending. Proceeding to payment.",
-            data: lead,
-          });
-        }
-        return res.json({
+      // If already registered and paid for the program, block and return HTTP 409
+      if (lead.paymentStatus === "paid") {
+        return res.status(409).json({
           success: false,
-          message: "You have already registered for this",
+          message: "You have already registered for this program."
         });
       }
 
-      // ✅ New action → add source
-      lead.sources.push(source);
+      // Reuse the existing lead if payment is pending (or anything else)
+      if (!lead.sources.includes(source)) {
+        lead.sources.push(source);
+      }
+
+      // Keep details updated
+      lead.name = name;
+      lead.email = email.toLowerCase();
+      lead.phone = phone;
+      if (workingProfile) lead.workingProfile = workingProfile;
+      if (experience) lead.experience = experience;
+
       console.log("Lead before save (existing createLead):", lead);
       await lead.save();
 
@@ -97,16 +106,10 @@ export const createLead = async (req, res) => {
         console.error("❌ Zoho sync failed:", zohoErr.message);
       }
 
-
-      // Removed email sending for webinar (now handled during payment verification)
-
-      // Do NOT consume the OTP immediately. 
-      // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
-      // (like downloading a PDF after registering) without verifying twice.
-
       return res.json({
         success: true,
-        message: "Your action has been recorded",
+        reusedLead: true,
+        message: "You have registered but payment is pending. Proceeding to payment.",
         data: lead,
       });
     }
@@ -139,14 +142,9 @@ export const createLead = async (req, res) => {
       console.error("❌ Zoho sync failed:", zohoErr.message);
     }
 
-
-    // Removed email sending for webinar (now handled during payment verification)
-
     // Do NOT consume the OTP immediately. 
     // Let it expire naturally via TTL (5 mins) so users can perform multiple actions 
     // (like downloading a PDF after registering) without verifying twice.
-
-
 
     return res.json({
       success: true,
@@ -155,6 +153,12 @@ export const createLead = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Error creating lead:", error);
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "You have already registered for this program."
+      });
+    }
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
@@ -209,8 +213,14 @@ export const requestCall = async (req, res) => {
 
     console.log("📥 Request Call reached backend:", { name, email: maskEmail(email), phone: maskPhone(phone) });
 
-    // 2. Check if lead exists (Upsert logic)
-    let lead = await Lead.findOne({ phone, program });
+    // 2. Check if lead exists using (email + program) or (phone + program) (Upsert logic)
+    let lead = await Lead.findOne({
+      program,
+      $or: [
+        { email: email.toLowerCase() },
+        { phone }
+      ]
+    });
 
     if (lead) {
       console.log("✅ Lead found, updating sources to call_request");
@@ -218,6 +228,11 @@ export const requestCall = async (req, res) => {
       if (!lead.sources.includes(source)) {
         lead.sources.push(source);
       }
+      // Keep details updated
+      lead.name = name;
+      lead.email = email.toLowerCase();
+      lead.phone = phone;
+      
       console.log("Lead before save (existing requestCall):", lead);
       await lead.save();
     } else {
@@ -286,6 +301,12 @@ export const requestCall = async (req, res) => {
     });
   } catch (error) {
     console.error("❌ Error in requestCall:", error);
+    if (error.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: "You have already registered for this program."
+      });
+    }
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
