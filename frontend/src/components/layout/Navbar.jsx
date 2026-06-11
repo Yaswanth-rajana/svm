@@ -1,8 +1,9 @@
+import { Link, useLocation } from 'react-router-dom'
 import AnimatedText from '../ui/AnimatedText'
 import { openLeadModal } from '../../utils/modalEvents'
 
 function Navbar() {
-
+  const location = useLocation()
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
@@ -11,14 +12,21 @@ function Navbar() {
     }
   }
 
+  const handleLogoClick = (e) => {
+    if (location.pathname === '/') {
+      e.preventDefault()
+      scrollToSection('hero')
+    }
+  }
+
   return (
     <nav className="bg-black border-b border-gray-800 shadow-md relative z-20 w-full">
       <div className="max-w-[1600px] mx-auto px-4 md:px-12 py-3">
         <div className="flex justify-between items-center gap-4">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-2 cursor-pointer flex-shrink-0" onClick={() => scrollToSection('hero')}>
+          <Link to="/" className="flex items-center gap-2 cursor-pointer flex-shrink-0" onClick={handleLogoClick}>
             <img src="/logo2.png" alt="Smart Mate Ventures" style={{ height: '50px', width: 'auto', maxWidth: '300px', objectFit: 'contain' }} />
-          </div>
+          </Link>
 
           {/* Action Area */}
           <div className="flex items-center gap-1.5 sm:gap-2 md:gap-4 flex-shrink-0">
