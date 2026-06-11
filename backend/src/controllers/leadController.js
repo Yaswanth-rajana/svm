@@ -6,6 +6,17 @@ import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { normalizePhone } from "../utils/phone.js";
 import { maskEmail, maskPhone } from "../utils/logger.js";
 
+const ALLOWED_PROGRAMS = [
+  "it-infrastructure",
+  "cloud-computing",
+  "devops-engineering",
+  "virtualization-engineering",
+  "server-engineering",
+  "storage-engineering",
+  "backup-engineering"
+];
+
+
 
 /**
  * @desc    Create a new lead
@@ -19,6 +30,13 @@ export const createLead = async (req, res) => {
     const program = reqProgram || "it-infrastructure";
     console.log("Received lead payload (createLead):", req.body);
     console.log("Program:", program);
+
+    if (!ALLOWED_PROGRAMS.includes(program)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid program",
+      });
+    }
     
     // Normalize input
     const phone = req.body.phone ? normalizePhone(req.body.phone) : undefined;
@@ -47,8 +65,8 @@ export const createLead = async (req, res) => {
       }
     }
 
-    // 2. Check if lead already exists by phone
-    let lead = await Lead.findOne({ phone });
+    // 2. Check if lead already exists by phone and program
+    let lead = await Lead.findOne({ phone, program });
 
     if (lead) {
       // ❌ If already registered for same source
@@ -68,9 +86,6 @@ export const createLead = async (req, res) => {
 
       // ✅ New action → add source
       lead.sources.push(source);
-      if (reqProgram) {
-        lead.program = reqProgram;
-      }
       console.log("Lead before save (existing createLead):", lead);
       await lead.save();
 
@@ -158,6 +173,13 @@ export const requestCall = async (req, res) => {
     const program = reqProgram || "it-infrastructure";
     console.log("Received lead payload (requestCall):", req.body);
     console.log("Program:", program);
+
+    if (!ALLOWED_PROGRAMS.includes(program)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid program",
+      });
+    }
     
     // Normalize input
     const phone = req.body.phone ? normalizePhone(req.body.phone) : undefined;
@@ -188,16 +210,13 @@ export const requestCall = async (req, res) => {
     console.log("📥 Request Call reached backend:", { name, email: maskEmail(email), phone: maskPhone(phone) });
 
     // 2. Check if lead exists (Upsert logic)
-    let lead = await Lead.findOne({ phone });
+    let lead = await Lead.findOne({ phone, program });
 
     if (lead) {
       console.log("✅ Lead found, updating sources to call_request");
       // Add call_request to sources if not already present
       if (!lead.sources.includes(source)) {
         lead.sources.push(source);
-      }
-      if (reqProgram) {
-        lead.program = reqProgram;
       }
       console.log("Lead before save (existing requestCall):", lead);
       await lead.save();

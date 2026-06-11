@@ -1,4 +1,5 @@
 export const webinarConfig = {
+  program: "it-infrastructure",
   webinarTitle: "IT Infrastructure Masterclass",
   webinarDate: "20th June 2026",
   webinarCode: "SMVINFRA062026",

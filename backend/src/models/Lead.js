@@ -18,7 +18,6 @@ const leadSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: true,
-      unique: true,
     },
 
     sources: {
@@ -126,5 +125,8 @@ const leadSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+leadSchema.index({ phone: 1, program: 1 }, { unique: true });
+leadSchema.index({ email: 1, program: 1 }, { unique: true });
 
 export default mongoose.model("Lead", leadSchema);

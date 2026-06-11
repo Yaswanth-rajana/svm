@@ -6,6 +6,7 @@ import { sendEmailOTP } from '../services/emailService.js';
 import { generateCertificatePDF, sendCertificateEmail } from '../services/certificateService.js';
 import { getProgramConfig } from '../config/programConfig.js';
 import { env } from '../config/env.js';
+import { sendLeadToZohoCRM } from '../services/zohoService.js';
 
 /**
  * @desc    Send verification OTP for certificate claim
@@ -14,11 +15,29 @@ import { env } from '../config/env.js';
  */
 export const sendCertificateOtp = async (req, res) => {
   try {
-    const { email, webinarCode } = req.body;
+    const { email, webinarCode, program: reqProgram } = req.body;
+    const program = reqProgram || webinarConfig.program || 'it-infrastructure';
+
+    const allowedPrograms = [
+      "it-infrastructure",
+      "cloud-computing",
+      "devops-engineering",
+      "virtualization-engineering",
+      "server-engineering",
+      "storage-engineering",
+      "backup-engineering"
+    ];
+
+    if (!allowedPrograms.includes(program)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid program"
+      });
+    }
 
     const now = new Date();
     console.log("----------------------------------------");
-    console.log("📥 Incoming Certificate OTP Request:", { email, webinarCode });
+    console.log("📥 Incoming Certificate OTP Request:", { email, webinarCode, program });
     console.log("⏰ Current server time:", now.toISOString());
     console.log("⏱️ Configured claim deadline:", webinarConfig.claimDeadline);
 
@@ -52,14 +71,14 @@ export const sendCertificateOtp = async (req, res) => {
       });
     }
 
-    // 3. Check if a paid registration exists for this email
-    console.log(`🔍 Querying Lead for email: '${emailLower}' with paymentStatus: 'paid'`);
-    let lead = await Lead.findOne({ email: emailLower, paymentStatus: 'paid' });
+    // 3. Check if a paid registration exists for this email and program
+    console.log(`🔍 Querying Lead for email: '${emailLower}', program: '${program}' with paymentStatus: 'paid'`);
+    let lead = await Lead.findOne({ email: emailLower, paymentStatus: 'paid', program });
     console.log("👤 Matched paid lead:", lead);
 
     if (!lead) {
-      console.log(`🔍 Paid lead not found. Checking if any lead exists for email: '${emailLower}'`);
-      const anyLead = await Lead.findOne({ email: emailLower });
+      console.log(`🔍 Paid lead not found. Checking if any lead exists for email: '${emailLower}', program: '${program}'`);
+      const anyLead = await Lead.findOne({ email: emailLower, program });
       console.log("👤 Matched any lead:", anyLead);
 
       if (!anyLead) {
@@ -156,7 +175,25 @@ export const sendCertificateOtp = async (req, res) => {
  */
 export const verifyAndGenerateCertificate = async (req, res) => {
   try {
-    const { fullName, email, webinarCode, otp } = req.body;
+    const { fullName, email, webinarCode, otp, program: reqProgram } = req.body;
+    const program = reqProgram || webinarConfig.program || 'it-infrastructure';
+
+    const allowedPrograms = [
+      "it-infrastructure",
+      "cloud-computing",
+      "devops-engineering",
+      "virtualization-engineering",
+      "server-engineering",
+      "storage-engineering",
+      "backup-engineering"
+    ];
+
+    if (!allowedPrograms.includes(program)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid program"
+      });
+    }
 
     if (!fullName || !email || !webinarCode || (env.DISABLE_OTP_VALIDATION !== "true" && !otp)) {
       return res.status(400).json({ 
@@ -230,6 +267,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
       { 
         email: emailLower, 
         paymentStatus: 'paid', 
+        program,
         certificateClaimed: false 
       }, 
       { 
@@ -276,6 +314,14 @@ export const verifyAndGenerateCertificate = async (req, res) => {
       lead.certificateId = generatedId;
       lead.claimedAt = new Date();
       await lead.save();
+
+      // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
+      try {
+        console.log(`🔄 Syncing lead to Zoho CRM after certificate claim: ${lead.email}`);
+        sendLeadToZohoCRM(lead);
+      } catch (zohoErr) {
+        console.error("❌ Zoho sync failed after certificate claim:", zohoErr.message);
+      }
 
       return res.status(200).json({
         success: true,

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail, Info } from 'lucide-react';
 import { normalizePhone } from '../../utils/phone';
 
-const OtpVerification = ({ phone, email, onVerified, onReset }) => {
+const OtpVerification = ({ phone, email, fullName, onVerified, onReset }) => {
   const isBypass = import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true';
 
   useEffect(() => {
@@ -64,18 +64,18 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
   };
 
   const handleSendOtp = async (selectedChannel = 'whatsapp') => {
-    if (!phone && !email) {
-      showToast('Please provide phone or email', true);
+    if (!fullName || fullName.trim() === '') {
+      showToast('Full Name is required before verification', true);
       return;
     }
 
-    if (selectedChannel === 'whatsapp' && (!phone || phone.length < 10)) {
-      showToast('Please enter a valid phone number', true);
+    if (!email || !email.includes('@')) {
+      showToast('Please enter a valid email address before verification', true);
       return;
     }
 
-    if (selectedChannel === 'email' && (!email || !email.includes('@'))) {
-      showToast('Please enter a valid email address', true);
+    if (!phone || phone.length < 10) {
+      showToast('Please enter a valid 10-digit phone number before verification', true);
       return;
     }
     
@@ -194,7 +194,7 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
         <button
           type="button"
           onClick={() => handleSendOtp('whatsapp')}
-          disabled={loading || (!phone && !email)}
+          disabled={loading || !phone || !email || !fullName}
           className="w-full py-3 px-4 rounded-xl bg-pink-600 hover:bg-pink-500 disabled:bg-gray-700 disabled:text-gray-400 text-white font-bold text-sm transition-all shadow-lg shadow-pink-500/20 active:scale-95 flex items-center justify-center gap-2"
         >
           {loading ? (
@@ -214,22 +214,22 @@ const OtpVerification = ({ phone, email, onVerified, onReset }) => {
             </span>
           </div>
           
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3">
             <input
               type="text"
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
               placeholder="000000"
-              className="flex-1 py-3 px-4 bg-[#11161d] border border-white/10 text-white font-mono text-center tracking-[0.5em] text-lg rounded-xl focus:outline-none focus:border-pink-500/50 transition-all"
+              className="w-full py-3 px-4 bg-[#11161d] border border-white/10 text-white font-mono text-center tracking-[0.5em] text-lg rounded-xl focus:outline-none focus:border-pink-500/50 transition-all"
             />
             <button
               type="button"
               onClick={handleVerifyOtp}
               disabled={loading || otp.length !== 6}
-              className="px-5 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-orange-500 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center min-w-[100px]"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-orange-500 hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 text-white font-bold text-sm transition-all shadow-lg shadow-orange-500/20 active:scale-95 flex items-center justify-center"
             >
-              {loading ? <RefreshCw size={16} className="animate-spin" /> : 'Confirm'}
+              {loading ? <RefreshCw size={16} className="animate-spin" /> : 'Confirm OTP'}
             </button>
           </div>
 
