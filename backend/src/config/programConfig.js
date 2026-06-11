@@ -11,9 +11,9 @@ export const PROGRAM_CONFIG = {
   },
 
   "cloud-computing": {
-    title: "Cloud Computing Engineering Roadmap",
+    title: "Cloud Computing",
     shortTitle: "Cloud Computing",
-    emailSubject: "🎉 Registration Confirmed - Cloud Computing Engineering Roadmap",
+    emailSubject: "🎉 Registration Confirmed - Cloud Computing Course",
     learningPoints: [
       "Master AWS, Microsoft Azure, and Google Cloud Platform.",
       "Understand cloud deployment models and enterprise architectures.",
@@ -23,9 +23,9 @@ export const PROGRAM_CONFIG = {
   },
 
   "devops-engineering": {
-    title: "DevOps Engineering Roadmap",
+    title: "DevOps Engineering",
     shortTitle: "DevOps Engineering",
-    emailSubject: "🎉 Registration Confirmed - DevOps Engineering Roadmap",
+    emailSubject: "🎉 Registration Confirmed - DevOps Engineering Course",
     learningPoints: [
       "Master CI/CD pipelines, Docker, Kubernetes, and IaC (Terraform).",
       "Understand software development lifecycles and automated testing.",
@@ -35,9 +35,9 @@ export const PROGRAM_CONFIG = {
   },
 
   "virtualization-engineering": {
-    title: "Virtualization Engineering Roadmap",
+    title: "Virtualization Engineering",
     shortTitle: "Virtualization Engineering",
-    emailSubject: "🎉 Registration Confirmed - Virtualization Engineering Roadmap",
+    emailSubject: "🎉 Registration Confirmed - Virtualization Engineering Course",
     learningPoints: [
       "Master VMware vSphere, ESXi, and Microsoft Hyper-V.",
       "Configure virtualization clusters, resource allocation, and datastores.",
@@ -47,9 +47,9 @@ export const PROGRAM_CONFIG = {
   },
 
   "server-engineering": {
-    title: "Server Engineering Roadmap",
+    title: "Server Engineering",
     shortTitle: "Server Engineering",
-    emailSubject: "🎉 Registration Confirmed - Server Engineering Roadmap",
+    emailSubject: "🎉 Registration Confirmed - Server Engineering Course",
     learningPoints: [
       "Master Windows Server and Linux administration fundamentals.",
       "Configure Active Directory, Group Policies, DNS, and DHCP services.",
@@ -59,9 +59,9 @@ export const PROGRAM_CONFIG = {
   },
 
   "storage-engineering": {
-    title: "Storage Engineering Roadmap",
+    title: "Storage Engineering",
     shortTitle: "Storage Engineering",
-    emailSubject: "🎉 Registration Confirmed - Storage Engineering Roadmap",
+    emailSubject: "🎉 Registration Confirmed - Storage Engineering Course",
     learningPoints: [
       "Master SAN and NAS enterprise storage networks and protocols.",
       "Configure RAID configurations, volume management, and pools.",
@@ -71,9 +71,9 @@ export const PROGRAM_CONFIG = {
   },
 
   "backup-engineering": {
-    title: "Backup Engineering Roadmap",
+    title: "Backup Engineering",
     shortTitle: "Backup Engineering",
-    emailSubject: "🎉 Registration Confirmed - Backup Engineering Roadmap",
+    emailSubject: "🎉 Registration Confirmed - Backup Engineering Course",
     learningPoints: [
       "Master Veeam Backup & Replication and enterprise Commvault solutions.",
       "Configure backup policies, retention schedules, and immutable vaults.",

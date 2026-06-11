@@ -173,9 +173,12 @@ const LeadModal = ({ program }) => {
         // 💳 Razorpay Integration for Webinar
         if (type === 'webinar') {
           setIsPaymentLoading(true);
+          const programKey = program === 'it-infrastructure' ? 'infrastructure' : program;
+          const programData = programsContent[programKey] || programsContent.infrastructure;
           handleRazorpayPayment({
             leadData: lead,
             formData: formData,
+            amount: programData.price,
             onSuccess: () => {
               setIsSubmitted(true);
               setIsPaymentLoading(false);
@@ -357,6 +360,7 @@ const LeadModal = ({ program }) => {
                     key={`otp-modal-${resetKey}`}
                     phone={formData.phone} 
                     email={formData.email} 
+                    fullName={formData.fullName}
                     onVerified={() => setIsPhoneVerified(true)}
                     onReset={() => setIsPhoneVerified(false)}
                   />
@@ -464,6 +468,7 @@ const LeadModal = ({ program }) => {
                       key={`otp-modal-simple-${resetKey}`}
                       phone={formData.phone} 
                       email={formData.email} 
+                      fullName={formData.fullName}
                       onVerified={() => setIsPhoneVerified(true)}
                       onReset={() => setIsPhoneVerified(false)}
                     />

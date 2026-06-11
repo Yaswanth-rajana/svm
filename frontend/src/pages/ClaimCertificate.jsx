@@ -1,13 +1,29 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
 import { Award, Mail, Lock, CheckCircle, AlertCircle, RefreshCw, ArrowLeft, User, Key, Info } from 'lucide-react';
 
+const getProgramLabel = (prog) => {
+  const labels = {
+    'it-infrastructure': 'IT Infrastructure',
+    'cloud-computing': 'Cloud Computing',
+    'devops-engineering': 'DevOps Engineering',
+    'virtualization-engineering': 'Virtualization Engineering',
+    'server-engineering': 'Server Engineering',
+    'storage-engineering': 'Storage Engineering',
+    'backup-engineering': 'Backup Engineering',
+  };
+  return labels[prog] || prog;
+};
+
 const ClaimCertificate = () => {
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState(1); // 1: Info Form, 2: OTP Verification, 3: Success Screen
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [webinarCode, setWebinarCode] = useState('');
   const [otp, setOtp] = useState('');
+  const [program, setProgram] = useState(searchParams.get('program') || 'it-infrastructure');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -63,7 +79,8 @@ const ClaimCertificate = () => {
         const response = await axios.post(`${API_URL}/api/certificate/verify-and-generate`, {
           fullName: fullName.trim(),
           email: email.trim(),
-          webinarCode: webinarCode.trim()
+          webinarCode: webinarCode.trim(),
+          program
         });
 
         showToast(response.data.message || 'Certificate generated and emailed!');
@@ -73,7 +90,8 @@ const ClaimCertificate = () => {
 
       const response = await axios.post(`${API_URL}/api/certificate/send-otp`, {
         email: email.trim(),
-        webinarCode: webinarCode.trim()
+        webinarCode: webinarCode.trim(),
+        program
       });
 
       showToast(response.data.message || 'OTP sent successfully!');
@@ -105,7 +123,8 @@ const ClaimCertificate = () => {
         fullName: fullName.trim(),
         email: email.trim(),
         webinarCode: webinarCode.trim(),
-        otp: otp.trim()
+        otp: otp.trim(),
+        program
       });
 
       showToast(response.data.message || 'Certificate generated and emailed!');
@@ -213,6 +232,37 @@ const ClaimCertificate = () => {
               </div>
             </div>
 
+            {/* Webinar Program */}
+            <div>
+              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
+                Webinar Program
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
+                  <Award className="w-4 h-4" />
+                </span>
+                <select
+                  required
+                  value={program}
+                  onChange={(e) => setProgram(e.target.value)}
+                  className="w-full py-3.5 pl-10 pr-10 bg-[#0b0f14]/80 border border-white/10 text-white rounded-xl focus:outline-none focus:border-pink-500/50 transition-all text-sm appearance-none cursor-pointer"
+                >
+                  <option value="it-infrastructure">IT Infrastructure Engineering</option>
+                  <option value="cloud-computing">Cloud Computing Engineering</option>
+                  <option value="devops-engineering">DevOps Engineering</option>
+                  <option value="virtualization-engineering">Virtualization Engineering</option>
+                  <option value="server-engineering">Server Engineering</option>
+                  <option value="storage-engineering">Storage Engineering</option>
+                  <option value="backup-engineering">Backup Engineering</option>
+                </select>
+                <span className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-500">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
             {/* Secret Webinar Code */}
             <div>
               <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
@@ -261,6 +311,7 @@ const ClaimCertificate = () => {
               <div className="text-xs text-gray-300 space-y-1 font-medium">
                 <div>Name: <span className="text-white font-semibold">{fullName}</span></div>
                 <div>Email: <span className="text-white font-semibold">{email}</span></div>
+                <div>Program: <span className="text-white font-semibold">{getProgramLabel(program)}</span></div>
                 <div>Webinar Code: <span className="text-white font-semibold">{webinarCode}</span></div>
               </div>
               <button 
