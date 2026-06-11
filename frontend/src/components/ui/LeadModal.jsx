@@ -164,6 +164,9 @@ const LeadModal = ({ program }) => {
       }
 
       if (!response.ok) {
+        if (response.status === 409) {
+          throw new Error("You have already registered for this program.");
+        }
         throw new Error(data.message || `Server error: HTTP ${response.status}`);
       }
 

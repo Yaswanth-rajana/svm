@@ -125,20 +125,23 @@ function HeroSection({ program }) {
       });
       clearTimeout(timeoutId);
 
-      let data;
+      let resJson;
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
-        data = await response.json();
+        resJson = await response.json();
       } else {
         throw new Error(`Unexpected server response format (HTTP ${response.status})`);
       }
 
       if (!response.ok) {
-        throw new Error(data.message || `Server error: HTTP ${response.status}`);
+        if (response.status === 409) {
+          throw new Error("You have already registered for this program.");
+        }
+        throw new Error(resJson.message || `Server error: HTTP ${response.status}`);
       }
 
-      if (data.success) {
-        const lead = data.data;
+      if (resJson.success) {
+        const lead = resJson.data;
 
         // 💳 Razorpay Integration for Webinar
         handleRazorpayPayment({
@@ -162,7 +165,7 @@ function HeroSection({ program }) {
           }
         });
       } else {
-        alert(data.message || "Something went wrong. Please try again.");
+        alert(resJson.message || "Something went wrong. Please try again.");
         setLoadingAction("");
       }
     } catch (error) {
