@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { openBenefitsModal } from '../../utils/benefitsModalEvents';
 
-const BenefitsLink = () => {
+const BenefitsLink = ({ program }) => {
+  const isCourse = program && program !== 'it-infrastructure' && program !== 'infrastructure';
   return (
     <div className="flex justify-center w-full pt-1 pb-2">
       <button
@@ -44,7 +45,7 @@ const BenefitsLink = () => {
           
           {/* Gradient Text */}
           <span className="bg-gradient-to-r from-pink-400 to-orange-400 bg-clip-text text-transparent">
-            See webinar benefits
+            {isCourse ? "See Course Benefits" : "See webinar benefits"}
           </span>
         </motion.span>
         

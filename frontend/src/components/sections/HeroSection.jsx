@@ -331,6 +331,7 @@ function HeroSection({ program }) {
                       phone={formData.phone}
                       email={formData.email}
                       fullName={formData.fullName}
+                      program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
                       onVerified={() => setIsPhoneVerified(true)}
                       onReset={() => setIsPhoneVerified(false)}
                     />
@@ -356,7 +357,7 @@ function HeroSection({ program }) {
                     />
                   </div>
 
-                  <BenefitsLink />
+                  <BenefitsLink program={program} />
 
                   <div className="pt-2">
                     <button type="submit" disabled={!isPhoneVerified || loadingAction === "submit"} className={`w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-xl shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all font-extrabold text-lg tracking-wide ${(!isPhoneVerified || loadingAction === "submit") ? 'opacity-50 cursor-not-allowed' : ''}`}>

@@ -1,4 +1,4 @@
-import Lead from "../models/Lead.js";
+import getLeadModel from "../utils/getLeadModel.js";
 import OTP from "../models/OTP.js";
 import { env } from "../config/env.js";
 import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail, sendCallRequestAdminEmail, sendPendingPaymentAdminEmail } from "../services/emailService.js";
@@ -49,6 +49,9 @@ export const createLead = async (req, res) => {
       });
     }
 
+    const leadType = program === "it-infrastructure" ? "infrastructure" : "course";
+    const LeadModel = getLeadModel(program);
+
     // 1.5 Verify OTP first (except for brochure downloads)
     if (env.DISABLE_OTP_VALIDATION !== "true") {
       if (source !== 'brochure') {
@@ -66,7 +69,7 @@ export const createLead = async (req, res) => {
     }
 
     // 2. Check if lead already exists using (email + program) or (phone + program)
-    let lead = await Lead.findOne({
+    let lead = await LeadModel.findOne({
       program,
       $or: [
         { email: email.toLowerCase() },
@@ -92,6 +95,7 @@ export const createLead = async (req, res) => {
       lead.name = name;
       lead.email = email.toLowerCase();
       lead.phone = phone;
+      lead.leadType = leadType;
       if (workingProfile) lead.workingProfile = workingProfile;
       if (experience) lead.experience = experience;
 
@@ -122,9 +126,10 @@ export const createLead = async (req, res) => {
       workingProfile,
       experience,
       program,
+      leadType,
     });
     // 🆕 New user
-    lead = await Lead.create({
+    lead = await LeadModel.create({
       name,
       email,
       phone,
@@ -132,6 +137,7 @@ export const createLead = async (req, res) => {
       workingProfile,
       experience,
       program,
+      leadType,
     });
 
     // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
@@ -197,6 +203,9 @@ export const requestCall = async (req, res) => {
       });
     }
 
+    const leadType = program === "it-infrastructure" ? "infrastructure" : "course";
+    const LeadModel = getLeadModel(program);
+
     // 1.5 Verify OTP first
     if (env.DISABLE_OTP_VALIDATION !== "true") {
       const verifiedOtp = await OTP.findOne({ 
@@ -214,7 +223,7 @@ export const requestCall = async (req, res) => {
     console.log("📥 Request Call reached backend:", { name, email: maskEmail(email), phone: maskPhone(phone) });
 
     // 2. Check if lead exists using (email + program) or (phone + program) (Upsert logic)
-    let lead = await Lead.findOne({
+    let lead = await LeadModel.findOne({
       program,
       $or: [
         { email: email.toLowerCase() },
@@ -232,6 +241,7 @@ export const requestCall = async (req, res) => {
       lead.name = name;
       lead.email = email.toLowerCase();
       lead.phone = phone;
+      lead.leadType = leadType;
       
       console.log("Lead before save (existing requestCall):", lead);
       await lead.save();
@@ -244,15 +254,17 @@ export const requestCall = async (req, res) => {
         sources: [source],
         isVerified: true,
         program,
+        leadType,
       });
       // Create new lead
-      lead = await Lead.create({
+      lead = await LeadModel.create({
         name,
         email,
         phone,
         sources: [source],
         isVerified: true,
         program,
+        leadType,
       });
     }
 

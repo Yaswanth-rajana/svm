@@ -40,8 +40,10 @@ export const handleRazorpayPayment = async ({
 
     // 1. Create order on backend
     const orderResponse = await axios.post(`${API_URL}/api/payment/create-order`, {
-      amount: amount || 99,
-      leadId: leadData._id
+      amount: amount ||99,
+      leadId: leadData._id,
+      leadType: leadData.leadType,
+      program: leadData.program
     });
 
     const orderData = orderResponse.data;
@@ -86,7 +88,9 @@ export const handleRazorpayPayment = async ({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
-            leadId: leadId
+            leadId: leadId,
+            leadType: leadData.leadType,
+            program: leadData.program
           };
 
           logger.info("Calling verification API");
@@ -148,7 +152,9 @@ export const handleRazorpayPayment = async ({
         leadId: leadData._id,
         razorpay_order_id: response.error.metadata.order_id,
         razorpay_payment_id: response.error.metadata.payment_id,
-        error_description: response.error.description
+        error_description: response.error.description,
+        leadType: leadData.leadType,
+        program: leadData.program
       }).catch(err => console.error("Failed to log payment failure:", err));
     });
 
