@@ -364,6 +364,7 @@ const LeadModal = ({ program }) => {
                     phone={formData.phone} 
                     email={formData.email} 
                     fullName={formData.fullName}
+                    program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
                     onVerified={() => setIsPhoneVerified(true)}
                     onReset={() => setIsPhoneVerified(false)}
                   />
@@ -389,7 +390,7 @@ const LeadModal = ({ program }) => {
                   />
                 </div>
 
-                <BenefitsLink />
+                <BenefitsLink program={program} />
 
                 <div className="pt-2">
                   <button 
@@ -472,6 +473,7 @@ const LeadModal = ({ program }) => {
                       phone={formData.phone} 
                       email={formData.email} 
                       fullName={formData.fullName}
+                      program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
                       onVerified={() => setIsPhoneVerified(true)}
                       onReset={() => setIsPhoneVerified(false)}
                     />

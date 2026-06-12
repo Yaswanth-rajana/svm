@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import Lead from '../models/Lead.js';
+import getLeadModel from '../utils/getLeadModel.js';
 import OTP from '../models/OTP.js';
 import { webinarConfig } from '../config/webinarConfig.js';
 import { sendEmailOTP } from '../services/emailService.js';
@@ -71,14 +71,16 @@ export const sendCertificateOtp = async (req, res) => {
       });
     }
 
+    const LeadModel = getLeadModel(program);
+
     // 3. Check if a paid registration exists for this email and program
     console.log(`🔍 Querying Lead for email: '${emailLower}', program: '${program}' with paymentStatus: 'paid'`);
-    let lead = await Lead.findOne({ email: emailLower, paymentStatus: 'paid', program });
+    let lead = await LeadModel.findOne({ email: emailLower, paymentStatus: 'paid', program });
     console.log("👤 Matched paid lead:", lead);
 
     if (!lead) {
       console.log(`🔍 Paid lead not found. Checking if any lead exists for email: '${emailLower}', program: '${program}'`);
-      const anyLead = await Lead.findOne({ email: emailLower, program });
+      const anyLead = await LeadModel.findOne({ email: emailLower, program });
       console.log("👤 Matched any lead:", anyLead);
 
       if (!anyLead) {
@@ -177,6 +179,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
   try {
     const { fullName, email, webinarCode, otp, program: reqProgram } = req.body;
     const program = reqProgram || webinarConfig.program || 'it-infrastructure';
+    const LeadModel = getLeadModel(program);
 
     const allowedPrograms = [
       "it-infrastructure",
@@ -263,7 +266,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
     }
 
     // 4. PREVENT RACE CONDITIONS: Atomic Claim Lock
-    const lead = await Lead.findOneAndUpdate(
+    const lead = await LeadModel.findOneAndUpdate(
       { 
         email: emailLower, 
         paymentStatus: 'paid', 
@@ -286,7 +289,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
     }
 
     // 5. Generate unique sequential Certificate ID with random suffix for absolute collision safety
-    const claimedCount = await Lead.countDocuments({ 
+    const claimedCount = await LeadModel.countDocuments({ 
       certificateClaimed: true, 
       certificateId: { $ne: "" } 
     });
@@ -332,7 +335,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
       console.error("❌ Certificate generation or delivery failed:", processError);
 
       // Rollback claim lock on failure
-      await Lead.updateOne(
+      await LeadModel.updateOne(
         { _id: lead._id }, 
         { 
           $set: { 

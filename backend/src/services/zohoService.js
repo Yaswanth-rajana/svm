@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getProgramConfig } from "../config/programConfig.js";
 
 let cachedToken = null;
 let tokenExpiry = null;
@@ -73,6 +74,13 @@ export const sendLeadToZohoCRM = async (leadData) => {
       return isNaN(d.getTime()) ? null : d.toISOString().split("T")[0];
     };
 
+
+
+    const program = leadData.program || "it-infrastructure";
+    const programConfig = getProgramConfig(program);
+    const programName = programConfig.shortTitle;
+    const programCategory = program === "it-infrastructure" ? "Infrastructure" : "Course";
+
     // Map leadData to Zoho fields
     const zohoLead = {
       Last_Name: leadData.name,
@@ -81,10 +89,12 @@ export const sendLeadToZohoCRM = async (leadData) => {
       Lead_Source: leadData.sources?.join(", ") || "Webinar",
       Working_Profile: leadData.workingProfile || "N/A",
       Experience: leadData.experience || "N/A",
-      Description: `Registration Date: ${leadData.createdAt}\nPayment Status: ${leadData.paymentStatus}\nProgram: ${leadData.program || "it-infrastructure"}`,
+      Description: `Registration Date: ${leadData.createdAt}\nPayment Status: ${leadData.paymentStatus}\nProgram: ${program}`,
       
       // Mapped fields
-      Program: leadData.program || "it-infrastructure",
+      Program: program,
+      Program_Name: programName,
+      Program_Category: programCategory,
       Registration_Status: registrationStatus,
       Payment_Status: zohoPaymentStatus,
       Webinar_Date: formatDate(leadData.eventDate),

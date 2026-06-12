@@ -120,6 +120,12 @@ const leadSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+
+    leadType: {
+      type: String,
+      enum: ["infrastructure", "course"],
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -129,4 +135,5 @@ const leadSchema = new mongoose.Schema(
 leadSchema.index({ phone: 1, program: 1 }, { unique: true });
 leadSchema.index({ email: 1, program: 1 }, { unique: true });
 
+export { leadSchema };
 export default mongoose.model("Lead", leadSchema);

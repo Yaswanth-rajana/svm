@@ -3,7 +3,7 @@ import axios from 'axios';
 import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail, Info } from 'lucide-react';
 import { normalizePhone } from '../../utils/phone';
 
-const OtpVerification = ({ phone, email, fullName, onVerified, onReset }) => {
+const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset }) => {
   const isBypass = import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true';
 
   useEffect(() => {
@@ -88,7 +88,8 @@ const OtpVerification = ({ phone, email, fullName, onVerified, onReset }) => {
       const res = await axios.post(`${API_URL}/api/send-otp`, {
         phone: normalizePhone(phone),
         email,
-        channel: selectedChannel
+        channel: selectedChannel,
+        program
       });
       
       setChannel(res.data.channel);
@@ -132,7 +133,8 @@ const OtpVerification = ({ phone, email, fullName, onVerified, onReset }) => {
       const API_URL = import.meta.env.VITE_API_URL;
       await axios.post(`${API_URL}/api/verify-otp`, {
         contact,
-        otp
+        otp,
+        program
       });
       
       showToast('Verified successfully!');

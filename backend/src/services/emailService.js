@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { maskEmail } from '../utils/logger.js';
-import Lead from '../models/Lead.js';
 import { getProgramConfig } from '../config/programConfig.js';
 
 /**

@@ -1,10 +1,33 @@
 import Razorpay from "razorpay";
 import crypto from "crypto";
-import Lead from "../models/Lead.js";
+import InfrastructureLead from "../models/InfrastructureLead.js";
+import CourseLead from "../models/CourseLead.js";
+import getLeadModel from "../utils/getLeadModel.js";
 import { sendConfirmationEmail, sendRegistrationAdminEmail, sendFailedPaymentAdminEmail } from "../services/emailService.js";
 import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { maskEmail, logger } from "../utils/logger.js";
 
+/**
+ * Helper to retrieve a lead document and its corresponding Model class.
+ */
+const getLeadById = async (leadId, leadType, program) => {
+  if (leadType) {
+    const Model = leadType === "infrastructure" ? InfrastructureLead : CourseLead;
+    const lead = await Model.findById(leadId);
+    if (lead) return { lead, Model };
+  }
+  if (program) {
+    const Model = getLeadModel(program);
+    const lead = await Model.findById(leadId);
+    if (lead) return { lead, Model };
+  }
+  // Fallback: look up in both collections
+  let lead = await InfrastructureLead.findById(leadId);
+  if (lead) return { lead, Model: InfrastructureLead };
+  lead = await CourseLead.findById(leadId);
+  if (lead) return { lead, Model: CourseLead };
+  return { lead: null, Model: null };
+};
 
 /**
  * @desc    Create Razorpay Order
@@ -13,7 +36,7 @@ import { maskEmail, logger } from "../utils/logger.js";
  */
 export const createOrder = async (req, res) => {
   try {
-    const { amount, leadId } = req.body; // Amount in INR
+    const { amount, leadId, leadType, program } = req.body; // Amount in INR
 
     if (!amount || !leadId) {
       return res.status(400).json({ success: false, message: "Amount and leadId are required" });
@@ -32,6 +55,10 @@ export const createOrder = async (req, res) => {
       amount: amount * 100,
       currency: "INR",
       receipt: `rcpt_${leadId.slice(-8)}_${Date.now().toString().slice(-6)}`,
+      notes: {
+        leadType,
+        program
+      }
     };
 
     const order = await instance.orders.create(options);
@@ -41,7 +68,7 @@ export const createOrder = async (req, res) => {
       return res.status(500).json({ success: false, message: "Failed to create order" });
     }
 
-    const lead = await Lead.findById(leadId);
+    const { lead } = await getLeadById(leadId, leadType, program);
     if (lead) {
       lead.razorpayOrderId = order.id;
       await lead.save();
@@ -63,7 +90,7 @@ export const verifyPayment = async (req, res) => {
   try {
     logger.info("Payment verification API hit");
     console.log("Payment verification API hit");
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, leadId } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, leadId, leadType, program } = req.body;
 
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !leadId) {
       logger.error("Payment verification failed: Missing parameters");
@@ -89,13 +116,10 @@ export const verifyPayment = async (req, res) => {
     );
 
     if (generatedSignature === razorpay_signature) {
-      // Payment is successful
-      const lead = await Lead.findById(leadId);
-      if (!lead) {
-        return res.status(404).json({ success: false, message: "Lead not found" });
-      }
+      let resolvedLeadType = leadType;
+      let resolvedProgram = program;
 
-      // Fetch payment details from Razorpay to get method, amount, etc.
+      // Fetch payment details from Razorpay to get method, amount, notes, etc.
       let paymentDetails = {};
       try {
         const instance = new Razorpay({
@@ -103,8 +127,18 @@ export const verifyPayment = async (req, res) => {
           key_secret: secret,
         });
         paymentDetails = await instance.payments.fetch(razorpay_payment_id);
+        if (!resolvedLeadType && paymentDetails.notes) {
+          resolvedLeadType = paymentDetails.notes.leadType;
+          resolvedProgram = paymentDetails.notes.program;
+        }
       } catch (payErr) {
         console.error("⚠️ Failed to fetch payment details from Razorpay:", payErr.message);
+      }
+
+      // Payment is successful
+      const { lead } = await getLeadById(leadId, resolvedLeadType, resolvedProgram);
+      if (!lead) {
+        return res.status(404).json({ success: false, message: "Lead not found" });
       }
 
       // Update lead
@@ -173,13 +207,13 @@ export const verifyPayment = async (req, res) => {
 export const handlePaymentFailure = async (req, res) => {
   try {
 
-    const { leadId, razorpay_order_id, razorpay_payment_id, error_description } = req.body;
+    const { leadId, razorpay_order_id, razorpay_payment_id, error_description, leadType, program } = req.body;
 
     if (!leadId) {
       return res.status(400).json({ success: false, message: "LeadId is required" });
     }
 
-    const lead = await Lead.findById(leadId);
+    const { lead } = await getLeadById(leadId, leadType, program);
     if (!lead) {
       return res.status(404).json({ success: false, message: "Lead not found" });
     }
