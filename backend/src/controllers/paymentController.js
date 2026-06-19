@@ -6,6 +6,7 @@ import getLeadModel from "../utils/getLeadModel.js";
 import { sendConfirmationEmail, sendRegistrationAdminEmail, sendFailedPaymentAdminEmail } from "../services/emailService.js";
 import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { maskEmail, logger } from "../utils/logger.js";
+import { createRegistrationInBigin, updatePaymentStatus, updateRegistrationStage } from "../services/biginService.js";
 
 /**
  * Helper to retrieve a lead document and its corresponding Model class.
@@ -154,6 +155,38 @@ export const verifyPayment = async (req, res) => {
 
       await lead.save();
       logger.info("Payment verification successful");
+
+      // 🔄 Sync payment to Zoho Bigin (Non-blocking & Fail-safe)
+      if (lead.biginRecordId) {
+        try {
+          await updatePaymentStatus(lead.biginRecordId, "Paid");
+          await updateRegistrationStage(lead.biginRecordId, "Enrolled");
+          lead.biginSyncStatus = "synced";
+          lead.lastBiginSyncAt = new Date();
+          lead.biginLastError = undefined; // clear error
+          await lead.save();
+        } catch (biginErr) {
+          console.error("Bigin Sync Error (Payment Update):", biginErr.response?.data || biginErr.message);
+          lead.biginSyncStatus = "failed";
+          lead.biginLastError = biginErr.message;
+          await lead.save();
+        }
+      } else {
+        try {
+          console.log(`🔄 Bigin record ID missing for lead ${lead.email}. Creating registration in Bigin first...`);
+          const biginId = await createRegistrationInBigin(lead);
+          lead.biginRecordId = biginId;
+          lead.biginSyncStatus = "synced";
+          lead.lastBiginSyncAt = new Date();
+          lead.biginLastError = undefined; // clear error
+          await lead.save();
+        } catch (biginErr) {
+          console.error("Bigin Sync Error (Payment Create & Update):", biginErr.response?.data || biginErr.message);
+          lead.biginSyncStatus = "failed";
+          lead.biginLastError = biginErr.message;
+          await lead.save();
+        }
+      }
 
       // 🚀 Send email ONLY for webinar (Non-blocking & Fail-safe)
       try {

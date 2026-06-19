@@ -2,7 +2,7 @@ export const programsContent = {
   // IT Infrastructure Program Data
   infrastructure: {
     shortTitle: "IT Infrastructure",
-    price: 99,
+    price: 1,
     meta: {
       title: "IT Infrastructure Training | Start Your Career | SMVEN",
       description: "Master IT Infrastructure fundamentals, servers, virtualization, storage, and cloud systems to start a successful IT career."
@@ -219,7 +219,7 @@ export const programsContent = {
     webinar: {
       title: "🚀 Join Our Live Webinar",
       subtitle: "Learn IT Infrastructure from Industry Experts",
-      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 July 4  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",

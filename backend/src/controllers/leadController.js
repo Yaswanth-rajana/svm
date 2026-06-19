@@ -5,6 +5,7 @@ import { sendConfirmationEmail, sendCallRequestEmail, sendRegistrationAdminEmail
 import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { normalizePhone } from "../utils/phone.js";
 import { maskEmail, maskPhone } from "../utils/logger.js";
+import { createRegistrationInBigin } from "../services/biginService.js";
 
 const ALLOWED_PROGRAMS = [
   "it-infrastructure",
@@ -79,7 +80,8 @@ export const createLead = async (req, res) => {
 
     if (lead) {
       // If already registered and paid for the program, block and return HTTP 409
-      if (lead.paymentStatus === "paid") {
+      // (Except when they are just requesting a brochure download)
+      if (lead.paymentStatus === "paid" && source !== "brochure") {
         return res.status(409).json({
           success: false,
           message: "You have already registered for this program."
@@ -101,6 +103,23 @@ export const createLead = async (req, res) => {
 
       console.log("Lead before save (existing createLead):", lead);
       await lead.save();
+
+      // 🔄 Sync lead to Zoho Bigin (Non-blocking & Fail-safe)
+      if (!lead.biginRecordId) {
+        try {
+          const biginId = await createRegistrationInBigin(lead);
+          lead.biginRecordId = biginId;
+          lead.biginSyncStatus = "synced";
+          lead.lastBiginSyncAt = new Date();
+          lead.biginLastError = undefined; // clear error
+          await lead.save();
+        } catch (biginErr) {
+          console.error("Bigin Sync Error:", biginErr.response?.data || biginErr.message);
+          lead.biginSyncStatus = "failed";
+          lead.biginLastError = biginErr.message;
+          await lead.save();
+        }
+      }
 
       // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
       try {
@@ -139,6 +158,21 @@ export const createLead = async (req, res) => {
       program,
       leadType,
     });
+
+    // 🔄 Sync lead to Zoho Bigin (Non-blocking & Fail-safe)
+    try {
+      const biginId = await createRegistrationInBigin(lead);
+      lead.biginRecordId = biginId;
+      lead.biginSyncStatus = "synced";
+      lead.lastBiginSyncAt = new Date();
+      lead.biginLastError = undefined; // clear error
+      await lead.save();
+    } catch (biginErr) {
+      console.error("Bigin Sync Error:", biginErr.response?.data || biginErr.message);
+      lead.biginSyncStatus = "failed";
+      lead.biginLastError = biginErr.message;
+      await lead.save();
+    }
 
     // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
     try {

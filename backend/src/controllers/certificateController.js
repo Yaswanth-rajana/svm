@@ -7,6 +7,7 @@ import { generateCertificatePDF, sendCertificateEmail } from '../services/certif
 import { getProgramConfig } from '../config/programConfig.js';
 import { env } from '../config/env.js';
 import { sendLeadToZohoCRM } from '../services/zohoService.js';
+import { createRegistrationInBigin, updateCertificateClaimed } from "../services/biginService.js";
 
 /**
  * @desc    Send verification OTP for certificate claim
@@ -317,6 +318,37 @@ export const verifyAndGenerateCertificate = async (req, res) => {
       lead.certificateId = generatedId;
       lead.claimedAt = new Date();
       await lead.save();
+
+      // 🔄 Sync certificate claim to Zoho Bigin (Non-blocking & Fail-safe)
+      if (lead.biginRecordId) {
+        try {
+          await updateCertificateClaimed(lead.biginRecordId, true);
+          lead.biginSyncStatus = "synced";
+          lead.lastBiginSyncAt = new Date();
+          lead.biginLastError = undefined; // clear error
+          await lead.save();
+        } catch (biginErr) {
+          console.error("Bigin Sync Error (Certificate Claim Update):", biginErr.response?.data || biginErr.message);
+          lead.biginSyncStatus = "failed";
+          lead.biginLastError = biginErr.message;
+          await lead.save();
+        }
+      } else {
+        try {
+          console.log(`🔄 Bigin record ID missing for lead ${lead.email}. Creating registration in Bigin first...`);
+          const biginId = await createRegistrationInBigin(lead);
+          lead.biginRecordId = biginId;
+          lead.biginSyncStatus = "synced";
+          lead.lastBiginSyncAt = new Date();
+          lead.biginLastError = undefined; // clear error
+          await lead.save();
+        } catch (biginErr) {
+          console.error("Bigin Sync Error (Certificate Claim Create & Update):", biginErr.response?.data || biginErr.message);
+          lead.biginSyncStatus = "failed";
+          lead.biginLastError = biginErr.message;
+          await lead.save();
+        }
+      }
 
       // 🔄 Sync lead to Zoho CRM (Non-blocking & Fail-safe)
       try {

@@ -24,13 +24,12 @@ export const zohoCallback = async (req, res) => {
     const { access_token, refresh_token } = response.data;
 
     if (refresh_token) {
-      console.log("✅ Zoho Refresh Token received and should be stored securely.");
-      // In a real production app, store this in a secure database/vault, not logs.
+      console.log("✅ Zoho Refresh Token received:", refresh_token);
+      res.send(`Zoho connected successfully. Refresh Token: ${refresh_token}`);
     } else {
       console.log("ℹ️ Zoho Access Token received, but no Refresh Token was provided.");
+      res.send("Zoho CRM connected successfully (No new Refresh Token provided - you may need to revoke access or use prompt=consent).");
     }
-
-    res.send("Zoho CRM connected successfully");
   } catch (error) {
     console.error("❌ Error exchanging Zoho code:", error.message);
     res.status(500).json({
