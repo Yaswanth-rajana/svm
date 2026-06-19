@@ -49,7 +49,7 @@ const leadSchema = new mongoose.Schema(
 
     eventDate: {
       type: Date,
-      default: new Date("2026-06-20T10:00:00+05:30"),
+      default: new Date("2026-07-04T10:00:00+05:30"),
     },
     
     paymentStatus: {
@@ -125,6 +125,33 @@ const leadSchema = new mongoose.Schema(
       type: String,
       enum: ["infrastructure", "course"],
       required: true,
+    },
+
+    biginRecordId: {
+      type: String,
+    },
+
+    biginSyncStatus: {
+      type: String,
+      enum: ["pending", "synced", "failed"],
+      default: "pending",
+    },
+
+    lastBiginSyncAt: {
+      type: Date,
+    },
+
+    biginLastError: {
+      type: String,
+    },
+
+    biginRetryCount: {
+      type: Number,
+      default: 0,
+    },
+
+    lastBiginRetryAt: {
+      type: Date,
     },
   },
   {

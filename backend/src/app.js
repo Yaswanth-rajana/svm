@@ -9,6 +9,8 @@ import otpRoutes from "./routes/otpRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
+import biginRoutes from "./routes/biginRoutes.js";
+
 
 const app = express();
 
@@ -113,10 +115,12 @@ app.use("/api", paymentRoutes);
 app.use("/auth", authRoutes);
 app.use("/api/certificate", certificateLimiter);
 app.use("/api/certificate", certificateRoutes);
+app.use("/api", biginRoutes);
+
 
 
 app.get("/", (req, res) => {
-  res.send("API running...");
+  res.send("API running..."); // trigger nodemon restart
 });
 
 export default app;

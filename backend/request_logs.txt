@@ -42,3 +42,54 @@
 [2026-06-12T06:35:58.441Z] POST /api/payment/verify - Body: {"razorpay_order_id":"order_T0cgjMxNIhM6Aj","razorpay_payment_id":"pay_verify_test_123456","razorpay_signature":"c3821c6b2e5e2b3e78186fe84bf51d491d5036b8be3a2f22f10e5d585524ee0e","leadId":"6a2ba8ce6d11bfdc2f106485","leadType":"course","program":"cloud-computing"}
 [2026-06-12T06:35:59.594Z] POST /api/certificate/verify-and-generate - Body: {"fullName":"Test Course Lead","email":"test-verify-course@example.com","webinarCode":"TESTCODE123","program":"cloud-computing","otp":"123456"}
 [2026-06-12T06:48:49.730Z] POST /api/send-otp - Body: {"phone":"+912148548723","email":"dopara2982@dyleris.com","channel":"whatsapp","program":"cloud-computing"}
+[2026-06-19T11:56:08.084Z] GET /api/bigin/test-connection - Body: undefined
+[2026-06-19T11:56:13.592Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:03:02.810Z] GET /auth/zoho/callback?code=1000.80ae2136753df946ce888c9a4baa123f.e03b49142b8eefc3222c4139cd42551e&location=in&accounts-server=https%3A%2F%2Faccounts.zoho.in - Body: undefined
+[2026-06-19T12:03:03.202Z] GET /favicon.ico - Body: undefined
+[2026-06-19T12:03:34.520Z] GET /auth/zoho/callback?code=1000.5b48f7361331803a8fdd2c96df6d5922.78187c9a66162e7815cbb91d9de33635&location=in&accounts-server=https%3A%2F%2Faccounts.zoho.in - Body: undefined
+[2026-06-19T12:05:27.035Z] GET /auth/zoho/callback?code=1000.c00276c2e3c2c4306ee44f16f8064d27.4b87a05e88e62cde8f6a1ab8881d6262&location=in&accounts-server=https%3A%2F%2Faccounts.zoho.in - Body: undefined
+[2026-06-19T12:06:11.324Z] GET /api/bigin/test-connection - Body: undefined
+[2026-06-19T12:07:35.318Z] GET /auth/zoho/callback?code=1000.09190d4d92dd69e2ad2ada885791d3d9.74e176619ab09ad667d8a490fede7a1a&location=in&accounts-server=https%3A%2F%2Faccounts.zoho.in - Body: undefined
+[2026-06-19T12:10:39.716Z] GET /auth/zoho/callback?code=1000.b0113df8f2935928210848e043637cc6.2797e4263e727a8e43fb3e78a0d50ec6&location=in&accounts-server=https%3A%2F%2Faccounts.zoho.in - Body: undefined
+[2026-06-19T12:11:20.583Z] GET /api/bigin/test-connection - Body: undefined
+[2026-06-19T12:11:27.135Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:11:34.344Z] POST /api/bigin/test-create-registration - Body: undefined
+[2026-06-19T12:11:46.999Z] POST /api/bigin/test-create-registration - Body: undefined
+[2026-06-19T12:11:54.184Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:12:00.886Z] GET / - Body: undefined
+[2026-06-19T12:12:10.622Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:12:30.231Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:12:34.451Z] GET / - Body: undefined
+[2026-06-19T12:16:33.876Z] POST /api/bigin/test-create-registration - Body: undefined
+[2026-06-19T12:16:51.245Z] GET /api/bigin/test-connection - Body: undefined
+[2026-06-19T12:17:02.191Z] GET /api/bigin/test-connection - Body: undefined
+[2026-06-19T12:17:08.488Z] POST /api/bigin/test-create-registration - Body: undefined
+[2026-06-19T12:17:21.295Z] POST /api/bigin/test-create-registration - Body: undefined
+[2026-06-19T12:20:53.734Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:20:59.970Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:21:09.187Z] HEAD / - Body: undefined
+[2026-06-19T12:21:15.249Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:21:20.572Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:21:27.241Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:21:32.068Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:21:38.659Z] GET /api/bigin/debug-metadata - Body: undefined
+[2026-06-19T12:26:49.120Z] POST /api/bigin/resync-failed - Body: undefined
+[2026-06-19T12:32:53.639Z] GET /api/bigin/stats - Body: undefined
+[2026-06-19T12:32:54.124Z] GET /api/bigin/stats - Body: undefined
+[2026-06-19T12:32:54.534Z] POST /api/bigin/resync-failed - Body: undefined
+[2026-06-19T12:32:56.073Z] GET /api/bigin/stats - Body: undefined
+[2026-06-19T12:38:28.455Z] POST /api/send-otp - Body: {"phone":"+913625856356","email":"dopara2982@dyleris.com","channel":"whatsapp","program":"it-infrastructure"}
+[2026-06-19T12:38:53.169Z] POST /api/verify-otp - Body: {"contact":"dopara2982@dyleris.com","otp":"626465","program":"it-infrastructure"}
+[2026-06-19T12:38:57.171Z] POST /api/leads - Body: {"name":"Yasg","email":"dopara2982@dyleris.com","phone":"+913625856356","source":"webinar","workingProfile":"Software Engineer","experience":"1–3 years","program":"it-infrastructure"}
+[2026-06-19T12:38:59.037Z] POST /api/payment/create-order - Body: {"amount":99,"leadId":"6a2bac36237ad0a544c33ccf","leadType":"infrastructure","program":"it-infrastructure"}
+[2026-06-19T12:41:11.767Z] POST /api/send-otp - Body: {"phone":"+913625856356","email":"dopara2982@dyleris.com","channel":"whatsapp","program":"it-infrastructure"}
+[2026-06-19T12:41:29.370Z] POST /api/verify-otp - Body: {"contact":"dopara2982@dyleris.com","otp":"638914","program":"it-infrastructure"}
+[2026-06-19T12:41:33.018Z] POST /api/leads - Body: {"name":"yasg","email":"dopara2982@dyleris.com","phone":"+913625856356","source":"webinar","workingProfile":"Software Engineer","experience":"1–3 years","program":"it-infrastructure"}
+[2026-06-19T12:41:33.426Z] POST /api/payment/create-order - Body: {"amount":1,"leadId":"6a2bac36237ad0a544c33ccf","leadType":"infrastructure","program":"it-infrastructure"}
+[2026-06-19T12:42:19.543Z] POST /api/payment/verify - Body: {"razorpay_order_id":"order_T3Uel873IhbXbF","razorpay_payment_id":"pay_T3UfGZkFAbDYJ2","razorpay_signature":"bcdda9c621a0713e83cc9d537bdbbf10391eb9b612dee554db48773df463a212","leadId":"6a2bac36237ad0a544c33ccf","leadType":"infrastructure","program":"it-infrastructure"}
+[2026-06-19T12:43:25.390Z] POST /api/certificate/send-otp - Body: {"email":"dopara2982@dyleris.com","webinarCode":"SMINFRA062026","program":"it-infrastructure"}
+[2026-06-19T12:43:44.266Z] POST /api/certificate/send-otp - Body: {"email":"dopara2982@dyleris.com","webinarCode":"SMVINFRA062026","program":"it-infrastructure"}
+[2026-06-19T12:44:04.168Z] POST /api/certificate/verify-and-generate - Body: {"fullName":"Yash","email":"dopara2982@dyleris.com","webinarCode":"SMVINFRA062026","otp":"303959","program":"it-infrastructure"}
+[2026-06-19T12:46:48.746Z] POST /api/leads - Body: {"name":"yasg","email":"dopara2982@dyleris.com","phone":"+913625856356","source":"brochure","workingProfile":"","experience":"","program":"it-infrastructure"}
+[2026-06-19T12:47:53.586Z] POST /api/leads - Body: {"name":"Paid Tester","email":"testbrochure@smven.com","phone":"9900990099","source":"brochure","program":"cloud-computing"}
+[2026-06-19T12:48:12.357Z] POST /api/leads - Body: {"name":"yasg","email":"dopara2982@dyleris.com","phone":"+913625856356","source":"brochure","workingProfile":"","experience":"","program":"it-infrastructure"}

@@ -184,8 +184,59 @@ export const initScheduler = () => {
         }
     });
 
+    // 4. Zoho Bigin Failed Sync Retry Job (Runs every 30 minutes)
+    cron.schedule('*/30 * * * *', async () => {
+        console.log(`⏰ [Scheduler] Running Zoho Bigin failed sync retry job...`);
+        try {
+            const models = [InfrastructureLead, CourseLead];
+            let resyncedCount = 0;
+
+            for (const LeadModel of models) {
+                // Find up to 50 failed leads where retry count is less than 10
+                const failedLeads = await LeadModel.find({
+                    biginSyncStatus: "failed",
+                    $or: [
+                        { biginRetryCount: { $lt: 10 } },
+                        { biginRetryCount: { $exists: false } }
+                    ]
+                }).limit(50);
+                
+                if (failedLeads.length > 0) {
+                    console.log(`🔍 [Scheduler] Found ${failedLeads.length} failed Bigin leads to resync in ${LeadModel.modelName}.`);
+                }
+
+                for (const lead of failedLeads) {
+                    lead.lastBiginRetryAt = new Date();
+                    lead.biginRetryCount = (lead.biginRetryCount || 0) + 1;
+                    
+                    try {
+                        const { createRegistrationInBigin } = await import('./services/biginService.js');
+                        const biginRecordId = await createRegistrationInBigin(lead);
+                        lead.biginRecordId = biginRecordId;
+                        lead.biginSyncStatus = "synced";
+                        lead.lastBiginSyncAt = new Date();
+                        lead.biginLastError = undefined; // clear error
+                        await lead.save();
+                        resyncedCount++;
+                        console.log(`✅ [Scheduler] Auto-resynced lead ${maskEmail(lead.email)} to Bigin.`);
+                    } catch (err) {
+                        console.error(`❌ [Scheduler] Auto-resync failed for ${lead.email}:`, err.message);
+                        lead.biginLastError = err.message;
+                        await lead.save();
+                    }
+                }
+            }
+            if (resyncedCount > 0) {
+                console.log(`✅ [Scheduler] Completed auto-resync job. Resynced ${resyncedCount} leads.`);
+            }
+        } catch (error) {
+            console.error('❌ Error running Zoho Bigin failed sync retry job:', error);
+        }
+    });
+
     console.log('🗓️  Scheduler initialized.');
     console.log('   - Daily reminder job: 9:00 AM IST');
     console.log('   - Pending payment alerts: Every 2 minutes (for >15 min delay)');
     console.log('   - 30-minute reminders: Every 2 minutes');
+    console.log('   - Bigin failed sync retry: Every 30 minutes');
 };
