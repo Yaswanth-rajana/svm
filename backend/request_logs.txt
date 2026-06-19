@@ -41,3 +41,4 @@
 [2026-06-12T06:35:58.109Z] POST /api/payment/create-order - Body: {"amount":99,"leadId":"6a2ba8ce6d11bfdc2f106485","leadType":"course","program":"cloud-computing"}
 [2026-06-12T06:35:58.441Z] POST /api/payment/verify - Body: {"razorpay_order_id":"order_T0cgjMxNIhM6Aj","razorpay_payment_id":"pay_verify_test_123456","razorpay_signature":"c3821c6b2e5e2b3e78186fe84bf51d491d5036b8be3a2f22f10e5d585524ee0e","leadId":"6a2ba8ce6d11bfdc2f106485","leadType":"course","program":"cloud-computing"}
 [2026-06-12T06:35:59.594Z] POST /api/certificate/verify-and-generate - Body: {"fullName":"Test Course Lead","email":"test-verify-course@example.com","webinarCode":"TESTCODE123","program":"cloud-computing","otp":"123456"}
+[2026-06-12T06:48:49.730Z] POST /api/send-otp - Body: {"phone":"+912148548723","email":"dopara2982@dyleris.com","channel":"whatsapp","program":"cloud-computing"}

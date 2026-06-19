@@ -1001,7 +1001,7 @@ export const programsContent = {
       title: "Become a Virtualization Engineer & Power Modern Data Centers",
       subtitle: "Virtualization is the foundation of modern cloud and enterprise infrastructure.Most enterprise workloads today run on virtualized environments.",
       addonBadge: "AI-Proof Career Path",
-      ctaPrimary: "Connect With Trainer",
+      ctaPrimary: "Download Brochure",
       stats: [
         { text: "₹15-18 LPA Avg Salary" },
         { text: "Virtualization Lab Partner" },
