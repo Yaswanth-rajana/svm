@@ -2,7 +2,7 @@ export const programsContent = {
   // IT Infrastructure Program Data
   infrastructure: {
     shortTitle: "IT Infrastructure",
-    price: 1,
+    price: 99,
     meta: {
       title: "IT Infrastructure Training | Start Your Career | SMVEN",
       description: "Master IT Infrastructure fundamentals, servers, virtualization, storage, and cloud systems to start a successful IT career."
