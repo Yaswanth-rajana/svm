@@ -2,12 +2,12 @@ export const programsContent = {
   // IT Infrastructure Program Data
   infrastructure: {
     shortTitle: "IT Infrastructure",
-    price: 99,
+    price: 9999,
     meta: {
       title: "IT Infrastructure Training | Start Your Career | SMVEN",
       description: "Master IT Infrastructure fundamentals, servers, virtualization, storage, and cloud systems to start a successful IT career."
     },
-    brochure: "/brochure.pdf",
+    brochure: "/itBrochure.pdf",
     keyTakeaways: [
       "Clear IT Infrastructure Career Roadmap",
       "Step-by-Step Learning Path From 0 to Job Ready",
@@ -1927,7 +1927,7 @@ export const programsContent = {
   'backup-engineering': {
     shortTitle: "Backup Engineering",
     price: 9999,
-    brochure: "/virtualization-brochure.pdf",
+    brochure: "/Backup-Engineer-SMV.pdf",
     meta: {
       title: "Backup Engineering Training | Become a Backup Engineer | SMVEN",
       description: "Master Veeam, Commvault, disaster recovery planning, and data replication. Start your career in backup engineering with SMVEN."
@@ -1959,7 +1959,7 @@ export const programsContent = {
       title: "Become a Backup & Disaster Recovery Engineer",
       subtitle: "Data is one of the most valuable assets for every organization. Backup Engineers ensure business continuity and data protection.",
       addonBadge: "AI-Proof Career Path",
-      ctaPrimary: "Connect With Trainer",
+      ctaPrimary: "Download Brochure",
       stats: [
         { text: "₹12-15 LPA Avg Salary" },
         { text: "Backup Lab Partner" },
