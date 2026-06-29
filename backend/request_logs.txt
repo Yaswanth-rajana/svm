@@ -98,3 +98,21 @@
 [2026-06-29T12:06:58.871Z] POST /api/leads - Body: {"name":"Test","email":"rahod77628@divahd.com","phone":"+914565456754","source":"webinar","workingProfile":"Software Engineer","experience":"Fresher","program":"virtualization-engineering"}
 [2026-06-29T12:07:01.715Z] POST /api/payment/create-order - Body: {"amount":1,"leadId":"6a425fe360480d9ed1bb3dcc","leadType":"course","program":"virtualization-engineering"}
 [2026-06-29T12:07:33.086Z] POST /api/payment/verify - Body: {"razorpay_order_id":"order_T7RPUcA0pjz0uq","razorpay_payment_id":"pay_T7RPkc8zEeHkky","razorpay_signature":"7317f5ab4288f696bf3ee0c489ab173330019f499364d22889520738f8e68189","leadId":"6a425fe360480d9ed1bb3dcc","leadType":"course","program":"virtualization-engineering"}
+[2026-06-29T16:47:27.392Z] HEAD / - Body: undefined
+[2026-06-29T16:48:18.995Z] HEAD / - Body: undefined
+[2026-06-29T16:48:52.228Z] HEAD / - Body: undefined
+[2026-06-29T17:01:40.730Z] HEAD / - Body: undefined
+[2026-06-29T17:02:27.158Z] HEAD / - Body: undefined
+[2026-06-29T17:05:09.541Z] POST /api/send-otp - Body: {"email":"testbrochure@smven.com","channel":"email","program":"cloud-computing"}
+[2026-06-29T17:05:21.896Z] POST /api/verify-otp - Body: {"contact":"testbrochure@smven.com","otp":"622148"}
+[2026-06-29T17:05:26.223Z] POST /api/leads - Body: {"name":"Test Lead","email":"testbrochure@smven.com","phone":"+919900990099","source":"webinar","workingProfile":"Software Engineer","experience":"Fresher","program":"cloud-computing"}
+[2026-06-29T17:05:32.685Z] POST /api/payment/create-order - Body: {"amount":1,"leadId":"6a42a5d6de1f635d24ea1d39","leadType":"course","program":"cloud-computing"}
+[2026-06-29T17:05:42.096Z] POST /api/payment/verify - Body: {"razorpay_order_id":"order_T7WUpIXOXIrAsH","razorpay_payment_id":"pay_test_123456","razorpay_signature":"8a5342d473afa6a378a0406b3d0e8e8cf91ef11a6b9c5bba824cf5180465ce6d","leadId":"6a42a5d6de1f635d24ea1d39","leadType":"course","program":"cloud-computing"}
+[2026-06-29T17:06:02.035Z] POST /api/certificate/send-otp - Body: {"email":"testbrochure@smven.com","webinarCode":"SMVINFRA070426","program":"it-infrastructure"}
+[2026-06-29T17:06:08.619Z] POST /api/send-otp - Body: {"email":"testinfra@smven.com","channel":"email","program":"it-infrastructure"}
+[2026-06-29T17:06:19.091Z] POST /api/verify-otp - Body: {"contact":"testinfra@smven.com","otp":"593160"}
+[2026-06-29T17:06:25.976Z] POST /api/leads - Body: {"name":"Infra Tester","email":"testinfra@smven.com","phone":"+919911991199","source":"webinar","workingProfile":"Software Engineer","experience":"Fresher","program":"it-infrastructure"}
+[2026-06-29T17:06:31.075Z] POST /api/payment/create-order - Body: {"amount":1,"leadId":"6a42a612de1f635d24ea1d3b","leadType":"infrastructure","program":"it-infrastructure"}
+[2026-06-29T17:06:41.444Z] POST /api/payment/verify - Body: {"razorpay_order_id":"order_T7WVr4WX6G7tbT","razorpay_payment_id":"pay_test_123456","razorpay_signature":"1267acb77e9fa436e7867ccfa58b99192cfc79b8b1e0f906a009d8cfab3be02c","leadId":"6a42a612de1f635d24ea1d3b","leadType":"infrastructure","program":"it-infrastructure"}
+[2026-06-29T17:06:46.888Z] POST /api/certificate/send-otp - Body: {"email":"testinfra@smven.com","webinarCode":"SMVINFRA070426","program":"it-infrastructure"}
+[2026-06-29T17:06:57.323Z] POST /api/certificate/verify-and-generate - Body: {"fullName":"Infra Tester","email":"testinfra@smven.com","webinarCode":"SMVINFRA070426","otp":"583346","program":"it-infrastructure"}
