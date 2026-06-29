@@ -79,7 +79,7 @@ export const sendConfirmationEmail = ({ name, email, program }) => {
 
                 <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">You're in, ${safeName}! 🎉</h2>
                 <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-                    Your seat is confirmed for the <strong>${programConfig.title}</strong> webinar. We're excited to help you navigate your career in this high-demand field.
+                    Your seat is confirmed for the <strong>${programConfig.title}</strong> Program. We're excited to help you navigate your career in this high-demand field.
                 </p>
                 
                 <!-- Webinar Details Card -->
@@ -95,7 +95,7 @@ export const sendConfirmationEmail = ({ name, email, program }) => {
                     <div style="margin-bottom: 24px;">
                         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Access Link</p>
                         <div style="margin-top: 12px;">
-                            <a href="https://zoom.us/j/meeting-id" style="display: inline-block; padding: 14px 28px; background-color: #ff5a5f; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">👉 Join Webinar</a>
+                            <a href="https://zoom.us/j/meeting-id" style="display: inline-block; padding: 14px 28px; background-color: #ff5a5f; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">👉 Join Program</a>
                         </div>
                         <p style="margin: 12px 0 0; font-size: 12px; color: #9ca3af;">
                             If the button doesn't work, copy this link: <br/>

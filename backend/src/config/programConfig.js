@@ -1,8 +1,8 @@
 export const PROGRAM_CONFIG = {
   "it-infrastructure": {
-    title: "IT Infrastructure Engineering Roadmap",
+    title: "IT Foundation Training Program",
     shortTitle: "IT Infrastructure",
-    emailSubject: "🎉 Registration Confirmed - IT Infrastructure Engineering Roadmap",
+    emailSubject: "🎉 Registration Confirmed - IT Infrast₹ructure Engineering Program",
     learningPoints: [
       "Understand what IT Infrastructure is and how it powers the modern world.",
       "Discover why this is a highly stable, AI-proof career path.",
