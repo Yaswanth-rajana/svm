@@ -93,3 +93,8 @@
 [2026-06-19T12:46:48.746Z] POST /api/leads - Body: {"name":"yasg","email":"dopara2982@dyleris.com","phone":"+913625856356","source":"brochure","workingProfile":"","experience":"","program":"it-infrastructure"}
 [2026-06-19T12:47:53.586Z] POST /api/leads - Body: {"name":"Paid Tester","email":"testbrochure@smven.com","phone":"9900990099","source":"brochure","program":"cloud-computing"}
 [2026-06-19T12:48:12.357Z] POST /api/leads - Body: {"name":"yasg","email":"dopara2982@dyleris.com","phone":"+913625856356","source":"brochure","workingProfile":"","experience":"","program":"it-infrastructure"}
+[2026-06-29T12:06:31.609Z] POST /api/send-otp - Body: {"phone":"+914565456754","email":"rahod77628@divahd.com","channel":"whatsapp","program":"virtualization-engineering"}
+[2026-06-29T12:06:54.198Z] POST /api/verify-otp - Body: {"contact":"rahod77628@divahd.com","otp":"366299","program":"virtualization-engineering"}
+[2026-06-29T12:06:58.871Z] POST /api/leads - Body: {"name":"Test","email":"rahod77628@divahd.com","phone":"+914565456754","source":"webinar","workingProfile":"Software Engineer","experience":"Fresher","program":"virtualization-engineering"}
+[2026-06-29T12:07:01.715Z] POST /api/payment/create-order - Body: {"amount":1,"leadId":"6a425fe360480d9ed1bb3dcc","leadType":"course","program":"virtualization-engineering"}
+[2026-06-29T12:07:33.086Z] POST /api/payment/verify - Body: {"razorpay_order_id":"order_T7RPUcA0pjz0uq","razorpay_payment_id":"pay_T7RPkc8zEeHkky","razorpay_signature":"7317f5ab4288f696bf3ee0c489ab173330019f499364d22889520738f8e68189","leadId":"6a425fe360480d9ed1bb3dcc","leadType":"course","program":"virtualization-engineering"}

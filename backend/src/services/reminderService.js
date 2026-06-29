@@ -40,22 +40,22 @@ export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, ev
     });
 
     if (daysLeft === 7) {
-        subject = `⏳ 1 Week to go! ${programConfig.shortTitle} Webinar`;
-        messageBody = `Just a quick reminder that our highly anticipated <strong>${programConfig.title}</strong> webinar is exactly <strong>1 week away</strong>. Make sure your calendar is marked!`;
+        subject = `⏳ 1 Week to go! ${programConfig.shortTitle} Program`;
+        messageBody = `Just a quick reminder that our highly anticipated <strong>${programConfig.title}</strong> program is exactly <strong>1 week away</strong>. Make sure your calendar is marked!`;
     } else if (daysLeft === 3) {
-        subject = `⌛ 3 Days left! Get ready for your ${programConfig.shortTitle} Webinar`;
-        messageBody = `We're only <strong>3 days away</strong> from the webinar! Get ready to explore the exciting world of ${programConfig.shortTitle} and learn how to build a high-growth career.`;
+        subject = `⌛ 3 Days left! Get ready for your ${programConfig.shortTitle} Program`;
+        messageBody = `We're only <strong>3 days away</strong> from the program! Get ready to explore the exciting world of ${programConfig.shortTitle} and learn how to build a high-growth career.`;
     } else if (daysLeft === 1) {
-        subject = `🚨 Tomorrow is the day! ${programConfig.shortTitle} Webinar`;
-        messageBody = `This is it! Tomorrow is the day of our <strong>${programConfig.title}</strong> webinar. We are extremely excited to see you there. Make sure to join a few minutes early to secure your spot.`;
+        subject = `🚨 Tomorrow is the day! ${programConfig.shortTitle} Program`;
+        messageBody = `This is it! Tomorrow is the day of our <strong>${programConfig.title}</strong> program. We are extremely excited to see you there. Make sure to join a few minutes early to secure your spot.`;
     } else if (minutesLeft === 30) {
-        subject = `⏰ Starting in 30 Minutes! ${programConfig.shortTitle} Webinar`;
+        subject = `⏰ Starting in 30 Minutes! ${programConfig.shortTitle} Program`;
         messageBody = `We am starting in exactly <strong>30 minutes</strong>! Grab a cup of coffee, get your notes ready, and join us to map out your ${programConfig.shortTitle} engineering career.`;
     }
 
     let note = "We'll send you another reminder before the session starts. We recommend joining 5 minutes early to test your audio.";
     if (minutesLeft === 30) {
-        note = "The webinar will start shortly. We recommend joining 5 minutes early to test your audio and ensure your connection is stable.";
+        note = "The program will start shortly. We recommend joining 5 minutes early to test your audio and ensure your connection is stable.";
     }
 
     const data = {
@@ -93,7 +93,7 @@ export const sendReminderEmail = async ({ name, email, daysLeft, minutesLeft, ev
                     <div style="margin-bottom: 24px;">
                         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Access Link</p>
                         <div style="margin-top: 12px;">
-                            <a href="https://zoom.us/j/meeting-id" style="display: inline-block; padding: 14px 28px; background-color: #ff5a5f; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">👉 Join Webinar</a>
+                            <a href="https://zoom.us/j/meeting-id" style="display: inline-block; padding: 14px 28px; background-color: #ff5a5f; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">👉 Join Program</a>
                         </div>
                     </div>
                 </div>
