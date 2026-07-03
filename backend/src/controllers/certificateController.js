@@ -46,7 +46,7 @@ export const sendCertificateOtp = async (req, res) => {
       console.warn("⚠️ Missing email or webinarCode");
       return res.status(400).json({ 
         success: false, 
-        message: "Email and Webinar Code are required" 
+        message: "Email and Program Code are required" 
       });
     }
 
@@ -58,7 +58,7 @@ export const sendCertificateOtp = async (req, res) => {
       console.warn("❌ Invalid webinar code");
       return res.status(400).json({ 
         success: false, 
-        message: "Invalid Webinar Code. Please use the code shared during the session." 
+        message: "Invalid Program Code. Please use the code shared during the session." 
       });
     }
 
@@ -68,7 +68,7 @@ export const sendCertificateOtp = async (req, res) => {
       console.warn(`❌ Claim deadline has passed. Deadline: ${deadline.toISOString()}, Now: ${now.toISOString()}`);
       return res.status(400).json({ 
         success: false, 
-        message: "Certificate claim period for this webinar has expired." 
+        message: "Certificate claim period for this program has expired." 
       });
     }
 
@@ -88,7 +88,7 @@ export const sendCertificateOtp = async (req, res) => {
         console.warn("❌ Lead not registered");
         return res.status(404).json({ 
           success: false, 
-          message: "This email address is not registered for the webinar. Please verify your email." 
+          message: "This email address is not registered for the program. Please verify your email." 
         });
       }
 
@@ -96,7 +96,7 @@ export const sendCertificateOtp = async (req, res) => {
       console.warn(`❌ Lead exists but paymentStatus is '${anyLead.paymentStatus}' (expected: 'paid')`);
       return res.status(403).json({ 
         success: false, 
-        message: "Webinar certificates are only available for paid participants." 
+        message: "Program certificates are only available for paid participants." 
       });
     }
 
@@ -212,7 +212,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
     if (webinarCode.trim() !== webinarConfig.webinarCode) {
       return res.status(400).json({ 
         success: false, 
-        message: "Invalid Webinar Code." 
+        message: "Invalid Program Code." 
       });
     }
 

@@ -64,7 +64,7 @@ const ClaimCertificate = () => {
       return;
     }
     if (!webinarCode.trim()) {
-      showToast('Please enter the secret webinar code.', true);
+      showToast('Please enter the secret program code.', true);
       return;
     }
 
@@ -160,7 +160,7 @@ const ClaimCertificate = () => {
               <Award className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-extrabold text-white">Certificate Portal</h1>
-            <p className="text-gray-400 text-xs mt-1">Claim your webinar masterclass credentials</p>
+            <p className="text-gray-400 text-xs mt-1">Claim your program masterclass credentials</p>
           </div>
         )}
 
@@ -235,7 +235,7 @@ const ClaimCertificate = () => {
             {/* Webinar Program */}
             <div>
               <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                Webinar Program
+                Program
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
@@ -266,7 +266,7 @@ const ClaimCertificate = () => {
             {/* Secret Webinar Code */}
             <div>
               <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                Secret Webinar Code
+                Secret Program Code
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
@@ -312,7 +312,7 @@ const ClaimCertificate = () => {
                 <div>Name: <span className="text-white font-semibold">{fullName}</span></div>
                 <div>Email: <span className="text-white font-semibold">{email}</span></div>
                 <div>Program: <span className="text-white font-semibold">{getProgramLabel(program)}</span></div>
-                <div>Webinar Code: <span className="text-white font-semibold">{webinarCode}</span></div>
+                <div>Program Code: <span className="text-white font-semibold">{webinarCode}</span></div>
               </div>
               <button 
                 type="button" 

@@ -56,7 +56,7 @@ function LandingPage({ program = 'it-infrastructure' }) {
         <div id="roadmap"><RoadmapSection program={program} /></div>
         <ComponentsSection program={program} />
         <MentorSection program={program} />
-        <div id="webinar"><WebinarSection program={program} /></div>
+        <div id="program"><WebinarSection program={program} /></div>
         <FaqSection program={program} />
         <Footer />
       </main>

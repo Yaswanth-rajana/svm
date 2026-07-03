@@ -88,7 +88,7 @@ export const sendConfirmationEmail = ({ name, email, program }) => {
                         <p style="margin: 0; font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;">Date & Time</p>
                         <p style="margin: 4px 0 0; font-size: 18px; color: #111827; font-weight: 600;">Saturday, July 4, 2026 at 10:00 AM IST</p>
                         <p style="margin: 8px 0 0; font-size: 14px;">
-                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(programConfig.title)}&dates=20260704T043000Z/20260704T060000Z&details=Join+our+exclusive+webinar+to+build+your+${encodeURIComponent(programConfig.shortTitle)}+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
+                            📅 <a href="https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(programConfig.title)}&dates=20260704T043000Z/20260704T060000Z&details=Join+our+exclusive+program+to+build+your+${encodeURIComponent(programConfig.shortTitle)}+career.&location=https://zoom.us/j/meeting-id" style="color: #2563eb; text-decoration: none; font-weight: 500;">Add to Google Calendar</a>
                         </p>
                     </div>
 
@@ -366,11 +366,11 @@ export const sendRegistrationAdminEmail = ({ name, email, phone, workingProfile,
                 }
             }
         ],
-        subject: "🎉 New Webinar Registration",
+        subject: "🎉 New Program Registration",
         htmlbody: `
             <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #ffffff; color: #1f2937;">
-                <h2 style="color: #111827; margin-bottom: 16px;">New Webinar Registration 🎉</h2>
-                <p>A new user has successfully registered for the webinar.</p>
+                <h2 style="color: #111827; margin-bottom: 16px;">New Program Registration 🎉</h2>
+                <p>A new user has successfully registered for the program.</p>
                 <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
@@ -516,7 +516,7 @@ export const sendPendingPaymentAdminEmail = ({ name, email, phone, source, regis
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">User Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone Number</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel} Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel} Program</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb; color: #d97706; font-weight: bold;">Pending</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Registration Time</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${registrationTime}</td></tr>
@@ -561,7 +561,7 @@ export const sendFailedPaymentAdminEmail = ({ name, email, phone, amount, paymen
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">User Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${name}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Email</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${email}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Phone Number</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${formattedPhone}</td></tr>
-                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Webinar Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel} Webinar</td></tr>
+                    <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program Name</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel} Program</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Program</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${programLabel}</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Status</td><td style="padding: 8px; border: 1px solid #e5e7eb; color: #ef4444; font-weight: bold;">Failed</td></tr>
                     <tr><td style="padding: 8px; border: 1px solid #e5e7eb; font-weight: bold;">Payment Method</td><td style="padding: 8px; border: 1px solid #e5e7eb;">${paymentMethod || 'Unknown'}</td></tr>

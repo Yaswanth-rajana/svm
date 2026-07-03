@@ -132,7 +132,7 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
   const mailOptions = {
     from: `"Smart Mate Ventures" <${fromEmail}>`,
     to: email,
-    subject: `Your SMVEN Webinar Certificate 🎓`,
+    subject: `Your SMVEN Program Certificate 🎓`,
     html: `
       <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
         

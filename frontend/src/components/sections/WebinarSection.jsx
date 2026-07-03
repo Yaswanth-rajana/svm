@@ -8,7 +8,7 @@ function WebinarSection({ program = 'infrastructure' }) {
   const { webinar } = data;
 
   return (
-    <section className="relative bg-[#0B0F14] pt-20 pb-24 lg:pt-28 lg:pb-32 overflow-hidden" id="webinar">
+    <section className="relative bg-[#0B0F14] pt-20 pb-24 lg:pt-28 lg:pb-32 overflow-hidden" id="program">
       {/* Background Decorative Orbs & Radial Glow */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-pink-500/5 blur-[120px] rounded-full -z-10 animate-pulse-slow"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-orange-500/5 blur-[120px] rounded-full -z-10"></div>
@@ -30,7 +30,7 @@ function WebinarSection({ program = 'infrastructure' }) {
             </div>
             
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-5 tracking-tight">
-              Join Our <br className="hidden md:block" /> Live Webinar <span className="inline-block align-middle -translate-y-[2px]">🚀</span>
+              Join Our <br className="hidden md:block" /> Live Program <span className="inline-block align-middle -translate-y-[2px]">🚀</span>
               <div className="w-20 h-1.5 bg-gradient-to-r from-pink-500 to-orange-400 mt-5 rounded-full hidden lg:block opacity-90"></div>
             </h2>
             

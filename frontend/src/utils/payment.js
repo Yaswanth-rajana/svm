@@ -58,7 +58,7 @@ export const handleRazorpayPayment = async ({
       amount: orderData.order.amount,
       currency: orderData.order.currency,
       name: "Smart Mate Ventures",
-      description: "Webinar Registration",
+      description: "Program Registration",
       order_id: orderData.order.id,
       handler: async function (response) {
         console.log("Handler entered");

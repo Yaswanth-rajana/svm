@@ -133,7 +133,7 @@ const BenefitsModal = ({ program = 'infrastructure' }) => {
                   <span>Exclusive Benefits</span>
                 </div>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-white leading-tight tracking-tight">
-                  What You'll Gain From This Webinar
+                  What You'll Gain From This Program
                 </h2>
                 <p className="text-gray-400 text-xs md:text-sm font-medium mt-0.5 md:mt-1">
                   A complete roadmap to start and grow your career in {shortTitle}.

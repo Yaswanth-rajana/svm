@@ -10,7 +10,7 @@ const PaymentSuccess = () => {
         </div>
         <h1 className="text-3xl font-bold text-white mb-4">Payment Successful!</h1>
         <p className="text-gray-400 mb-8 text-sm">
-          You have successfully registered for the webinar. Check your email for joining details and next steps.
+          You have successfully registered for the program. Check your email for joining details and next steps.
         </p>
         <a 
           href="/" 

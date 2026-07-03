@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const WhatsAppFloat = () => {
-  const whatsappUrl = 'https://wa.me/917307765051?text=Hi%20I%20want%20to%20know%20more%20about%20the%20webinar.';
+  const whatsappUrl = 'https://wa.me/917307765051?text=Hi%20I%20want%20to%20know%20more%20about%20the%20program.';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNearFooter, setIsNearFooter] = useState(false);
 

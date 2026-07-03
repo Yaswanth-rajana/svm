@@ -35,7 +35,7 @@ function App() {
         <div id="roadmap"><RoadmapSection /></div>
         <ComponentsSection />
         <MentorSection />
-        <div id="webinar"><WebinarSection /></div>
+        <div id="program"><WebinarSection /></div>
         <FaqSection />
         <Footer />
       </main>

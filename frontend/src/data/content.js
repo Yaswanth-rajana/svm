@@ -217,7 +217,7 @@ export const programsContent = {
       ]
     },
     webinar: {
-      title: "🚀 Join Our Live Webinar",
+      title: "🚀 Join Our Live Program",
       subtitle: "Learn IT Infrastructure from Industry Experts",
       dateTime: "📅 July 4  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
       cta: "Claim Your Spot",

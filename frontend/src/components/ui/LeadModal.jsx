@@ -298,7 +298,7 @@ const LeadModal = ({ program }) => {
                   ? "We'll reach out shortly 🚀" 
                   : type === 'pdf'
                   ? "Brochure downloaded successfully 📚"
-                  : "You have registered for the webinar successfully 🚀"}
+                  : "You have registered for the program successfully 🚀"}
               </h3>
               <p className="text-gray-400">
                 {type === 'call'
