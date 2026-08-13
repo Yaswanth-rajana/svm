@@ -5,6 +5,8 @@ import { sendWhatsAppOTP } from "../services/whatsappService.js";
 import { sendEmailOTP } from "../services/emailService.js";
 import { normalizePhone } from "../utils/phone.js";
 import { env } from "../config/env.js";
+import Student from "../models/Student.js";
+import { generateToken } from "./passwordAuthController.js";
 
 /**
  * @desc    Send OTP via WhatsApp with Email fallback
@@ -186,9 +188,42 @@ export const verifyOtp = async (req, res) => {
       console.warn("⚠️ Cleanup of old OTPs failed (non-critical):", cleanupError.message);
     }
 
+    // Auth Integration: Find or create student, then generate JWT
+    const email = isPhone ? null : formattedContact;
+    let student = null;
+    
+    if (email) {
+      student = await Student.findOne({ email });
+      if (!student) {
+        student = await Student.create({
+          email,
+          name: email.split("@")[0],
+          isVerified: true,
+        });
+      }
+    } else {
+      // Find by phone
+      student = await Student.findOne({ phone: formattedContact });
+      // If phone login and no student exists, we might need them to register first
+      // But for now, since this is a fallback, let's assume they exist or error out
+      if (!student) {
+         return res.status(404).json({ success: false, message: "No account found with this phone number. Please use your email." });
+      }
+    }
+
+    // Update login tracking
+    student.lastLoginMethod = "otp";
+    student.lastLoginAt = new Date();
+    await student.save();
+
+    const token = generateToken(student._id, true);
+
     return res.status(200).json({
       success: true,
-      message: "OTP verified successfully"
+      message: "OTP verified successfully",
+      token,
+      studentId: student.studentId,
+      passwordCreated: student.passwordCreated
     });
 
   } catch (error) {

@@ -10,13 +10,31 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
 import biginRoutes from "./routes/biginRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import studentAuthRoutes from "./routes/studentAuthRoutes.js";
 
+
+const allowedOrigins = [
+  "https://smven.com",
+  "https://www.smven.com",
+  "https://portal.smven.com",
+  "http://localhost:5173",
+  "http://localhost:5174",
+];
 
 const app = express();
 
 app.use(
   cors({
-    origin: ["https://smven.com", "https://www.smven.com", "http://localhost:5173"],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("CORS Policy: Origin not allowed"), false);
+    },
     credentials: true,
   })
 );
@@ -35,7 +53,7 @@ app.use(
 // Global Rate Limiting
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per window
+  max: process.env.NODE_ENV === "production" ? 100 : 10000, // Raise limit significantly in development
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -112,10 +130,13 @@ app.use("/auth", authLimiter);
 app.use("/api", leadRoutes);
 app.use("/api", otpRoutes);
 app.use("/api", paymentRoutes);
-app.use("/auth", authRoutes);
+app.use("/auth", authRoutes); // Zoho Auth
+app.use("/api/auth", authLimiter, studentAuthRoutes); // Student Password Auth
 app.use("/api/certificate", certificateLimiter);
 app.use("/api/certificate", certificateRoutes);
 app.use("/api", biginRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 
