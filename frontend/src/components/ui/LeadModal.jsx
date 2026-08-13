@@ -6,6 +6,7 @@ import { handleRazorpayPayment } from '../../utils/payment';
 import { normalizePhone } from '../../utils/phone';
 import BenefitsLink from './BenefitsLink';
 import { programsContent } from '../../data/content';
+import PaymentPlanModal from './PaymentPlanModal';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -61,8 +62,9 @@ const LeadModal = ({ program }) => {
     experience: ''
   });
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
-  const [resetKey, setResetKey] = useState(0);
+  const [isResetKey, setIsResetKey] = useState(0);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
 
   useEffect(() => {
     const handleOpen = (e) => {
@@ -71,7 +73,7 @@ const LeadModal = ({ program }) => {
       setIsSubmitted(e.detail.isSuccess || false);
       setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
       setIsPhoneVerified(false);
-      setResetKey(prev => prev + 1);
+      setIsResetKey(prev => prev + 1);
 
       // Request animation frame to ensure the DOM is updated before applying transitions
       requestAnimationFrame(() => {
@@ -118,6 +120,20 @@ const LeadModal = ({ program }) => {
       return;
     }
 
+    if (type === 'webinar') {
+      setIsPlanModalOpen(true);
+      return;
+    }
+
+    await executeLeadSubmission("FULL");
+  };
+
+  const handlePlanConfirm = async (selectedPlan) => {
+    setIsPlanModalOpen(false);
+    await executeLeadSubmission(selectedPlan);
+  };
+
+  const executeLeadSubmission = async (paymentPlan = "FULL") => {
     try {
       const isCallRequest = type === 'call';
       const endpoint = isCallRequest ? '/api/request-call' : '/api/leads';
@@ -136,7 +152,8 @@ const LeadModal = ({ program }) => {
             source: type === 'webinar' ? 'webinar' : 'brochure',
             workingProfile: formData.workingProfile,
             experience: formData.experience,
-            program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')
+            program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure'),
+            paymentPlan
           };
 
       console.log("Submitting lead:", payload);
@@ -165,7 +182,7 @@ const LeadModal = ({ program }) => {
 
       if (!response.ok) {
         if (response.status === 409) {
-          throw new Error("You have already registered for this program.");
+          throw new Error(data.message || "You have already registered for this program.");
         }
         throw new Error(data.message || `Server error: HTTP ${response.status}`);
       }
@@ -176,12 +193,14 @@ const LeadModal = ({ program }) => {
         // 💳 Razorpay Integration for Webinar
         if (type === 'webinar') {
           setIsPaymentLoading(true);
-          const programKey = program === 'it-infrastructure' ? 'infrastructure' : program;
-          const programData = programsContent[programKey] || programsContent.infrastructure;
+          
+          // Local display amount based on selected plan
+          const displayAmount = paymentPlan === "TWO_INSTALLMENTS" ? 6500 : 13000;
+
           handleRazorpayPayment({
             leadData: lead,
             formData: formData,
-            amount: programData.price,
+            amount: displayAmount,
             onSuccess: () => {
               setIsSubmitted(true);
               setIsPaymentLoading(false);
@@ -469,7 +488,7 @@ const LeadModal = ({ program }) => {
                   <div className="space-y-1.5 text-left">
                     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
                     <OtpVerification 
-                      key={`otp-modal-simple-${resetKey}`}
+                      key={`otp-modal-simple-${isResetKey}`}
                       phone={formData.phone} 
                       email={formData.email} 
                       fullName={formData.fullName}
@@ -491,6 +510,12 @@ const LeadModal = ({ program }) => {
           )}
         </div>
       </div>
+      
+      <PaymentPlanModal 
+        isOpen={isPlanModalOpen} 
+        onClose={() => setIsPlanModalOpen(false)} 
+        onConfirm={handlePlanConfirm} 
+      />
     </div>
   );
 };

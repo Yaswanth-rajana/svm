@@ -8,6 +8,7 @@ import OtpVerification from '../ui/OtpVerification'
 import { handleRazorpayPayment } from '../../utils/payment'
 import { normalizePhone } from '../../utils/phone'
 import BenefitsLink from '../ui/BenefitsLink'
+import PaymentPlanModal from '../ui/PaymentPlanModal'
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -71,6 +72,7 @@ function HeroSection({ program }) {
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
   const [loadingAction, setLoadingAction] = useState(""); // "submit"
   const [resetKey, setResetKey] = useState(0);
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
 
 
 
@@ -96,8 +98,16 @@ function HeroSection({ program }) {
       alert("Please verify your phone number first.");
       return;
     }
-    setLoadingAction("submit");
+    setIsPlanModalOpen(true);
+  };
 
+  const handlePlanConfirm = async (selectedPlan) => {
+    setIsPlanModalOpen(false);
+    setLoadingAction("submit");
+    await executeLeadSubmission(selectedPlan);
+  };
+
+  const executeLeadSubmission = async (paymentPlan = "FULL") => {
     try {
       const API_URL = import.meta.env.VITE_API_URL;
       const controller = new AbortController();
@@ -110,7 +120,8 @@ function HeroSection({ program }) {
         source: 'webinar',
         workingProfile: formData.workingProfile,
         experience: formData.experience,
-        program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')
+        program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure'),
+        paymentPlan
       };
 
       console.log("Submitting lead from HeroSection:", payload);
@@ -135,7 +146,7 @@ function HeroSection({ program }) {
 
       if (!response.ok) {
         if (response.status === 409) {
-          throw new Error("You have already registered for this program.");
+          throw new Error(resJson.message || "You have already registered for this program.");
         }
         throw new Error(resJson.message || `Server error: HTTP ${response.status}`);
       }
@@ -143,11 +154,14 @@ function HeroSection({ program }) {
       if (resJson.success) {
         const lead = resJson.data;
 
+        // Local display amount based on selected plan
+        const displayAmount = paymentPlan === "TWO_INSTALLMENTS" ? 6500 : 13000;
+
         // 💳 Razorpay Integration for Webinar
         handleRazorpayPayment({
           leadData: lead,
           formData: formData,
-          amount: data.price,
+          amount: displayAmount,
           onSuccess: () => {
             // Open the success popup
             openLeadModal('webinar', true);
@@ -401,7 +415,12 @@ function HeroSection({ program }) {
           </div>
         </div>
       </Container>
-
+      
+      <PaymentPlanModal 
+        isOpen={isPlanModalOpen} 
+        onClose={() => setIsPlanModalOpen(false)} 
+        onConfirm={handlePlanConfirm} 
+      />
     </div>
   )
 }

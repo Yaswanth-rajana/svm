@@ -159,7 +159,7 @@ const resolveExperienceValue = (exp) => {
 /**
  * @desc    Helper to update fields of a pipeline record in Zoho Bigin
  */
-const updateBiginRecord = async (biginRecordId, fields) => {
+export const updateBiginRecord = async (biginRecordId, fields) => {
   const accessToken = await getBiginAccessToken();
   const response = await axios.put(
     "https://www.zohoapis.in/bigin/v2/Pipelines",
@@ -198,9 +198,12 @@ export const createRegistrationInBigin = async (lead) => {
   let stage = "New Enquiry";
   let paymentStatus = "Pending";
 
-  if (lead.paymentStatus === "paid") {
+  if (lead.paymentStatus === "paid" || lead.paymentStatus === "PAID") {
     stage = "Enrolled";
     paymentStatus = "Paid";
+  } else if (lead.paymentStatus === "PARTIALLY_PAID") {
+    stage = "Enrolled";
+    paymentStatus = "Pending";
   } else if (lead.paymentStatus === "refunded") {
     paymentStatus = "Refunded";
   }
@@ -215,7 +218,8 @@ export const createRegistrationInBigin = async (lead) => {
     Payment_Status: paymentStatus,
     Stage: stage,
     Sub_Pipeline: subPipeline,
-    Certificate_Claimed: !!lead.certificateClaimed
+    Certificate_Claimed: !!lead.certificateClaimed,
+    Description: `Payment Plan: ${lead.paymentPlan || "FULL"}\nPayment Status: ${lead.paymentStatus}\nAmount Paid: ₹${lead.amountPaid || 0}\nBalance: ₹${lead.balanceAmount || 0}`
   };
 
   if (layoutId) {

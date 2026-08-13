@@ -49,8 +49,10 @@ export const sendLeadToZohoCRM = async (leadData) => {
 
     // Map Registration Status logic
     let registrationStatus = "Payment Pending";
-    if (leadData.paymentStatus === "paid") {
+    if (leadData.paymentStatus === "paid" || leadData.paymentStatus === "PAID") {
       registrationStatus = "Paid";
+    } else if (leadData.paymentStatus === "PARTIALLY_PAID") {
+      registrationStatus = "Partially Paid";
     }
     if (leadData.certificateClaimed) {
       registrationStatus = "Certificate Claimed";
@@ -58,7 +60,7 @@ export const sendLeadToZohoCRM = async (leadData) => {
 
     // Map Payment Status logic (supported: pending, paid, refunded)
     let zohoPaymentStatus = "pending";
-    if (leadData.paymentStatus === "paid") {
+    if (leadData.paymentStatus === "paid" || leadData.paymentStatus === "PAID") {
       zohoPaymentStatus = "paid";
     } else if (leadData.paymentStatus === "refunded") {
       zohoPaymentStatus = "refunded";
@@ -89,7 +91,7 @@ export const sendLeadToZohoCRM = async (leadData) => {
       Lead_Source: leadData.sources?.join(", ") || "Webinar",
       Working_Profile: leadData.workingProfile || "N/A",
       Experience: leadData.experience || "N/A",
-      Description: `Registration Date: ${leadData.createdAt}\nPayment Status: ${leadData.paymentStatus}\nProgram: ${program}`,
+      Description: `Registration Date: ${leadData.createdAt}\nPayment Plan: ${leadData.paymentPlan || "FULL"}\nPayment Status: ${leadData.paymentStatus}\nAmount Paid: ₹${leadData.amountPaid || 0}\nBalance: ₹${leadData.balanceAmount || 0}\nProgram: ${program}`,
       
       // Mapped fields
       Program: program,

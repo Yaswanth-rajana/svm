@@ -75,8 +75,8 @@ export const sendCertificateOtp = async (req, res) => {
     const LeadModel = getLeadModel(program);
 
     // 3. Check if a paid registration exists for this email and program
-    console.log(`🔍 Querying Lead for email: '${emailLower}', program: '${program}' with paymentStatus: 'paid'`);
-    let lead = await LeadModel.findOne({ email: emailLower, paymentStatus: 'paid', program });
+    console.log(`🔍 Querying Lead for email: '${emailLower}', program: '${program}' with paymentStatus: 'paid' or 'PAID'`);
+    let lead = await LeadModel.findOne({ email: emailLower, paymentStatus: { $in: ['paid', 'PAID'] }, program });
     console.log("👤 Matched paid lead:", lead);
 
     if (!lead) {
@@ -92,11 +92,11 @@ export const sendCertificateOtp = async (req, res) => {
         });
       }
 
-      // If lead exists but paymentStatus is not 'paid'
-      console.warn(`❌ Lead exists but paymentStatus is '${anyLead.paymentStatus}' (expected: 'paid')`);
+      // If lead exists but paymentStatus is not 'paid' or 'PAID'
+      console.warn(`❌ Lead exists but paymentStatus is '${anyLead.paymentStatus}' (expected: 'paid' or 'PAID')`);
       return res.status(403).json({ 
         success: false, 
-        message: "Program certificates are only available for paid participants." 
+        message: "Program certificates are only available for paid participants. Partially paid participants must complete the second installment first." 
       });
     }
 
@@ -270,7 +270,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
     const lead = await LeadModel.findOneAndUpdate(
       { 
         email: emailLower, 
-        paymentStatus: 'paid', 
+        paymentStatus: { $in: ['paid', 'PAID'] }, 
         program,
         certificateClaimed: false 
       }, 

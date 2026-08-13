@@ -57,6 +57,48 @@ const leadSchema = new mongoose.Schema(
       default: "pending",
     },
 
+    paymentPlan: {
+      type: String,
+      enum: ["FULL", "TWO_INSTALLMENTS"],
+      default: "FULL"
+    },
+
+    totalAmount: {
+      type: Number,
+    },
+
+    amountPaid: {
+      type: Number,
+      default: 0
+    },
+
+    balanceAmount: {
+      type: Number,
+      default: 0
+    },
+
+    firstInstallmentAmount: {
+      type: Number,
+    },
+
+    secondInstallmentAmount: {
+      type: Number,
+    },
+
+    secondInstallment: {
+      amount: { type: Number },
+      status: {
+        type: String,
+        enum: ["PENDING", "PAID", "OVERDUE"],
+        default: "PENDING"
+      },
+      paymentLinkId: { type: String },
+      paymentLinkUrl: { type: String },
+      dueDate: { type: Date },
+      paidAt: { type: Date },
+      paymentId: { type: String }
+    },
+
     razorpayOrderId: {
       type: String,
     },
@@ -75,10 +117,6 @@ const leadSchema = new mongoose.Schema(
 
     transactionId: {
       type: String,
-    },
-
-    amountPaid: {
-      type: Number,
     },
 
     reminder7Sent: {

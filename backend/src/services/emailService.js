@@ -576,3 +576,304 @@ export const sendFailedPaymentAdminEmail = ({ name, email, phone, amount, paymen
         .then(() => console.log(`✅ Admin alert (Payment Failed) sent successfully for: ${maskEmail(email)}`))
         .catch(error => console.error('❌ Failed to send admin alert (Payment Failed):', error.message));
 };
+
+/**
+ * Sends the second installment payment link to the student.
+ */
+export const sendSecondInstallmentLinkEmail = ({ name, email, program, paymentLinkUrl, dueDate }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+
+    if (!apiKey || !fromEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY or FROM_EMAIL is not defined in .env");
+        return;
+    }
+
+    const programConfig = getProgramConfig(program);
+    const safeName = name || "Student";
+    const url = 'https://api.zeptomail.in/v1.1/email';
+    const formattedDate = new Date(dueDate).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    const data = {
+        from: {
+            address: fromEmail,
+            name: "Smart Mate Ventures"
+        },
+        to: [
+            {
+                email_address: {
+                    address: email,
+                    name: safeName
+                }
+            }
+        ],
+        subject: `Installment Payment Link: ${programConfig.shortTitle} Program`,
+        htmlbody: `
+            <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <img src="https://smven.com/Logo.1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
+                </div>
+
+                <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">Hello ${safeName},</h2>
+                
+                <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                    Thank you for choosing the <strong>${programConfig.shortTitle}</strong> program! We have received your registration and your first installment payment of ₹6,500.
+                </p>
+
+                <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin-top: 0; color: #111827; font-size: 16px; font-weight: 600; margin-bottom: 16px;">Payment Schedule & Plan Details:</h3>
+                    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Program:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">${programConfig.shortTitle}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">First Installment Paid:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #10b981;">₹6,500 (Paid)</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Second Installment Due:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #f59e0b;">₹6,500</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Due Date:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #ef4444;">${formattedDate} (within 30 days)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                    You can pay the remaining second installment at any time before the due date by clicking the link below:
+                </p>
+
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <a href="${paymentLinkUrl}" target="_blank" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">
+                        Pay Second Installment (₹6,500)
+                    </a>
+                </div>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #6b7280; margin-bottom: 0; border-top: 1px solid #f3f4f6; padding-top: 24px; text-align: center;">
+                    If you have any questions or require assistance, please reply to this email or reach out to support.
+                </p>
+            </div>
+        `
+    };
+
+    const config = {
+        headers: {
+            'Authorization': `Zoho-enczapikey ${apiKey}`,
+            'Content-Type': 'application/json'
+        }
+    };
+
+    axios.post(url, data, config)
+        .then(response => {
+            console.log(`✅ Second installment link email sent to: ${maskEmail(email)}`);
+        })
+        .catch(error => {
+            console.error('❌ Failed to send second installment link email:', error.message);
+        });
+};
+
+/**
+ * Sends a confirmation email after full payment is received.
+ */
+export const sendSecondInstallmentPaidEmail = ({ name, email, program }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+
+    if (!apiKey || !fromEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY or FROM_EMAIL is not defined in .env");
+        return;
+    }
+
+    const programConfig = getProgramConfig(program);
+    const safeName = name || "Student";
+    const url = 'https://api.zeptomail.in/v1.1/email';
+
+    const data = {
+        from: {
+            address: fromEmail,
+            name: "Smart Mate Ventures"
+        },
+        to: [
+            {
+                email_address: {
+                    address: email,
+                    name: safeName
+                }
+            }
+        ],
+        subject: `Payment Completed: ${programConfig.shortTitle} Program`,
+        htmlbody: `
+            <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <img src="https://smven.com/Logo.1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
+                </div>
+
+                <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">Fee Payment Completed! 🎓</h2>
+                
+                <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                    Hello ${safeName}, we are pleased to inform you that we have received your second installment payment of ₹6,500. Your program fees are now <strong>fully paid</strong>!
+                </p>
+
+                <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin-top: 0; color: #111827; font-size: 16px; font-weight: 600; margin-bottom: 16px;">Billing Summary:</h3>
+                    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Program:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">${programConfig.shortTitle}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Total Amount Paid:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #10b981;">₹13,000</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Outstanding Balance:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #10b981;">₹0 (Paid in Full)</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                    All course benefits, including eligibility to claim your training certificate upon course completion, are now fully unlocked!
+                </p>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #6b7280; margin-bottom: 0; border-top: 1px solid #f3f4f6; padding-top: 24px; text-align: center;">
+                    Thank you for your prompt payment. We look forward to seeing your career growth!
+                </p>
+            </div>
+        `
+    };
+
+    const config = {
+        headers: {
+            'Authorization': `Zoho-enczapikey ${apiKey}`,
+            'Content-Type': 'application/json'
+        }
+    };
+
+    axios.post(url, data, config)
+        .then(response => {
+            console.log(`✅ Second installment completion email sent to: ${maskEmail(email)}`);
+        })
+        .catch(error => {
+            console.error('❌ Failed to send second installment completion email:', error.message);
+        });
+};
+
+/**
+ * Sends a reminder email for the second installment.
+ */
+export const sendSecondInstallmentReminderEmail = ({ name, email, program, paymentLinkUrl, dueDate, daysLeft }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+
+    if (!apiKey || !fromEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY or FROM_EMAIL is not defined in .env");
+        return;
+    }
+
+    const programConfig = getProgramConfig(program);
+    const safeName = name || "Student";
+    const url = 'https://api.zeptomail.in/v1.1/email';
+    const formattedDate = new Date(dueDate).toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+
+    const isOverdue = daysLeft < 0;
+    const subject = isOverdue 
+        ? `⚠️ OVERDUE: Installment Payment for ${programConfig.shortTitle}`
+        : `Reminder: Second Installment Due in ${daysLeft} days for ${programConfig.shortTitle}`;
+
+    const reminderMessage = isOverdue
+        ? `This is an urgent notice that your second installment payment of ₹6,500 is overdue. It was due on <strong>${formattedDate}</strong>.`
+        : `This is a friendly reminder that your second installment payment of ₹6,500 is due in <strong>${daysLeft} days</strong> (on or before <strong>${formattedDate}</strong>).`;
+
+    const data = {
+        from: {
+            address: fromEmail,
+            name: "Smart Mate Ventures"
+        },
+        to: [
+            {
+                email_address: {
+                    address: email,
+                    name: safeName
+                }
+            }
+        ],
+        subject: subject,
+        htmlbody: `
+            <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <img src="https://smven.com/Logo.1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
+                </div>
+
+                <h2 style="color: ${isOverdue ? '#ef4444' : '#111827'}; font-size: 22px; font-weight: 700; margin-bottom: 16px;">
+                    ${isOverdue ? 'Overdue Payment Notice ⚠️' : 'Payment Reminder 🗓️'}
+                </h2>
+                
+                <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                    Hello ${safeName}, ${reminderMessage}
+                </p>
+
+                <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin-top: 0; color: #111827; font-size: 16px; font-weight: 600; margin-bottom: 16px;">Installment Details:</h3>
+                    <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Program:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">${programConfig.shortTitle}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Due Amount:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #ef4444;">₹6,500</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Due Date:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #ef4444;">${formattedDate}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                    Please click the link below to complete your second installment payment:
+                </p>
+
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <a href="${paymentLinkUrl}" target="_blank" style="background: linear-gradient(135deg, ${isOverdue ? '#ef4444, #dc2626' : '#2563eb, #1d4ed8'}); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">
+                        Pay Installment (₹6,500)
+                    </a>
+                </div>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #6b7280; margin-bottom: 0; border-top: 1px solid #f3f4f6; padding-top: 24px; text-align: center;">
+                    If you have already paid, please ignore this email. Contact support for any billing concerns.
+                </p>
+            </div>
+        `
+    };
+
+    const config = {
+        headers: {
+            'Authorization': `Zoho-enczapikey ${apiKey}`,
+            'Content-Type': 'application/json'
+        }
+    };
+
+    axios.post(url, data, config)
+        .then(response => {
+            console.log(`✅ Installment reminder email sent to: ${maskEmail(email)}`);
+        })
+        .catch(error => {
+            console.error('❌ Failed to send installment reminder email:', error.message);
+        });
+};

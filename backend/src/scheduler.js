@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import InfrastructureLead from './models/InfrastructureLead.js';
 import CourseLead from './models/CourseLead.js';
 import { sendReminderEmail } from './services/reminderService.js';
-import { sendPendingPaymentAdminEmail } from './services/emailService.js';
+import { sendPendingPaymentAdminEmail, sendSecondInstallmentReminderEmail } from './services/emailService.js';
 import { maskEmail } from './utils/logger.js';
 
 /**
@@ -234,8 +234,66 @@ export const initScheduler = () => {
         }
     });
 
+    // 5. Daily Installment Reminder Job (Run daily at 9:05 AM IST)
+    cron.schedule('5 9 * * *', async () => {
+        console.log(`⏰ [Scheduler] Running daily installment reminder job...`);
+        try {
+            const models = [InfrastructureLead, CourseLead];
+            let remindersSent = 0;
+            const today = new Date();
+
+            for (const LeadModel of models) {
+                const leads = await LeadModel.find({
+                    paymentPlan: "TWO_INSTALLMENTS",
+                    "secondInstallment.status": { $ne: "PAID" },
+                    "secondInstallment.paymentLinkUrl": { $exists: true }
+                });
+
+                for (const lead of leads) {
+                    const dueDate = new Date(lead.secondInstallment.dueDate);
+                    const diffTime = dueDate.getTime() - today.getTime();
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    let shouldSend = false;
+
+                    if (diffDays === 5 || diffDays === 1 || diffDays < 0) {
+                        shouldSend = true;
+                    }
+
+                    if (diffDays < 0 && lead.secondInstallment.status !== "OVERDUE") {
+                        lead.secondInstallment.status = "OVERDUE";
+                        await lead.save();
+                    }
+
+                    if (shouldSend) {
+                        try {
+                            sendSecondInstallmentReminderEmail({
+                                name: lead.name,
+                                email: lead.email,
+                                program: lead.program,
+                                paymentLinkUrl: lead.secondInstallment.paymentLinkUrl,
+                                dueDate: lead.secondInstallment.dueDate,
+                                daysLeft: diffDays
+                            });
+                            remindersSent++;
+                        } catch (err) {
+                            console.error(`❌ Failed to send installment reminder email to ${lead.email}:`, err.message);
+                        }
+                    }
+                }
+            }
+            console.log(`✅ Installment reminder job completed. Sent ${remindersSent} reminders.`);
+        } catch (error) {
+            console.error('❌ Error running daily installment reminder job:', error);
+        }
+    }, {
+        scheduled: true,
+        timezone: "Asia/Kolkata"
+    });
+
     console.log('🗓️  Scheduler initialized.');
     console.log('   - Daily reminder job: 9:00 AM IST');
+    console.log('   - Daily installment reminder job: 9:05 AM IST');
     console.log('   - Pending payment alerts: Every 2 minutes (for >15 min delay)');
     console.log('   - 30-minute reminders: Every 2 minutes');
     console.log('   - Bigin failed sync retry: Every 30 minutes');

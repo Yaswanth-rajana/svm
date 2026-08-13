@@ -6,6 +6,7 @@ import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { normalizePhone } from "../utils/phone.js";
 import { maskEmail, maskPhone } from "../utils/logger.js";
 import { createRegistrationInBigin } from "../services/biginService.js";
+import { PAYMENT_CONFIG } from "../config/paymentConfig.js";
 
 const ALLOWED_PROGRAMS = [
   "it-infrastructure",
@@ -27,7 +28,7 @@ const ALLOWED_PROGRAMS = [
 export const createLead = async (req, res) => {
   console.log(`📥 API Request received (createLead): Source=${req.body.source}, Phone=${req.body.phone ? maskPhone(normalizePhone(req.body.phone)) : 'N/A'}, Email=${req.body.email ? maskEmail(req.body.email) : 'N/A'}`);
   try {
-    const { name, email, workingProfile, experience, program: reqProgram } = req.body;
+    const { name, email, workingProfile, experience, program: reqProgram, paymentPlan } = req.body;
     const program = reqProgram || "it-infrastructure";
     console.log("Received lead payload (createLead):", req.body);
     console.log("Program:", program);
@@ -81,7 +82,14 @@ export const createLead = async (req, res) => {
     if (lead) {
       // If already registered and paid for the program, block and return HTTP 409
       // (Except when they are just requesting a brochure download)
-      if (lead.paymentStatus === "paid" && source !== "brochure") {
+      const hasPaid = ["paid", "PAID", "PARTIALLY_PAID"].includes(lead.paymentStatus);
+      if (hasPaid && source !== "brochure") {
+        if (lead.paymentStatus === "PARTIALLY_PAID") {
+          return res.status(409).json({
+            success: false,
+            message: "You have already registered and paid the first installment. Please check your email for the second installment payment link."
+          });
+        }
         return res.status(409).json({
           success: false,
           message: "You have already registered for this program."
@@ -100,6 +108,21 @@ export const createLead = async (req, res) => {
       lead.leadType = leadType;
       if (workingProfile) lead.workingProfile = workingProfile;
       if (experience) lead.experience = experience;
+
+      // Lock payment details once a payment is successfully registered (hasPaid === true)
+      if (!hasPaid) {
+        lead.paymentPlan = paymentPlan || "FULL";
+        lead.totalAmount = PAYMENT_CONFIG.totalAmount;
+        lead.balanceAmount = PAYMENT_CONFIG.totalAmount;
+        lead.amountPaid = 0;
+        if (lead.paymentPlan === "TWO_INSTALLMENTS") {
+          lead.firstInstallmentAmount = PAYMENT_CONFIG.firstInstallmentAmount;
+          lead.secondInstallmentAmount = PAYMENT_CONFIG.secondInstallmentAmount;
+        } else {
+          lead.firstInstallmentAmount = PAYMENT_CONFIG.totalAmount;
+          lead.secondInstallmentAmount = 0;
+        }
+      }
 
       console.log("Lead before save (existing createLead):", lead);
       await lead.save();
@@ -146,6 +169,7 @@ export const createLead = async (req, res) => {
       experience,
       program,
       leadType,
+      paymentPlan: paymentPlan || "FULL"
     });
     // 🆕 New user
     lead = await LeadModel.create({
@@ -157,6 +181,12 @@ export const createLead = async (req, res) => {
       experience,
       program,
       leadType,
+      paymentPlan: paymentPlan || "FULL",
+      totalAmount: PAYMENT_CONFIG.totalAmount,
+      amountPaid: 0,
+      balanceAmount: PAYMENT_CONFIG.totalAmount,
+      firstInstallmentAmount: (paymentPlan === "TWO_INSTALLMENTS") ? PAYMENT_CONFIG.firstInstallmentAmount : PAYMENT_CONFIG.totalAmount,
+      secondInstallmentAmount: (paymentPlan === "TWO_INSTALLMENTS") ? PAYMENT_CONFIG.secondInstallmentAmount : 0,
     });
 
     // 🔄 Sync lead to Zoho Bigin (Non-blocking & Fail-safe)
