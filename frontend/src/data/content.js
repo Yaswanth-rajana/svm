@@ -2,7 +2,7 @@ export const programsContent = {
   // IT Infrastructure Program Data
   infrastructure: {
     shortTitle: "IT Infrastructure",
-    price: 9999,
+    price: 13000,
     meta: {
       title: "IT Infrastructure Training | Start Your Career | SMVEN",
       description: "Master IT Infrastructure fundamentals, servers, virtualization, storage, and cloud systems to start a successful IT career."
@@ -305,7 +305,7 @@ export const programsContent = {
   // Cloud Computing Program Data
   'cloud-computing': {
     shortTitle: "Cloud Computing",
-    price: 9999,
+    price: 13000,
     meta: {
       title: "Cloud Computing Training | Become a Cloud Engineer | SMVEN",
       description: "Become a Cloud Engineer and build the future of IT. Learn cloud technologies, industry best practices, and start your cloud career with SMVEN."
@@ -643,7 +643,7 @@ export const programsContent = {
 
   'devops-engineering': {
     shortTitle: "DevOps Engineering",
-    price: 9999,
+    price: 13000,
     meta: {
       title: "DevOps Engineering Training | Become a DevOps Engineer | SMVEN",
       description: "Become a DevOps Engineer and automate software delivery at scale. Learn Docker, Kubernetes, CI/CD, Terraform, and start your DevOps career with SMVEN."
@@ -968,7 +968,7 @@ export const programsContent = {
   //virtualization
   'virtualization-engineering': {
     shortTitle: "Virtualization Engineering",
-    price: 9999,
+    price: 13000,
     brochure: "/virtualization-brochure.pdf",
     meta: {
       title: "Virtualization Engineering Training | Become a Virtualization Engineer | SMVEN",
@@ -1260,7 +1260,7 @@ export const programsContent = {
   // Server Engineering Program Data
   'server-engineering': {
     shortTitle: "Server Engineering",
-    price: 9999,
+    price: 13000,
     brochure: "/virtualization-brochure.pdf",
     meta: {
       title: "Server Engineering Training | Become a Server Engineer | SMVEN",
@@ -1573,7 +1573,7 @@ export const programsContent = {
   // Storage Engineering Program Data
   'storage-engineering': {
     shortTitle: "Storage Engineering",
-    price: 9999,
+    price: 13000,
     brochure: "/virtualization-brochure.pdf",
     meta: {
       title: "Storage Engineering Training | Become a Storage Engineer | SMVEN",
@@ -1926,7 +1926,7 @@ export const programsContent = {
   // Backup Engineering Program Data
   'backup-engineering': {
     shortTitle: "Backup Engineering",
-    price: 9999,
+    price: 13000,
     brochure: "/Backup-Engineer-SMV.pdf",
     meta: {
       title: "Backup Engineering Training | Become a Backup Engineer | SMVEN",
