@@ -103,15 +103,17 @@ export default function PaymentPlanModal({ isOpen, onClose, onConfirm }) {
 
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-lg">Full Payment</span>
+                    <span className="font-semibold text-lg text-white">Full Payment</span>
                     <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
                       Best Value
                     </span>
                   </div>
-                  <div className="text-2xl font-bold mt-1 text-white">
-                    ₹{PAYMENT_CONFIG.totalAmount.toLocaleString("en-IN")}
+                  <div className="flex items-baseline gap-2 mt-1.5">
+                    <span className="text-slate-500 line-through text-base font-medium">₹20,000</span>
+                    <span className="text-2xl font-bold text-white">₹{PAYMENT_CONFIG.totalAmount.toLocaleString("en-IN")}</span>
+                    <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">35% OFF</span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                  <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
                     <ShieldCheck className="h-3.5 w-3.5 text-blue-400" />
                     Unlocks all course benefits & certificate immediately
                   </p>
@@ -141,15 +143,21 @@ export default function PaymentPlanModal({ isOpen, onClose, onConfirm }) {
 
                 <div className="flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-lg">2 Installments</span>
+                    <span className="font-semibold text-lg text-white">2 Installments</span>
                     <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/20">
                       Flexible
                     </span>
                   </div>
-                  <div className="text-2xl font-bold mt-1 text-white">
-                    ₹{PAYMENT_CONFIG.firstInstallmentAmount.toLocaleString("en-IN")}{" "}
-                    <span className="text-sm font-normal text-slate-400">now</span>
+                  <div className="flex items-baseline gap-2 mt-1.5">
+                    <span className="text-slate-500 line-through text-base font-medium">₹20,000</span>
+                    <span className="text-2xl font-bold text-white">
+                      ₹{PAYMENT_CONFIG.totalAmount.toLocaleString("en-IN")}<span className="text-sm font-normal text-slate-400"> total</span>
+                    </span>
+                    <span className="text-xs font-bold text-orange-400 bg-orange-500/10 px-2 py-0.5 rounded border border-orange-500/20">35% OFF</span>
                   </div>
+                  <p className="text-sm font-semibold text-blue-450 mt-1">
+                    ₹{PAYMENT_CONFIG.firstInstallmentAmount.toLocaleString("en-IN")} now + ₹{PAYMENT_CONFIG.secondInstallmentAmount.toLocaleString("en-IN")} within {PAYMENT_CONFIG.installmentDueDays} days
+                  </p>
                   <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5 text-blue-400" />
                     Pay the remaining ₹{PAYMENT_CONFIG.secondInstallmentAmount.toLocaleString("en-IN")} within {PAYMENT_CONFIG.installmentDueDays} days
