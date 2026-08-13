@@ -74,7 +74,7 @@ export default function PaymentPlanModal({ isOpen, onClose, onConfirm }) {
                 Choose a Payment Plan
               </h3>
               <p className="text-sm text-slate-400 mt-2">
-                Select the payment method that fits your budget
+                Choose how you'd like to pay
               </p>
             </div>
 
@@ -152,7 +152,7 @@ export default function PaymentPlanModal({ isOpen, onClose, onConfirm }) {
                   </div>
                   <p className="text-xs text-slate-400 mt-2 flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5 text-blue-400" />
-                    Second installment of ₹{PAYMENT_CONFIG.secondInstallmentAmount.toLocaleString("en-IN")} due within {PAYMENT_CONFIG.installmentDueDays} days
+                    Pay the remaining ₹{PAYMENT_CONFIG.secondInstallmentAmount.toLocaleString("en-IN")} within {PAYMENT_CONFIG.installmentDueDays} days
                   </p>
                 </div>
               </div>
@@ -172,7 +172,7 @@ export default function PaymentPlanModal({ isOpen, onClose, onConfirm }) {
                 onClick={handleConfirm}
                 className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-200"
               >
-                Continue to Payment
+                {selectedPlan === "TWO_INSTALLMENTS" ? `Pay ₹${PAYMENT_CONFIG.firstInstallmentAmount.toLocaleString("en-IN")} Now` : "Continue to Payment"}
               </button>
             </div>
           </motion.div>
