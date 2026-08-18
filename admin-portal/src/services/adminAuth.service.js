@@ -8,7 +8,7 @@ export const adminAuthService = {
     
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (credentials.email === 'admin@smven.com' && credentials.password === 'admin123') {
+        if (credentials.email === 'admin@smven.com' && (credentials.password === 'SmvAdmin#2026!' || credentials.password === 'admin123')) {
           resolve({
             data: {
               admin: {
@@ -25,7 +25,7 @@ export const adminAuthService = {
           reject({
             response: {
               data: {
-                message: 'Invalid credentials. Use admin@smven.com / admin123'
+                message: 'Invalid credentials. Use admin@smven.com / SmvAdmin#2026!'
               }
             }
           });
