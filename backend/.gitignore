@@ -3,3 +3,5 @@ node_modules/
 .env.*
 dist/
 build/
+request_logs.txt
+temp-certificates/

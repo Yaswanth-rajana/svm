@@ -6,7 +6,7 @@ import { sendEmailOTP } from "../services/emailService.js";
 import { normalizePhone } from "../utils/phone.js";
 import { env } from "../config/env.js";
 import Student from "../models/Student.js";
-import { generateToken } from "./passwordAuthController.js";
+import { generateToken, registerSession } from "./passwordAuthController.js";
 
 /**
  * @desc    Send OTP via WhatsApp with Email fallback
@@ -214,9 +214,9 @@ export const verifyOtp = async (req, res) => {
     // Update login tracking
     student.lastLoginMethod = "otp";
     student.lastLoginAt = new Date();
-    await student.save();
-
-    const token = generateToken(student._id, true);
+    
+    const sessionId = await registerSession(student, req);
+    const token = generateToken(student._id, true, sessionId);
 
     return res.status(200).json({
       success: true,

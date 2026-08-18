@@ -1,0 +1,16 @@
+export const ADMIN_ROUTES = {
+  LOGIN: '/login',
+  DASHBOARD: '/dashboard',
+  COURSES: '/courses',
+  MODULES: '/modules',
+  LESSONS: '/lessons',
+  ASSIGNMENTS: '/assignments',
+  STUDENTS: '/students',
+  ANNOUNCEMENTS: '/announcements',
+  ANALYTICS: '/analytics',
+  SETTINGS: '/settings',
+  FORBIDDEN: '/403',
+  NOT_FOUND: '/*',
+  SERVER_ERROR: '/500',
+  MAINTENANCE: '/maintenance',
+};

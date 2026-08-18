@@ -30,7 +30,7 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, postman)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin)) {
+      if (allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin) || /\.vercel\.app$/.test(origin)) {
         return callback(null, true);
       }
       return callback(new Error("CORS Policy: Origin not allowed"), false);
@@ -97,18 +97,6 @@ app.use(
   })
 );
 
-// Log incoming requests to request_logs.txt for debugging
-import fs from 'fs';
-import path from 'path';
-app.use((req, res, next) => {
-  const logMsg = `[${new Date().toISOString()}] ${req.method} ${req.url} - Body: ${JSON.stringify(req.body)}\n`;
-  try {
-    fs.appendFileSync(path.join(process.cwd(), 'request_logs.txt'), logMsg);
-  } catch (err) {
-    console.error("Failed to write request_logs.txt:", err);
-  }
-  next();
-});
 
 // Express 5 Compatibility: Make req.query mutable for express-mongo-sanitize
 app.use((req, res, next) => {
