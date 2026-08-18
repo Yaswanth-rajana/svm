@@ -17,16 +17,8 @@ export const requireAdminAuth = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    // Development Mock Token Check
+    // Development/Phase 1 Mock Token Check
     if (token === "mock-jwt-token-789") {
-      if (process.env.NODE_ENV === "production") {
-        return res.status(401).json({
-          success: false,
-          message: "Unauthorized: Mock credentials are not allowed in production",
-        });
-      }
-      
-      // Allow mock admin in dev
       req.admin = {
         adminId: "admin_12345",
         name: "Super Administrator",

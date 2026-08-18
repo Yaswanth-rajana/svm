@@ -62,6 +62,7 @@ const Login = () => {
                 <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type="email"
+                  autoComplete="username"
                   className="w-full glass-input rounded-xl py-3 pl-11 pr-4 text-sm"
                   placeholder="admin@smven.com"
                   {...register('email', { required: 'Email is required' })}
@@ -79,6 +80,7 @@ const Login = () => {
                 <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type="password"
+                  autoComplete="current-password"
                   className="w-full glass-input rounded-xl py-3 pl-11 pr-4 text-sm"
                   placeholder="••••••••"
                   {...register('password', { required: 'Password is required' })}
