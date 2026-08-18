@@ -45,8 +45,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Clear auth storage and redirect to login if unauthorized
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      // Clear auth storage and redirect to login if unauthorized or forbidden
       localStorage.removeItem('admin-auth-storage');
       localStorage.removeItem('smven_admin');
       localStorage.removeItem('smven_admin_token');

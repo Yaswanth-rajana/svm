@@ -12,7 +12,7 @@ export const deleteCourse = async (req, res) => {
     const course = await Course.findOneAndUpdate(
       { _id: id, deletedAt: null },
       { $set: { deletedAt: new Date() } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!course) {
@@ -44,7 +44,7 @@ export const restoreCourse = async (req, res) => {
     const course = await Course.findOneAndUpdate(
       { _id: id, deletedAt: { $ne: null } },
       { $set: { deletedAt: null } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!course) {

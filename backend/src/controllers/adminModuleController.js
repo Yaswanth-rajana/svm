@@ -131,7 +131,7 @@ export const updateModule = async (req, res) => {
     const updatedModule = await Module.findByIdAndUpdate(
       moduleId,
       { $set: updates }, // updatedBy: req.admin?._id
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     // Trigger announcement only on transition to published

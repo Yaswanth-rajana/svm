@@ -167,7 +167,7 @@ export const updateStudentProfile = async (req, res) => {
     }
 
     const updatedStudent = await Student.findByIdAndUpdate(student._id, updates, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
 

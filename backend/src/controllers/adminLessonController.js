@@ -174,7 +174,7 @@ export const updateLesson = async (req, res) => {
         ...req.body,
         updatedBy: req.admin?._id,
       },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     await syncLessonHierarchy(lesson.moduleId, lesson.courseId);

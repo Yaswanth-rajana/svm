@@ -23,7 +23,7 @@ export const updateCourseStatus = async (req, res) => {
     const course = await Course.findOneAndUpdate(
       { _id: id, deletedAt: null },
       { $set: { status } },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!course) {
