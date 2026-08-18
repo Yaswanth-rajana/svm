@@ -17,7 +17,7 @@ export const adminAuthService = {
                 email: 'admin@smven.com',
                 role: ROLES.SUPER_ADMIN,
               },
-              token: 'mock-jwt-token-789',
+              token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoiYWRtaW5fMTIzNDUiLCJuYW1lIjoiU3VwZXIgQWRtaW5pc3RyYXRvciIsImVtYWlsIjoiYWRtaW5Ac212ZW4uY29tIiwicm9sZSI6InN1cGVyX2FkbWluIiwiaWF0IjoxNzg3MDY1MTI0LCJleHAiOjE5ODk2NTcxMjR9.dNu4kUSJF6Pol8dgMiR1vTa3VPk0clB88im6ntKAz3E',
               expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
             }
           });
