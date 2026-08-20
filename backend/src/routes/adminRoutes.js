@@ -39,6 +39,7 @@ import {
 import {
   getEnrollments,
   enrollStudent,
+  resendAccessEmail,
   revokeAccess
 } from "../controllers/adminStudentController.js";
 import { getDashboardStats } from "../controllers/adminDashboardController.js";
@@ -117,6 +118,7 @@ router.post("/modules/:moduleId/lessons", createLesson);
 // ==========================
 router.get("/students/enrollments", getEnrollments);
 router.post("/students/enroll", enrollStudent);
+router.post("/students/resend-access-email", resendAccessEmail);
 router.delete("/students/enrollments/:enrollmentId", revokeAccess);
 
 export default router;

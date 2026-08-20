@@ -190,6 +190,17 @@ const StudentsDirectory = () => {
     }
   };
 
+  // Resend course access email for a specific enrollment
+  const handleResendAccessEmail = async (enrollmentId, courseTitle, studentEmail) => {
+    const toastId = toast.loading(`Resending access email for ${courseTitle}...`);
+    try {
+      const res = await studentService.resendAccessEmail(enrollmentId);
+      toast.success(res.data?.message || `Access email sent to ${studentEmail}`, { id: toastId });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to resend access email', { id: toastId });
+    }
+  };
+
   // Revoke All Accesses for a student
   const handleRevokeAllAccess = (studentRecord) => {
     const confirmMessage = `Are you sure you want to revoke ALL course accesses for:\nStudent: ${studentRecord.student.email}?`;
@@ -336,6 +347,13 @@ const StudentsDirectory = () => {
                                   <span className="text-emerald-400">Lifetime</span>
                                 )}
                               </span>
+                              <button
+                                onClick={() => handleResendAccessEmail(c.enrollmentId, c.course?.title || 'Course', record.student.email)}
+                                className="ml-1 p-0.5 text-gray-400 hover:text-pink-400 hover:bg-white/10 rounded transition-colors"
+                                title="Resend course access email"
+                              >
+                                <Mail size={12} />
+                              </button>
                             </span>
                           );
                         })}

@@ -12,4 +12,8 @@ export const studentService = {
   revokeAccess: async (enrollmentId) => {
     return api.delete(`/admin/students/enrollments/${enrollmentId}`);
   },
+
+  resendAccessEmail: async (enrollmentId) => {
+    return api.post('/admin/students/resend-access-email', { enrollmentId });
+  },
 };

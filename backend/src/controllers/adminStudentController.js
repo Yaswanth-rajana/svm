@@ -1,6 +1,7 @@
 import Enrollment from "../models/Enrollment.js";
 import Student from "../models/Student.js";
 import Course from "../models/Course.js";
+import { sendCourseAccessEmail } from "../services/emailService.js";
 
 /**
  * @desc    Get all student enrollments (course access list)
@@ -52,7 +53,7 @@ export const enrollStudent = async (req, res) => {
       });
     }
 
-    // 1. Find or create student
+    // 1. Find or create student (preserve existing password state if existing)
     const studentEmail = email.toString().trim().toLowerCase();
     let student = await Student.findOne({ email: studentEmail });
     if (!student) {
@@ -60,10 +61,12 @@ export const enrollStudent = async (req, res) => {
         email: studentEmail,
         name: studentEmail.split("@")[0],
         isVerified: true,
+        passwordSet: false,
+        passwordCreated: false,
       });
     }
 
-    // 2. Check for existing enrollment
+    // 2. Check for existing enrollment & persist to DB before sending email
     let enrollment = await Enrollment.findOne({
       studentId: student._id,
       courseId,
@@ -89,15 +92,33 @@ export const enrollStudent = async (req, res) => {
       });
     }
 
-    // Populate enrollment details for the response
+    // 3. Populate enrollment details for response
     const populatedEnrollment = await Enrollment.findById(enrollment._id)
       .populate("studentId", "email name")
       .populate("courseId", "title category")
       .lean();
 
+    // 4. Send course access email after successful enrollment persistence
+    let emailSent = false;
+    try {
+      await sendCourseAccessEmail({
+        studentEmail: student.email,
+        studentName: student.name,
+        courseName: course.title,
+        courseId: course._id,
+        accessTill: enrollment.accessEnd,
+      });
+      emailSent = true;
+    } catch (emailError) {
+      console.error("⚠️ Enrollment created, but failed to send access email:", emailError.message);
+    }
+
     return res.status(200).json({
       success: true,
-      message: "Course access granted successfully",
+      emailSent,
+      message: emailSent
+        ? "Course access granted and notification email sent successfully"
+        : "Course access granted, but notification email could not be sent",
       enrollment: populatedEnrollment,
     });
   } catch (error) {
@@ -105,6 +126,56 @@ export const enrollStudent = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Internal Server Error granting course access",
+    });
+  }
+};
+
+/**
+ * @desc    Resend course access email for an existing enrollment
+ * @route   POST /api/admin/students/resend-access-email
+ * @access  Private (Admin)
+ */
+export const resendAccessEmail = async (req, res) => {
+  try {
+    const { enrollmentId } = req.body;
+
+    if (!enrollmentId) {
+      return res.status(400).json({
+        success: false,
+        message: "Enrollment ID is required",
+      });
+    }
+
+    // Fetch enrollment and derive student and course details from DB
+    const enrollment = await Enrollment.findById(enrollmentId)
+      .populate("studentId")
+      .populate("courseId");
+
+    if (!enrollment || !enrollment.studentId || !enrollment.courseId) {
+      return res.status(404).json({
+        success: false,
+        message: "Active enrollment record not found",
+      });
+    }
+
+    // Send course access email using backend-derived data
+    await sendCourseAccessEmail({
+      studentEmail: enrollment.studentId.email,
+      studentName: enrollment.studentId.name,
+      courseName: enrollment.courseId.title,
+      courseId: enrollment.courseId._id,
+      accessTill: enrollment.accessEnd,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: `Course access email resent successfully to ${enrollment.studentId.email}`,
+    });
+  } catch (error) {
+    console.error("❌ Error in resendAccessEmail:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to resend course access email",
     });
   }
 };

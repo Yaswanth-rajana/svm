@@ -42,6 +42,15 @@ const studentSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive", "blocked"],
+      default: "active",
+    },
     readAnnouncementIds: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -60,6 +69,10 @@ const studentSchema = new mongoose.Schema(
       select: false, // Don't return by default
     },
     passwordCreated: {
+      type: Boolean,
+      default: false,
+    },
+    passwordSet: {
       type: Boolean,
       default: false,
     },
@@ -98,5 +111,21 @@ const studentSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+studentSchema.pre("save", function () {
+  // Sync passwordCreated and passwordSet
+  if (this.isModified("passwordCreated")) {
+    this.passwordSet = this.passwordCreated;
+  } else if (this.isModified("passwordSet")) {
+    this.passwordCreated = this.passwordSet;
+  }
+  
+  // Sync isVerified and emailVerified
+  if (this.isModified("isVerified")) {
+    this.emailVerified = this.isVerified;
+  } else if (this.isModified("emailVerified")) {
+    this.isVerified = this.emailVerified;
+  }
+});
 
 export default mongoose.model("Student", studentSchema);

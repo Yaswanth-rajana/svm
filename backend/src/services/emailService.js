@@ -877,3 +877,119 @@ export const sendSecondInstallmentReminderEmail = ({ name, email, program, payme
             console.error('❌ Failed to send installment reminder email:', error.message);
         });
 };
+
+/**
+ * Sends a course access notification email to a student.
+ * 
+ * @param {Object} params
+ * @param {string} params.studentEmail - Student email address
+ * @param {string} params.studentName - Student name
+ * @param {string} params.courseName - Name of course granted
+ * @param {string} params.courseId - MongoDB ID or slug of course
+ * @param {Date|string} [params.accessTill] - Expiry date if applicable
+ */
+export const sendCourseAccessEmail = async ({ studentEmail, studentName, courseName, courseId, accessTill }) => {
+    const apiKey = process.env.ZEPTO_API_KEY;
+    const fromEmail = process.env.FROM_EMAIL;
+
+    if (!apiKey || !fromEmail) {
+        console.error("❌ Email config missing: ZEPTO_API_KEY or FROM_EMAIL is not defined in .env");
+        throw new Error("Email credentials missing");
+    }
+
+    const safeName = studentName || studentEmail.split('@')[0] || "Student";
+    const portalBaseUrl = process.env.STUDENT_PORTAL_URL || "https://portal.smven.com";
+    const courseUrl = `${portalBaseUrl.replace(/\/$/, '')}/courses/${courseId}`;
+    const url = 'https://api.zeptomail.in/v1.1/email';
+
+    let expiryText = "Your course access has lifetime availability.";
+    if (accessTill) {
+        const formattedDate = new Date(accessTill).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        expiryText = `Your course access is available until <strong>${formattedDate}</strong>.`;
+    }
+
+    const data = {
+        from: {
+            address: fromEmail,
+            name: "Smart Mate Ventures"
+        },
+        to: [
+            {
+                email_address: {
+                    address: studentEmail,
+                    name: safeName
+                }
+            }
+        ],
+        subject: `You now have access to ${courseName} — SMVEN`,
+        htmlbody: `
+            <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
+                <!-- Logo Header -->
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <img src="https://smven.com/Logo.1.png" alt="Smart Mate Ventures Logo" style="width: 140px; height: auto; margin-bottom: 12px;" />
+                    <p style="margin: 4px 0 0; color: #6b7280; font-size: 14px;">Building the next generation of IT Engineers</p>
+                </div>
+
+                <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">
+                    Hi ${safeName},
+                </h2>
+                
+                <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
+                    You now have access to <strong>${courseName}</strong> on the SMVEN Learning Portal.
+                </p>
+
+                <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                    <h3 style="margin-top: 0; color: #111827; font-size: 16px; font-weight: 600; margin-bottom: 12px;">If this is your first login:</h3>
+                    <ol style="margin: 0; padding-left: 20px; font-size: 14px; color: #4b5563; line-height: 1.8;">
+                        <li>Open the Student Portal using the button below.</li>
+                        <li>Enter your registered email address (<code>${studentEmail}</code>).</li>
+                        <li>Verify your email using OTP.</li>
+                        <li>Create your password.</li>
+                    </ol>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <a href="${courseUrl}" target="_blank" style="background: linear-gradient(135deg, #ff0064, #8b5cf6); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(255, 0, 100, 0.25);">
+                        Access My Course
+                    </a>
+                </div>
+
+                <p style="font-size: 14px; line-height: 1.6; color: #6b7280; margin-bottom: 24px; text-align: center;">
+                    ${expiryText}
+                </p>
+
+                <hr style="border: 0; border-top: 1px solid #f3f4f6; margin: 32px 0;" />
+                
+                <div style="text-align: center;">
+                    <p style="margin: 0; font-size: 16px; color: #111827; font-weight: 700;">Smart Mate Ventures</p>
+                    <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Regards,<br/>SMVEN Team</p>
+                </div>
+            </div>
+        `
+    };
+
+    const config = {
+        headers: {
+            'Authorization': `Zoho-enczapikey ${apiKey}`,
+            'Content-Type': 'application/json'
+        }
+    };
+
+    try {
+        const response = await axios.post(url, data, config);
+        console.log(`✅ Course access email sent successfully to: ${maskEmail(studentEmail)}`);
+        return response.data;
+    } catch (error) {
+        console.error('❌ Failed to send course access email:');
+        if (error.response) {
+            console.error('ZeptoMail Error Data:', JSON.stringify(error.response.data, null, 2));
+        } else {
+            console.error('Error Message:', error.message);
+        }
+        throw error;
+    }
+};

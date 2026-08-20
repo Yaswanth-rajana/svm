@@ -189,7 +189,7 @@ export const verifyOtp = async (req, res) => {
     }
 
     // Auth Integration: Find or create student, then generate JWT
-    const email = isPhone ? null : formattedContact;
+    const email = isPhone ? null : formattedContact.trim().toLowerCase();
     let student = null;
     
     if (email) {
@@ -199,6 +199,9 @@ export const verifyOtp = async (req, res) => {
           email,
           name: email.split("@")[0],
           isVerified: true,
+          emailVerified: true,
+          passwordSet: false,
+          passwordCreated: false,
         });
       }
     } else {
@@ -223,7 +226,8 @@ export const verifyOtp = async (req, res) => {
       message: "OTP verified successfully",
       token,
       studentId: student.studentId,
-      passwordCreated: student.passwordCreated
+      passwordCreated: student.passwordCreated ?? student.passwordSet ?? false,
+      passwordSet: student.passwordSet ?? student.passwordCreated ?? false
     });
 
   } catch (error) {

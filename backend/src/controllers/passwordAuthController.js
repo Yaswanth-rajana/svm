@@ -139,6 +139,9 @@ export const setPassword = async (req, res) => {
     const salt = await bcrypt.genSalt(12);
     dbStudent.passwordHash = await bcrypt.hash(password, salt);
     dbStudent.passwordCreated = true;
+    dbStudent.passwordSet = true;
+    dbStudent.emailVerified = true;
+    dbStudent.isVerified = true;
     dbStudent.passwordCreatedAt = new Date();
     await dbStudent.save();
 

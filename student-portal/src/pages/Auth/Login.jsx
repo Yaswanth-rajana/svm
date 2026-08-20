@@ -17,7 +17,7 @@ export const Login = () => {
   const location = useLocation();
   const { requestOtp, verifyAndLogin, loginWithPassword, resetPassword } = useAuth();
 
-  // Modes: 'password', 'otp-email', 'otp-verify', 'forgot-email', 'forgot-verify', 'forgot-reset'
+  // Modes: 'password', 'otp-email', 'otp-verify', 'create-password', 'forgot-email', 'forgot-verify', 'forgot-reset'
   const [mode, setMode] = useState('password');
   
   const [email, setEmail] = useState(location.state?.email || '');
@@ -27,6 +27,7 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { setPassword: setAuthPassword } = useAuth();
 
   const {
     register,
@@ -36,10 +37,11 @@ export const Login = () => {
     formState: { errors },
     reset
   } = useForm({
-    defaultValues: { email: location.state?.email || '', password: '', rememberMe: false, newPassword: '', confirmPassword: '' },
+    defaultValues: { email: location.state?.email || '', password: '', rememberMe: false, newPassword: '', confirmPassword: '', createPassword: '', confirmCreatePassword: '' },
   });
 
   const newPasswordValue = watch('newPassword');
+  const createPasswordValue = watch('createPassword');
 
   // Countdown timer for OTP resend
   useEffect(() => {
@@ -50,13 +52,15 @@ export const Login = () => {
     return () => clearInterval(interval);
   }, [timer]);
 
+  const getDestination = () => location.state?.from?.pathname || ROUTES.DASHBOARD;
+
   const handlePasswordLogin = async (data) => {
     const targetEmail = data.email.trim().toLowerCase();
     setLoading(true);
     try {
       await loginWithPassword(targetEmail, data.password, data.rememberMe);
       toast.success('Logged in successfully!');
-      navigate(ROUTES.DASHBOARD, { replace: true });
+      navigate(getDestination(), { replace: true });
     } catch (err) {
       console.error('Login Error:', err);
       toast.error(err.message || 'Invalid email or password.');
@@ -97,13 +101,31 @@ export const Login = () => {
     setLoading(true);
     try {
       const result = await verifyAndLogin(email, otp);
-      toast.success('Logged in successfully!');
+      toast.success('OTP verified successfully!');
       
-      // If no password exists, prompt onboarding on dashboard
-      navigate(ROUTES.DASHBOARD, { replace: true, state: { showSetPassword: !result.passwordCreated } });
+      const isPasswordSet = result.passwordSet || result.passwordCreated;
+      if (!isPasswordSet) {
+        setMode('create-password');
+      } else {
+        navigate(getDestination(), { replace: true });
+      }
     } catch (err) {
       console.error('Verify OTP Error:', err);
       toast.error(err.message || 'Invalid OTP code.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreatePassword = async (data) => {
+    setLoading(true);
+    try {
+      await setAuthPassword(data.createPassword);
+      toast.success('Password created successfully!');
+      navigate(getDestination(), { replace: true });
+    } catch (err) {
+      console.error('Create Password Error:', err);
+      toast.error(err.response?.data?.message || err.message || 'Failed to set password.');
     } finally {
       setLoading(false);
     }
@@ -115,8 +137,6 @@ export const Login = () => {
       toast.error('Please enter the full 6-digit OTP code');
       return;
     }
-    // For password reset, we proceed to the reset step.
-    // The actual OTP verification happens when submitting the new password.
     setMode('forgot-reset');
   };
 
@@ -127,7 +147,7 @@ export const Login = () => {
       toast.success(response.message || 'Password reset successfully!');
       setMode('password');
       setOtp('');
-      reset({ email, password: '', newPassword: '', confirmPassword: '' });
+      reset({ email, password: '', newPassword: '', confirmPassword: '', createPassword: '', confirmCreatePassword: '' });
     } catch (err) {
       console.error('Reset Password Error:', err);
       toast.error(err.response?.data?.message || err.message || 'Failed to reset password.');
@@ -156,17 +176,20 @@ export const Login = () => {
         {/* Header Branding */}
         <div className="text-center space-y-2 mb-6 animate-fade-in">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-pink-500/20 to-purple-500/20 border border-pink-500/30 text-pink-400 mb-1">
-            {['password', 'forgot-email', 'forgot-reset'].includes(mode) ? <KeyRound size={22} /> : <Mail size={22} />}
+            {['password', 'forgot-email', 'forgot-reset', 'create-password'].includes(mode) ? <KeyRound size={22} /> : <Mail size={22} />}
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             {mode === 'forgot-email' || mode === 'forgot-verify' || mode === 'forgot-reset' 
-              ? 'Reset Password' 
+              ? 'Reset Password'
+              : mode === 'create-password'
+              ? 'Create Your Password' 
               : BRAND.APP_TITLE}
           </h1>
           <p className="text-xs sm:text-sm text-gray-400 max-w-sm mx-auto leading-relaxed">
             {mode === 'forgot-email' ? 'Enter your email to receive a reset code' :
              mode === 'forgot-verify' ? 'Enter the code sent to your email' :
              mode === 'forgot-reset' ? 'Create a new secure password' :
+             mode === 'create-password' ? 'First-time setup: set your account password' :
              BRAND.SUBTITLE}
           </p>
         </div>
@@ -343,6 +366,56 @@ export const Login = () => {
           </form>
         )}
 
+        {/* Mode: First-Time Create Password */}
+        {mode === 'create-password' && (
+          <form onSubmit={handleSubmit(handleCreatePassword)} className="space-y-4 animate-fade-in">
+            <div className="p-3 rounded-xl bg-pink-500/10 border border-pink-500/20 text-xs text-pink-300 mb-2">
+              🎉 Email verified successfully! Please set up your password to complete account setup.
+            </div>
+
+            <TextInput
+              label="New Password"
+              type={showNewPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              icon={Lock}
+              error={errors.createPassword?.message}
+              rightElement={
+                <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="p-1 text-gray-400 hover:text-white transition-colors" tabIndex="-1">
+                  {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              }
+              {...register('createPassword', {
+                required: 'Password is required',
+                minLength: { value: 8, message: 'Password must be at least 8 characters' }
+              })}
+            />
+
+            <TextInput
+              label="Confirm Password"
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              icon={Lock}
+              error={errors.confirmCreatePassword?.message}
+              rightElement={
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="p-1 text-gray-400 hover:text-white transition-colors" tabIndex="-1">
+                  {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              }
+              {...register('confirmCreatePassword', {
+                required: 'Please confirm your password',
+                validate: v => v === createPasswordValue || 'Passwords do not match'
+              })}
+            />
+
+            <div className="pt-2">
+              <PrimaryButton type="submit" isLoading={loading}>
+                <span>Create Password & Access Portal</span>
+                <CheckCircle2 size={16} />
+              </PrimaryButton>
+            </div>
+          </form>
+        )}
+
         {/* Mode: Reset Password */}
         {mode === 'forgot-reset' && (
           <form onSubmit={handleSubmit(handleResetPassword)} className="space-y-4 animate-fade-in">
@@ -374,7 +447,7 @@ export const Login = () => {
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="••••••••"
               icon={Lock}
-              error={errors.confirmPassword?.message}
+              error={errors.confirmConfirmPassword?.message || errors.confirmPassword?.message}
               rightElement={
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="p-1 text-gray-400 hover:text-white transition-colors" tabIndex="-1">
                   {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
