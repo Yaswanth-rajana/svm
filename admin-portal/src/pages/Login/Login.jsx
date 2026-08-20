@@ -110,8 +110,7 @@ const Login = () => {
           </form>
           
           <div className="mt-8 text-center text-xs text-gray-500">
-            <p>For Phase 1 use:</p>
-            <p className="font-mono mt-1 text-gray-400">admin@smven.com / SmvAdmin#2026!</p>
+            <p className="font-mono mt-1 text-gray-400">Enter your administrator email & password</p>
           </div>
         </div>
       </div>

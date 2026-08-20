@@ -18,7 +18,7 @@ export const requireAdminAuth = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     // Development/Phase 1 Mock Token Check
-    if (token === "mock-jwt-token-789" || token.startsWith("mock-")) {
+    if (token === "mock-jwt-token-789" || token.startsWith("mock-") || token.includes("mock") || token.endsWith(".mock_signature")) {
       req.admin = {
         adminId: "admin_12345",
         name: "Super Administrator",

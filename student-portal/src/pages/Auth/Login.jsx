@@ -437,7 +437,7 @@ export const Login = () => {
                   hasUpper: v => /[A-Z]/.test(v) || 'Must contain at least one uppercase letter',
                   hasLower: v => /[a-z]/.test(v) || 'Must contain at least one lowercase letter',
                   hasNumber: v => /[0-9]/.test(v) || 'Must contain at least one number',
-                  hasSpecial: v => /[!@#$%^&*(),.?":{}|<>]/.test(v) || 'Must contain at least one special character'
+                  hasSpecial: v => /[^A-Za-z0-9]/.test(v) || 'Must contain at least one special character'
                 }
               })}
             />
