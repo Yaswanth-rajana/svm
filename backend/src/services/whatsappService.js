@@ -46,8 +46,10 @@ export const sendWhatsAppOTP = async (phone, otp) => {
     console.log("✅ SUCCESS WhatsApp OTP");
     return res.data;
   } catch (err) {
-    console.log("❌ ERROR WhatsApp OTP:", err.message);
-
+    console.error("❌ ERROR WhatsApp OTP:", err.message);
+    if (err.response?.data) {
+      console.error("Meta API Error Details:", JSON.stringify(err.response.data, null, 2));
+    }
     throw err;
   }
 };

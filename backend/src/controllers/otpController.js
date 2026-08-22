@@ -37,7 +37,12 @@ export const sendOtp = async (req, res) => {
     let primaryChannel = channel === 'email' && email ? 'email' : (formattedPhone ? 'whatsapp' : 'email');
 
     // Check cooldown for primary contact (30 seconds)
-    const existingOtp = await OTP.findOne({ contact: primaryContact }).sort({ createdAt: -1 });
+    let existingOtp = null;
+    try {
+      existingOtp = await OTP.findOne({ contact: primaryContact }).sort({ createdAt: -1 });
+    } catch (dbError) {
+      console.error("❌ Database query error checking existing OTP:", dbError.message);
+    }
 
     if (existingOtp) {
       const timeSinceLastOtp = (Date.now() - existingOtp.createdAt.getTime()) / 1000;
@@ -49,12 +54,15 @@ export const sendOtp = async (req, res) => {
       }
       
       // Prevent accumulating too many OTP docs, clean up older ones
-      await OTP.deleteMany({ contact: primaryContact });
+      try {
+        await OTP.deleteMany({ contact: primaryContact });
+      } catch (cleanupError) {
+        console.warn("⚠️ Non-critical cleanup error:", cleanupError.message);
+      }
     }
 
     // Generate 6-digit OTP using cryptographically secure random numbers
     const otp = crypto.randomInt(100000, 999999).toString();
-
 
     // Expiry: 5 minutes from now
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
@@ -69,8 +77,8 @@ export const sendOtp = async (req, res) => {
       } else {
         await sendEmailOTP(email, otp);
       }
-    } catch (error) {
-      console.warn(`⚠️ Failed to send via ${primaryChannel}. Attempting fallback...`);
+    } catch (primaryErr) {
+      console.warn(`⚠️ Failed to send via ${primaryChannel} (${primaryErr.message}). Attempting fallback...`);
       // Fallback logic
       wasFallback = true;
       if (primaryChannel === 'whatsapp' && email) {
@@ -79,8 +87,11 @@ export const sendOtp = async (req, res) => {
           sentChannel = 'email';
           usedContact = email;
         } catch (fallbackError) {
-          console.error("❌ Fallback to email failed:", fallbackError);
-          return res.status(500).json({ success: false, message: "Failed to send OTP via all channels" });
+          console.error("❌ Fallback to email failed:", fallbackError.message);
+          return res.status(502).json({
+            success: false,
+            message: `Failed to send OTP via WhatsApp (${primaryErr.message}) and Email (${fallbackError.message})`
+          });
         }
       } else if (primaryChannel === 'email' && formattedPhone) {
         try {
@@ -88,21 +99,35 @@ export const sendOtp = async (req, res) => {
           sentChannel = 'whatsapp';
           usedContact = formattedPhone;
         } catch (fallbackError) {
-          console.error("❌ Fallback to WhatsApp failed:", fallbackError);
-          return res.status(500).json({ success: false, message: "Failed to send OTP via all channels" });
+          console.error("❌ Fallback to WhatsApp failed:", fallbackError.message);
+          return res.status(502).json({
+            success: false,
+            message: `Failed to send OTP via Email (${primaryErr.message}) and WhatsApp (${fallbackError.message})`
+          });
         }
       } else {
-        return res.status(500).json({ success: false, message: `Failed to send OTP via ${primaryChannel} and no fallback available` });
+        return res.status(502).json({
+          success: false,
+          message: `Failed to send OTP via ${primaryChannel}: ${primaryErr.message}`
+        });
       }
     }
 
     // Save to DB
-    await OTP.create({
-      contact: usedContact,
-      channel: sentChannel,
-      otp,
-      expiresAt
-    });
+    try {
+      await OTP.create({
+        contact: usedContact,
+        channel: sentChannel,
+        otp,
+        expiresAt
+      });
+    } catch (dbSaveError) {
+      console.error("❌ Failed to save OTP to database:", dbSaveError.message);
+      return res.status(500).json({
+        success: false,
+        message: "OTP sent but failed to store in verification database. Please try again."
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -117,7 +142,7 @@ export const sendOtp = async (req, res) => {
     console.error("❌ Error sending OTP:", error);
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error"
+      message: error.message || "Internal Server Error"
     });
   }
 };

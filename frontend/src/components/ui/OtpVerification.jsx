@@ -103,7 +103,8 @@ const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset 
         showToast(`OTP sent via ${res.data.channel === 'whatsapp' ? 'WhatsApp' : 'Email'}`);
       }
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to send OTP', true);
+      const msg = err.response?.data?.message || err.message || 'Failed to send OTP';
+      showToast(msg, true);
     } finally {
       setLoading(false);
     }
