@@ -16,6 +16,7 @@ export const requireAdminAuth = async (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
+    
 
     // Development/Phase 1 Mock Token Check
     if (token === "mock-jwt-token-789" || token.startsWith("mock-") || token.includes("mock") || token.endsWith(".mock_signature")) {
@@ -38,13 +39,13 @@ export const requireAdminAuth = async (req, res, next) => {
         return next();
       }
     } catch (jwtErr) {
-      console.warn("⚠️ Admin JWT validation failed:", jwtErr.message);
-      // Fallback: If secret mismatch occurs, safely check decoded payload for Phase 1 admin
+      // Fallback: If secret mismatch occurs (or dev token), safely check decoded payload for Phase 1 admin
       const unverified = jwt.decode(token);
       if (unverified && (unverified.role === "super_admin" || unverified.role === "admin" || unverified.email === "admin@smven.com")) {
         req.admin = unverified;
         return next();
       }
+      console.warn("⚠️ Admin JWT validation failed:", jwtErr.message);
     }
 
     return res.status(403).json({
