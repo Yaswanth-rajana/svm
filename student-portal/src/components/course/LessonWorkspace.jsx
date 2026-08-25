@@ -39,10 +39,6 @@ export const LessonWorkspace = ({ lessonId, course = {} }) => {
             <Badge variant={isCompleted ? 'emerald' : 'pink'}>
               {isCompleted ? 'Completed ✓' : 'In Progress'}
             </Badge>
-            <span className="text-xs text-gray-400 font-mono flex items-center gap-1">
-              <Clock size={13} className="text-purple-400" />
-              {formatDuration(lesson.duration)}
-            </span>
           </div>
           <h2 className="text-lg font-extrabold text-white">{lesson.title}</h2>
         </div>

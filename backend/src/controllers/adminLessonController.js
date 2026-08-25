@@ -9,7 +9,8 @@ import {
   getUploadPartPresignedUrl, 
   completeMultipartUpload, 
   abortMultipartUpload,
-  deleteFromR2 
+  deleteFromR2,
+  checkKeyExistsInR2
 } from "../services/r2Service.js";
 
 /**
@@ -86,12 +87,17 @@ export const createLesson = async (req, res) => {
     const newOrder = lastLesson ? lastLesson.order + 1 : 1;
 
     let finalVideo = video;
-    if (lessonType === 'video' && video?.provider === 'youtube') {
+    if (lessonType === 'video' && video?.provider === 'youtube' && video?.url?.trim()) {
       const ytId = extractYouTubeVideoId(video.url);
       if (!ytId) {
         return res.status(400).json({ success: false, message: "Invalid YouTube URL format" });
       }
-      finalVideo = await processYouTubeMetadata(video.url, video.duration);
+      try {
+        finalVideo = await processYouTubeMetadata(video.url, video.duration);
+      } catch (err) {
+        console.warn("Failed to fetch YouTube metadata:", err);
+      }
+      if (!finalVideo) finalVideo = { ...video };
       finalVideo.youtubeVideoId = ytId;
     }
 
@@ -159,13 +165,22 @@ export const updateLesson = async (req, res) => {
       }
     }
 
-    if (req.body.lessonType === 'video' && req.body.video?.provider === 'youtube') {
+    if (req.body.lessonType === 'video' && req.body.video?.provider === 'youtube' && req.body.video?.url?.trim()) {
       const ytId = extractYouTubeVideoId(req.body.video.url);
       if (!ytId) {
         return res.status(400).json({ success: false, message: "Invalid YouTube URL format" });
       }
-      req.body.video = await processYouTubeMetadata(req.body.video.url, req.body.video.duration);
-      req.body.video.youtubeVideoId = ytId;
+      let processedVideo = null;
+      try {
+        processedVideo = await processYouTubeMetadata(req.body.video.url, req.body.video.duration);
+      } catch (err) {
+        console.warn("Failed to fetch YouTube metadata:", err);
+      }
+      req.body.video = {
+        ...req.body.video,
+        ...(processedVideo || {}),
+        youtubeVideoId: ytId,
+      };
     }
 
     const updatedLesson = await Lesson.findByIdAndUpdate(
@@ -482,6 +497,12 @@ export const completeVideoUpload = async (req, res) => {
 
     // Complete R2 multipart upload
     await completeMultipartUpload({ key, uploadId, parts });
+
+    // Verify object existence in R2 before saving metadata
+    const objectExists = await checkKeyExistsInR2(key);
+    if (!objectExists) {
+      return res.status(500).json({ success: false, message: "R2 object verification failed after completion" });
+    }
 
     // Store old key for deletion after success
     const oldVideoKey = lesson.video?.videoKey;

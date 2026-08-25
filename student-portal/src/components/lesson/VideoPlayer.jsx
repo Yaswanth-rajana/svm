@@ -56,7 +56,7 @@ const WatermarkOverlay = ({ studentName, studentEmail }) => {
 
   return (
     <div
-      className="absolute pointer-events-none select-none z-40 font-mono text-[10px] md:text-xs text-white/10 uppercase tracking-widest text-left"
+      className="absolute pointer-events-none select-none z-10 font-mono text-[10px] md:text-xs text-white/10 uppercase tracking-widest text-left"
       style={{
         top: position.top,
         left: position.left,
@@ -541,6 +541,7 @@ export const VideoPlayer = ({
   };
 
   const progressPercent = videoDuration ? (currentTime / videoDuration) * 100 : 0;
+  const volumePercent = isMuted ? 0 : Math.round(volume * 100);
 
   return (
     <div
@@ -690,10 +691,10 @@ export const VideoPlayer = ({
             </button>
 
             {/* Volume Control Group (expanding on hover) */}
-            <div className="flex items-center gap-1 group/volume">
+            <div className="flex items-center gap-1.5 group/volume">
               <button
                 onClick={toggleMute}
-                className="text-gray-300 hover:text-white transition-colors cursor-pointer"
+                className="text-gray-300 hover:text-white transition-colors cursor-pointer shrink-0"
                 title={isMuted ? 'Unmute (M)' : 'Mute (M)'}
               >
                 {isMuted || volume === 0 ? (
@@ -704,16 +705,33 @@ export const VideoPlayer = ({
                   <Volume2 size={18} />
                 )}
               </button>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.05"
-                value={isMuted ? 0 : volume}
-                onChange={handleVolumeChange}
-                className="w-0 group-hover/volume:w-16 focus:w-16 group-focus-within/volume:w-16 transition-all duration-300 h-1 accent-pink-500 bg-white/20 rounded-lg appearance-none cursor-pointer"
-                title="Volume"
-              />
+              <div className="w-0 group-hover/volume:w-20 group-focus-within/volume:w-20 transition-all duration-300 overflow-hidden flex items-center h-5 px-2">
+                <div className="relative w-16 h-1 flex items-center cursor-pointer select-none">
+                  {/* Track background line */}
+                  <div className="absolute inset-0 bg-white/25 rounded-full" />
+                  {/* Filled pink track line */}
+                  <div
+                    className="absolute left-0 top-0 bottom-0 bg-pink-500 rounded-full"
+                    style={{ width: `${volumePercent}%` }}
+                  />
+                  {/* Thumb dot */}
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.9)] -translate-x-1/2 pointer-events-none"
+                    style={{ left: `${volumePercent}%` }}
+                  />
+                  {/* Invisible Range Input on top for pointer dragging / mouse handling */}
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={isMuted ? 0 : volume}
+                    onChange={handleVolumeChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    title="Volume"
+                  />
+                </div>
+              </div>
             </div>
 
             <span className="text-[11px] font-mono text-gray-300">

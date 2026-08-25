@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   ArrowLeft, ArrowRight, Save, CheckCircle, Video, FileText, Settings, AlignLeft, 
-  PlaySquare, PlayCircle, X 
+  PlaySquare, PlayCircle, X, UploadCloud, Trash2, RefreshCw, FileVideo, Loader2, Check, AlertCircle 
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
@@ -21,6 +21,22 @@ const STEPS = [
   { id: 5, title: 'Review', icon: CheckCircle },
 ];
 
+const formatBytes = (bytes) => {
+  if (!bytes || bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
+const formatSeconds = (secs) => {
+  if (!secs) return '0s';
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  if (m === 0) return `${s}s`;
+  return `${m}m ${s}s`;
+};
+
 const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId: propLessonId, onClose }) => {
   const { id: routeCourseId, moduleId: routeModuleId, lessonId: routeLessonId } = useParams();
   const courseId = propCourseId || routeCourseId;
@@ -33,6 +49,9 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
   const [currentStep, setCurrentStep] = useState(1);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadedBytes, setUploadedBytes] = useState(0);
+  const [completedPartsCount, setCompletedPartsCount] = useState(0);
+  const [totalPartsCount, setTotalPartsCount] = useState(0);
   const [uploadStatus, setUploadStatus] = useState('idle'); // 'idle' | 'uploading' | 'success' | 'error'
   const [uploadError, setUploadError] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
@@ -49,6 +68,10 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
       url: '',
       duration: 0,
       thumbnail: '',
+      videoKey: '',
+      videoFileName: '',
+      videoSize: 0,
+      videoMimeType: '',
     },
     notes: {
       title: '',
@@ -150,14 +173,27 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
             toast.error('Please select a video provider');
             return false;
           }
-          if (!formData.video.url) {
-            toast.error('Video URL is required');
-            return false;
+          if (formData.video.provider === 'youtube') {
+            if (!formData.video.url) {
+              toast.error('Video URL is required');
+              return false;
+            }
+            if (!formData.video.url.includes('youtube.com') && !formData.video.url.includes('youtu.be')) {
+              toast.error('Please enter a valid YouTube URL');
+              return false;
+            }
           }
-          // Basic YouTube validation
-          if (formData.video.provider === 'youtube' && !formData.video.url.includes('youtube.com') && !formData.video.url.includes('youtu.be')) {
-            toast.error('Please enter a valid YouTube URL');
-            return false;
+          if (formData.video.provider === 'r2') {
+            if (!formData.video.videoKey) {
+              toast.error('Please upload a video to Cloudflare R2 before proceeding');
+              return false;
+            }
+          }
+          if (formData.video.provider === 'direct') {
+            if (!formData.video.url) {
+              toast.error('Direct video URL is required');
+              return false;
+            }
           }
         }
         return true;
@@ -203,7 +239,8 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
     }
   };
 
-  const CHUNK_SIZE = 10 * 1024 * 1024;
+  const CHUNK_SIZE = 10 * 1024 * 1024; // 10 MB per chunk
+  const CONCURRENCY = 4; // Controlled parallel upload concurrency (3-5 workers)
 
   const handleStartUpload = async (file) => {
     if (!file) return;
@@ -230,6 +267,8 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
 
     setUploadFile(file);
     setUploadProgress(0);
+    setUploadedBytes(0);
+    setCompletedPartsCount(0);
     setUploadStatus('uploading');
     setUploadError('');
 
@@ -243,6 +282,8 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
       duration = await new Promise((resolve) => {
         const videoEl = document.createElement('video');
         videoEl.preload = 'metadata';
+        videoEl.muted = true;
+        videoEl.playsInline = true;
         videoEl.src = URL.createObjectURL(file);
         videoEl.onloadedmetadata = () => {
           const src = videoEl.src;
@@ -283,7 +324,10 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
       key = initRes.data.key;
 
       const totalChunks = Math.ceil(fileSize / CHUNK_SIZE);
-      const parts = [];
+      setTotalPartsCount(totalChunks);
+
+      const parts = new Array(totalChunks);
+      const chunkLoaded = new Array(totalChunks).fill(0);
       let isCancelled = false;
 
       cancelRef.current = async () => {
@@ -291,6 +335,8 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
         setUploadStatus('idle');
         setUploadFile(null);
         setUploadProgress(0);
+        setUploadedBytes(0);
+        setCompletedPartsCount(0);
         
         try {
           await lessonService.abortVideoUpload(courseId, currentLessonId, { uploadId, key });
@@ -300,16 +346,22 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
         }
       };
 
-      // 3. Upload chunks sequentially
-      for (let i = 0; i < totalChunks; i++) {
+      const updateProgressState = () => {
         if (isCancelled) return;
+        const totalLoaded = chunkLoaded.reduce((acc, curr) => acc + curr, 0);
+        const percent = Math.min(Math.round((totalLoaded / fileSize) * 100), 99);
+        setUploadProgress(percent);
+        setUploadedBytes(totalLoaded);
+      };
 
-        const start = i * CHUNK_SIZE;
+      // Function to upload a single chunk with retry capability
+      const uploadChunk = async (index) => {
+        if (isCancelled) return;
+        const partNumber = index + 1;
+        const start = index * CHUNK_SIZE;
         const end = Math.min(start + CHUNK_SIZE, fileSize);
         const chunk = file.slice(start, end);
-        const partNumber = i + 1;
 
-        // Get part upload URL
         const partRes = await lessonService.getUploadPartUrl(courseId, currentLessonId, {
           uploadId,
           key,
@@ -323,7 +375,6 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
 
         const { url } = partRes.data;
 
-        // PUT to R2
         let attempt = 0;
         const maxAttempts = 3;
         let uploadSuccess = false;
@@ -337,28 +388,39 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
               },
               onUploadProgress: (progressEvent) => {
                 if (isCancelled) return;
-                const chunkProgress = progressEvent.loaded;
-                const totalUploaded = start + chunkProgress;
-                const percent = Math.min(Math.round((totalUploaded / fileSize) * 100), 99);
-                setUploadProgress(percent);
+                chunkLoaded[index] = progressEvent.loaded;
+                updateProgressState();
               },
             });
 
             const etag = response.headers.etag || response.headers.ETag;
             if (!etag) throw new Error('No ETag header returned from R2');
 
-            parts.push({
+            parts[index] = {
               PartNumber: partNumber,
               ETag: etag.replace(/"/g, ''),
-            });
+            };
             uploadSuccess = true;
+            setCompletedPartsCount((prev) => prev + 1);
           } catch (err) {
             attempt++;
             if (attempt >= maxAttempts) throw err;
             await new Promise((r) => setTimeout(r, 1000 * attempt));
           }
         }
-      }
+      };
+
+      // 3. Controlled Parallel Upload Pool (3-5 active workers)
+      let currentIndex = 0;
+      const workerCount = Math.min(CONCURRENCY, totalChunks);
+      const workers = Array.from({ length: workerCount }).map(async () => {
+        while (currentIndex < totalChunks && !isCancelled) {
+          const taskIndex = currentIndex++;
+          await uploadChunk(taskIndex);
+        }
+      });
+
+      await Promise.all(workers);
 
       if (isCancelled) return;
 
@@ -381,7 +443,7 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
       completed = true;
       setUploadStatus('success');
       setUploadProgress(100);
-      toast.success('Video uploaded successfully');
+      toast.success('Video uploaded successfully to R2');
 
       // Update form data with new R2 video details
       setFormData((prev) => ({
@@ -415,6 +477,25 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
     }
   };
 
+  // Drag and drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleStartUpload(e.dataTransfer.files[0]);
+    }
+  };
+
   // Generate thumbnail for YouTube
   useEffect(() => {
     if (formData.video.provider === 'youtube' && formData.video.url) {
@@ -434,7 +515,6 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
       }
     }
   }, [formData.video.url, formData.video.provider]);
-
 
   if (isLoading) {
     return <div className="p-8 text-center text-gray-400">Loading lesson data...</div>;
@@ -594,49 +674,195 @@ const LessonWizard = ({ courseId: propCourseId, moduleId: propModuleId, lessonId
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-1">Video URL *</label>
-                      <input 
-                        type="text" 
-                        value={formData.video.url}
-                        onChange={(e) => handleVideoChange('url', e.target.value)}
-                        className="w-full bg-black/60 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#ff0064]"
-                        placeholder="https://..."
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-400 mb-1">Duration (seconds)</label>
-                      <input 
-                        type="number" 
-                        value={formData.video.duration}
-                        onChange={(e) => handleVideoChange('duration', parseInt(e.target.value) || 0)}
-                        className="w-full bg-black/60 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#ff0064]"
-                        placeholder="e.g. 600"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Video Preview */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-1">Thumbnail Preview</label>
-                    <div className="aspect-video bg-black/40 border border-white/10 rounded-lg overflow-hidden flex items-center justify-center relative">
-                      {formData.video.thumbnail ? (
-                        <img 
-                          src={formData.video.thumbnail} 
-                          alt="Thumbnail Preview" 
-                          className="w-full h-full object-cover"
+                {/* Provider: YouTube or Direct */}
+                {(formData.video.provider === 'youtube' || formData.video.provider === 'direct') && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">
+                          {formData.video.provider === 'youtube' ? 'YouTube Video URL *' : 'Direct Video URL *'}
+                        </label>
+                        <input 
+                          type="text" 
+                          value={formData.video.url}
+                          onChange={(e) => handleVideoChange('url', e.target.value)}
+                          className="w-full bg-black/60 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#ff0064]"
+                          placeholder={formData.video.provider === 'youtube' ? 'https://www.youtube.com/watch?v=...' : 'https://cdn.example.com/video.mp4'}
                         />
-                      ) : (
-                        <div className="text-center p-4">
-                          <PlayCircle size={32} className="mx-auto text-gray-600 mb-2" />
-                          <p className="text-xs text-gray-500">Thumbnail auto-generated from YouTube URL or editable in settings.</p>
-                        </div>
-                      )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-400 mb-1">Duration (seconds)</label>
+                        <input 
+                          type="number" 
+                          value={formData.video.duration}
+                          onChange={(e) => handleVideoChange('duration', parseInt(e.target.value) || 0)}
+                          className="w-full bg-black/60 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[#ff0064]"
+                          placeholder="e.g. 600"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Video Preview */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-400 mb-1">Thumbnail Preview</label>
+                      <div className="aspect-video bg-black/40 border border-white/10 rounded-lg overflow-hidden flex items-center justify-center relative">
+                        {formData.video.thumbnail ? (
+                          <img 
+                            src={formData.video.thumbnail} 
+                            alt="Thumbnail Preview" 
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-center p-4">
+                            <PlayCircle size={32} className="mx-auto text-gray-600 mb-2" />
+                            <p className="text-xs text-gray-500">Thumbnail preview</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {/* Provider: Cloudflare R2 Upload UI */}
+                {formData.video.provider === 'r2' && (
+                  <div className="space-y-6">
+                    {/* Hidden File Input */}
+                    <input 
+                      type="file" 
+                      ref={fileInputRef}
+                      accept="video/mp4,video/webm,video/quicktime,video/mov"
+                      onChange={(e) => e.target.files?.[0] && handleStartUpload(e.target.files[0])}
+                      className="hidden"
+                    />
+
+                    {/* Case 1: Uploading State */}
+                    {uploadStatus === 'uploading' && (
+                      <div className="p-6 rounded-2xl border border-orange-500/30 bg-orange-500/5 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400">
+                              <Loader2 size={24} className="animate-spin" />
+                            </div>
+                            <div>
+                              <h4 className="text-sm font-bold text-white truncate max-w-xs">{uploadFile?.name}</h4>
+                              <p className="text-xs text-gray-400 font-mono mt-0.5">
+                                {formatBytes(uploadedBytes)} / {formatBytes(uploadFile?.size || 0)}
+                                {totalPartsCount > 0 && ` • Part ${Math.min(completedPartsCount + 1, totalPartsCount)} / ${totalPartsCount}`}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => cancelRef.current?.()}
+                            className="px-3 py-1.5 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold transition-all"
+                          >
+                            Cancel Upload
+                          </button>
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="space-y-1.5">
+                          <div className="h-2.5 w-full bg-white/10 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-orange-500 via-pink-500 to-purple-500 rounded-full transition-all duration-200"
+                              style={{ width: `${uploadProgress}%` }}
+                            />
+                          </div>
+                          <div className="flex justify-between items-center text-[11px] font-mono text-gray-400">
+                            <span>Parallel Upload to Cloudflare R2...</span>
+                            <span className="font-bold text-orange-400">{uploadProgress}%</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Case 2: R2 Video Already Attached */}
+                    {uploadStatus !== 'uploading' && formData.video.videoKey && (
+                      <div className="p-5 sm:p-6 rounded-2xl border border-green-500/30 bg-green-500/5 space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-green-500/15">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="p-2.5 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 shrink-0">
+                              <CheckCircle size={24} />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h4 className="text-sm font-bold text-white truncate max-w-sm sm:max-w-md">
+                                  {formData.video.videoFileName || 'R2 Video Object'}
+                                </h4>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-green-500/20 text-green-400 border border-green-500/30 whitespace-nowrap shrink-0">
+                                  Cloudflare R2
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-gray-500 font-mono truncate max-w-sm sm:max-w-md mt-0.5">
+                                Key: {formData.video.videoKey}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all cursor-pointer"
+                            >
+                              <RefreshCw size={14} />
+                              <span>Replace Video</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setFormData(prev => ({
+                                ...prev,
+                                video: {
+                                  ...prev.video,
+                                  videoKey: '',
+                                  videoFileName: '',
+                                  videoSize: 0,
+                                  videoMimeType: '',
+                                  duration: 0,
+                                }
+                              }))}
+                              className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 transition-all cursor-pointer"
+                              title="Remove Video"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-green-500/15 flex items-center justify-between text-xs font-mono text-gray-400">
+                          <span>File Size: <strong className="text-white font-bold">{formatBytes(formData.video.videoSize)}</strong></span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Case 3: Empty Dropzone */}
+                    {uploadStatus !== 'uploading' && !formData.video.videoKey && (
+                      <div 
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`p-10 rounded-2xl border-2 border-dashed transition-all cursor-pointer text-center flex flex-col items-center justify-center space-y-4 ${
+                          isDragOver 
+                            ? 'border-orange-500 bg-orange-500/10 scale-[1.01]' 
+                            : 'border-white/15 bg-black/40 hover:border-white/30 hover:bg-white/[0.02]'
+                        }`}
+                      >
+                        <div className="w-16 h-16 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center">
+                          <UploadCloud size={32} />
+                        </div>
+                        <div className="space-y-1 max-w-sm">
+                          <h3 className="text-base font-bold text-white">Drag & Drop Video Here</h3>
+                          <p className="text-xs text-gray-400">or click to browse from your computer</p>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] text-gray-400 font-mono">
+                          <FileVideo size={13} className="text-orange-400" />
+                          <span>MP4 • WebM • MOV • Max 2 GB</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
