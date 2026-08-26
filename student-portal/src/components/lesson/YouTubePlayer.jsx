@@ -235,7 +235,10 @@ export const YouTubePlayer = ({ courseId, lessonId, videoId, title, initialPosit
   }, [videoId, lessonId, courseId, iframeId, initialPosition, queryClient]);
 
   return (
-    <div className="youtube-player-container relative w-full aspect-video bg-black rounded-2xl glass-panel border border-white/15 overflow-hidden shadow-2xl transition-all duration-300">
+    <div 
+      onContextMenu={(e) => e.preventDefault()}
+      className="youtube-player-container relative w-full aspect-video bg-black rounded-2xl glass-panel border border-white/15 overflow-hidden shadow-2xl transition-all duration-300"
+    >
       <div className="w-full h-full">
         <div id={iframeId} className="w-full h-full border-0" />
       </div>

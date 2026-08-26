@@ -12,16 +12,10 @@ import {
   AlertTriangle,
   RefreshCw,
   Gauge,
-  Tv2,
   Loader2,
 } from 'lucide-react';
 import useStudentProfile from '../../hooks/useStudentProfile';
 import courseService from '../../services/course.service';
-
-const DEFAULT_TEST_VIDEO =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
-const FALLBACK_TEST_VIDEO =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
 
 const SPEED_OPTIONS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
 
@@ -85,7 +79,7 @@ export const VideoPlayer = ({
   const { student } = useStudentProfile();
   const queryClient = useQueryClient();
   const effectiveLessonId = lessonId || lesson?._id || lesson?.id || 'demo_lesson';
-  const primarySource = videoUrl || lesson?.video?.url || lesson?.videoUrl || DEFAULT_TEST_VIDEO;
+  const primarySource = videoUrl || lesson?.video?.url || lesson?.videoUrl || '';
 
   const [src, setSrc] = useState(primarySource);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -462,20 +456,12 @@ export const VideoPlayer = ({
 
   const handleError = () => {
     setIsLoading(false);
-    if (lesson?.video?.provider === 'r2') {
-      setHasError(true);
-    } else if (src !== FALLBACK_TEST_VIDEO) {
-      console.warn('Primary video failed, switching to fallback stream...');
-      setSrc(FALLBACK_TEST_VIDEO);
-    } else {
-      setHasError(true);
-    }
+    setHasError(true);
   };
 
   const handleRetry = () => {
     setHasError(false);
     setIsLoading(true);
-    setSrc(primarySource);
     if (videoRef.current) {
       videoRef.current.load();
     }
@@ -495,20 +481,6 @@ export const VideoPlayer = ({
       containerRef.current.requestFullscreen().then(() => setIsFullscreen(true)).catch(() => {});
     } else {
       document.exitFullscreen().then(() => setIsFullscreen(false)).catch(() => {});
-    }
-  };
-
-  const handlePictureInPicture = async () => {
-    if (videoRef.current && document.pictureInPictureEnabled) {
-      try {
-        if (document.pictureInPictureElement) {
-          await document.exitPictureInPicture();
-        } else {
-          await videoRef.current.requestPictureInPicture();
-        }
-      } catch (err) {
-        console.warn('PiP Error:', err);
-      }
     }
   };
 
@@ -547,6 +519,7 @@ export const VideoPlayer = ({
     <div
       ref={containerRef}
       onMouseMove={handleMouseMove}
+      onContextMenu={(e) => e.preventDefault()}
       className={`
         relative w-full aspect-video rounded-2xl glass-panel border border-white/15 overflow-hidden
         bg-[#070a0e] group shadow-2xl transition-all duration-300 select-none
@@ -578,7 +551,7 @@ export const VideoPlayer = ({
           </div>
           <button
             onClick={handleRetry}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-400 text-xs font-bold text-white shadow-lg shadow-pink-500/20 transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-pink-500 hover:bg-pink-400 text-xs font-bold text-white shadow-lg shadow-pink-500/20 transition-all active:scale-95 cursor-pointer"
           >
             <RefreshCw size={14} />
             <span>Retry Loading</span>
@@ -591,6 +564,10 @@ export const VideoPlayer = ({
           src={src}
           className="w-full h-full object-cover cursor-pointer"
           onClick={togglePlay}
+          onContextMenu={(e) => e.preventDefault()}
+          onError={handleError}
+          disablePictureInPicture
+          disableRemotePlayback
           playsInline
         />
       )}
@@ -705,8 +682,8 @@ export const VideoPlayer = ({
                   <Volume2 size={18} />
                 )}
               </button>
-              <div className="w-0 group-hover/volume:w-20 group-focus-within/volume:w-20 transition-all duration-300 overflow-hidden flex items-center h-5 px-2">
-                <div className="relative w-16 h-1 flex items-center cursor-pointer select-none">
+              <div className="w-0 group-hover/volume:w-20 group-focus-within/volume:w-20 opacity-0 group-hover/volume:opacity-100 group-focus-within/volume:opacity-100 transition-all duration-300 overflow-hidden flex items-center h-5">
+                <div className="relative w-16 h-1 mx-2 shrink-0 flex items-center cursor-pointer select-none">
                   {/* Track background line */}
                   <div className="absolute inset-0 bg-white/25 rounded-full" />
                   {/* Filled pink track line */}
@@ -777,17 +754,6 @@ export const VideoPlayer = ({
                 </div>
               )}
             </div>
-
-            {/* Picture in Picture */}
-            {document.pictureInPictureEnabled && (
-              <button
-                onClick={handlePictureInPicture}
-                className="text-gray-300 hover:text-white transition-colors cursor-pointer"
-                title="Picture-in-Picture"
-              >
-                <Tv2 size={16} />
-              </button>
-            )}
 
             {/* Fullscreen Toggle */}
             <button
