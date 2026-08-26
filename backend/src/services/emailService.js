@@ -898,8 +898,8 @@ export const sendCourseAccessEmail = async ({ studentEmail, studentName, courseN
     }
 
     const safeName = studentName || studentEmail.split('@')[0] || "Student";
-    const portalBaseUrl = process.env.STUDENT_PORTAL_URL || "https://portal.smven.com";
-    const courseUrl = `${portalBaseUrl.replace(/\/$/, '')}/courses/${courseId}`;
+    const portalBaseUrl = process.env.STUDENT_PORTAL_URL || "https://student.smven.com";
+    const courseUrl = `${portalBaseUrl.replace(/\/$/, '')}/course/${courseId}`;
     const url = 'https://api.zeptomail.in/v1.1/email';
 
     let expiryText = "Your course access has lifetime availability.";
