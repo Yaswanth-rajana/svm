@@ -94,9 +94,15 @@ const CoursesList = () => {
       case 'archive':
         toast('Archive functionality coming in wizard!', { icon: '📦' });
         break;
-      case 'preview':
-        window.open(`http://localhost:5174/course/${course._id}`, '_blank');
+      case 'preview': {
+        const studentPortalUrl = import.meta.env.VITE_STUDENT_PORTAL_URL || (
+          window.location.hostname.includes('localhost')
+            ? 'http://localhost:5174'
+            : 'https://student.smven.com'
+        );
+        window.open(`${studentPortalUrl}/course/${course._id}`, '_blank');
         break;
+      }
       default:
         break;
     }
