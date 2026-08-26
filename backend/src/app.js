@@ -18,9 +18,13 @@ import studentAuthRoutes from "./routes/studentAuthRoutes.js";
 const allowedOrigins = [
   "https://smven.com",
   "https://www.smven.com",
+  "https://admin.smven.com",
+  "https://student.smven.com",
   "https://portal.smven.com",
   "http://localhost:5173",
   "http://localhost:5174",
+  "http://localhost:5175",
+  ...(env.ALLOWED_ORIGINS || []),
 ];
 
 const app = express();
@@ -30,7 +34,12 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like mobile apps, curl, postman)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin) || /^http:\/\/localhost:\d+$/.test(origin) || /\.vercel\.app$/.test(origin)) {
+      if (
+        allowedOrigins.includes(origin) ||
+        /^https:\/\/(.*\.)?smven\.com$/.test(origin) ||
+        /^http:\/\/localhost:\d+$/.test(origin) ||
+        /\.vercel\.app$/.test(origin)
+      ) {
         return callback(null, true);
       }
       return callback(new Error("CORS Policy: Origin not allowed"), false);
