@@ -64,7 +64,7 @@ const Login = () => {
                   type="email"
                   autoComplete="username"
                   className="w-full glass-input rounded-xl py-3 pl-11 pr-4 text-sm"
-                  placeholder="admin@smven.com"
+                  placeholder="Enter your email"
                   {...register('email', { required: 'Email is required' })}
                   disabled={isLoading}
                 />

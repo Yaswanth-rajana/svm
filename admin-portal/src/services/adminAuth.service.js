@@ -8,7 +8,7 @@ export const adminAuthService = {
     
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        if (credentials.email === 'admin@smven.com' && Boolean(credentials.password)) {
+        if (credentials.email === 'admin@smven.com' && credentials.password === 'Win@Hp$56') {
           // Construct token dynamically at runtime to avoid hardcoding JWT signatures in source
           const header = typeof btoa !== 'undefined' ? btoa(JSON.stringify({ alg: "HS256", typ: "JWT" })) : "mock_header";
           const payload = typeof btoa !== 'undefined' ? btoa(JSON.stringify({
