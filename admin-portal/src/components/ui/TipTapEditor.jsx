@@ -8,7 +8,9 @@ import { Bold, Italic, List, ListOrdered, Link as LinkIcon, Image as ImageIcon, 
 const TipTapEditor = ({ value, onChange }) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: false,
+      }),
       Image,
       Link.configure({
         openOnClick: false,

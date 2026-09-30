@@ -31,11 +31,18 @@ const runMulter = (req, res) => {
  * @param {Buffer} buffer 
  * @returns {boolean}
  */
+/**
+ * Validates the file buffer magic bytes for PDF format.
+ * A valid PDF file contains %PDF- in header bytes.
+ * 
+ * @param {Buffer} buffer 
+ * @returns {boolean}
+ */
 function validatePdfSignature(buffer) {
-  if (!buffer || buffer.length < 5) return false;
-  const limit = Math.min(buffer.length, 1024);
-  const fileHead = buffer.toString("ascii", 0, limit);
-  return fileHead.includes("%PDF-");
+  if (!buffer || buffer.length < 4) return false;
+  const pdfHeader = Buffer.from("%PDF-");
+  const searchBuffer = buffer.subarray(0, Math.min(buffer.length, 4096));
+  return searchBuffer.includes(pdfHeader);
 }
 
 /**
@@ -47,13 +54,7 @@ export const uploadPDF = async (req, res) => {
   try {
     const courseId = req.params.id;
 
-    // 1. Verify course exists
-    const course = await Course.findOne({ _id: courseId, deletedAt: null });
-    if (!course) {
-      return res.status(404).json({ success: false, message: "Course not found" });
-    }
-
-    // 2. Parse file upload
+    // 1. Parse file upload first to capture incoming stream
     try {
       await runMulter(req, res);
     } catch (err) {
@@ -66,6 +67,12 @@ export const uploadPDF = async (req, res) => {
     const file = req.file;
     if (!file) {
       return res.status(400).json({ success: false, message: "No file uploaded" });
+    }
+
+    // 2. Verify course exists
+    const course = await Course.findOne({ _id: courseId, deletedAt: null });
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
     }
 
     // 3. Verify magic bytes signature
@@ -182,13 +189,7 @@ export const uploadLessonPDF = async (req, res) => {
   try {
     const courseId = req.params.id;
 
-    // 1. Verify course exists
-    const course = await Course.findOne({ _id: courseId, deletedAt: null });
-    if (!course) {
-      return res.status(404).json({ success: false, message: "Course not found" });
-    }
-
-    // 2. Parse file upload
+    // 1. Parse file upload first to capture incoming stream
     try {
       await runMulter(req, res);
     } catch (err) {
@@ -201,6 +202,12 @@ export const uploadLessonPDF = async (req, res) => {
     const file = req.file;
     if (!file) {
       return res.status(400).json({ success: false, message: "No file uploaded" });
+    }
+
+    // 2. Verify course exists
+    const course = await Course.findOne({ _id: courseId, deletedAt: null });
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
     }
 
     // 3. Verify magic bytes signature

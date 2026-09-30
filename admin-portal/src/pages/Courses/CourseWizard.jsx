@@ -165,13 +165,31 @@ const CourseWizard = () => {
         try {
           const uploadRes = await courseService.uploadThumbnail(courseId, thumbnailFile);
           if (uploadRes.data?.success) {
+            const uploadedUrl = uploadRes.data.thumbnail;
             setThumbnailFile(null);
             setThumbnailPreview('');
+            if (uploadedUrl) {
+              setFormData(prev => ({
+                ...prev,
+                media: {
+                  ...prev.media,
+                  thumbnail: uploadedUrl
+                }
+              }));
+            }
           }
         } catch (err) {
           toast.error('Course details saved, but thumbnail upload failed. Please try again.');
           throw err;
         }
+      } else if (res.data?.course?.media?.thumbnail) {
+        setFormData(prev => ({
+          ...prev,
+          media: {
+            ...prev.media,
+            thumbnail: res.data.course.media.thumbnail
+          }
+        }));
       }
       return res;
     },
@@ -233,8 +251,11 @@ const CourseWizard = () => {
     if (typeof data.learningOutcomes === 'string') dataForBackend.learningOutcomes = data.learningOutcomes.split('\n').map(s => s.trim()).filter(Boolean);
     if (typeof data.prerequisites === 'string') dataForBackend.prerequisites = data.prerequisites.split('\n').map(s => s.trim()).filter(Boolean);
     
-    if (dataForBackend.settings?.accessType === 'lifetime' || !dataForBackend.settings?.expiryDate) {
-      dataForBackend.settings.expiryDate = null;
+    if (dataForBackend.settings) {
+      dataForBackend.settings = { ...dataForBackend.settings };
+      if (dataForBackend.settings.accessType === 'lifetime' || !dataForBackend.settings.expiryDate || dataForBackend.settings.expiryDate === '') {
+        dataForBackend.settings.expiryDate = null;
+      }
     }
 
     pendingSaveRef.current = true;
@@ -429,14 +450,15 @@ const CourseWizard = () => {
                           setThumbnailFile(file);
                           const previewUrl = URL.createObjectURL(file);
                           setThumbnailPreview(previewUrl);
-                          // Trigger form auto-save so it uploads right away in background
-                          formatAndSave(formData);
+                          if (courseId) {
+                            updateMutation.mutate(formData);
+                          }
                         }}
                         onChange={(url) => {
                           if (url === "") {
                             setThumbnailFile(null);
                             setThumbnailPreview("");
-                            handleNestedChange('media', 'thumbnail', '');
+                            handleNestedChange('media', 'thumbnail', null);
                           }
                         }}
                         label="Upload Thumbnail"

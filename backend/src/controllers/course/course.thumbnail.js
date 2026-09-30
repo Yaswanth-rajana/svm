@@ -104,8 +104,18 @@ export const uploadThumbnail = async (req, res) => {
     // Save previous key for deletion
     const oldKey = course.thumbnailKey;
 
-    // 6. Update database record with the new R2 key
+    // 6. Update database record with the new R2 key and signed URL
     course.thumbnailKey = newKey;
+    
+    let signedUrl = "";
+    try {
+      signedUrl = await getSignedUrlForR2({ key: newKey });
+      if (!course.media) course.media = {};
+      course.media.thumbnail = signedUrl;
+    } catch (urlErr) {
+      console.error("⚠️ Failed to generate signed URL for thumbnail:", urlErr);
+    }
+    
     await course.save();
 
     // 7. Cleanup old R2 object if existed
@@ -119,6 +129,7 @@ export const uploadThumbnail = async (req, res) => {
       success: true,
       message: "Course thumbnail uploaded successfully",
       thumbnailKey: newKey,
+      thumbnail: signedUrl,
     });
   } catch (error) {
     console.error("❌ Error in uploadThumbnail controller:", error);

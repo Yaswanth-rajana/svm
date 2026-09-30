@@ -5,8 +5,12 @@ import { initScheduler } from "./src/scheduler.js";
 
 const PORT = env.PORT || 5001;
 
-app.listen(PORT, async () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+const startServer = async () => {
   await connectDB();
   initScheduler();
-});
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  });
+};
+
+startServer();
