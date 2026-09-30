@@ -15,12 +15,18 @@ export const updateCourse = async (req, res) => {
     delete updateData._id;
     delete updateData.deletedAt;
     
-    // If slug is being updated, verify uniqueness
+    // If slug is being updated, ensure uniqueness by auto-incrementing if a conflict exists
     if (updateData.slug) {
-      const existingSlug = await Course.findOne({ slug: updateData.slug, _id: { $ne: id } });
-      if (existingSlug) {
-        return res.status(400).json({ success: false, message: "Slug already exists" });
+      let baseSlug = updateData.slug;
+      let slug = baseSlug;
+      let existingSlug = await Course.findOne({ slug, _id: { $ne: id } });
+      let counter = 1;
+      while (existingSlug) {
+        slug = `${baseSlug}-${counter}`;
+        existingSlug = await Course.findOne({ slug, _id: { $ne: id } });
+        counter++;
       }
+      updateData.slug = slug;
     }
 
     const existingCourse = await Course.findOne({ _id: id, deletedAt: null });

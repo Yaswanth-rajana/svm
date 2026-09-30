@@ -25,24 +25,38 @@ const runMulter = (req, res) => {
 };
 
 /**
- * Validates the file buffer against magic numbers for JPG, PNG, and WebP.
+ * Validates the file buffer against magic numbers and mime types for common image formats (JPG, PNG, WebP, GIF, SVG, etc.)
  * 
  * @param {Buffer} buffer 
+ * @param {string} mimetype 
+ * @param {string} filename 
  * @returns {boolean}
  */
-function validateImageSignature(buffer) {
-  if (!buffer || buffer.length < 12) return false;
+function validateImageSignature(buffer, mimetype = "", filename = "") {
+  if (!buffer || buffer.length < 4) return false;
   
-  // PNG signature: 89 50 4E 47 0D 0A 1A 0A
+  // PNG signature: 89 50 4E 47
   const isPng = buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
   
   // JPEG signature: FF D8 FF
   const isJpeg = buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
   
   // WebP signature: RIFF at offset 0, WEBP at offset 8
-  const isWebp = buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP";
-  
-  return isPng || isJpeg || isWebp;
+  const isWebp = buffer.length >= 12 && buffer.toString("ascii", 0, 4) === "RIFF" && buffer.toString("ascii", 8, 12) === "WEBP";
+
+  // GIF signature: GIF8
+  const isGif = buffer.toString("ascii", 0, 4) === "GIF8";
+
+  // SVG signature: <svg or <?xml
+  const headStr = buffer.toString("utf8", 0, Math.min(buffer.length, 512)).toLowerCase();
+  const isSvg = headStr.includes("<svg") || headStr.includes("<?xml");
+
+  // MIME / Extension fallback
+  const lowerMime = (mimetype || "").toLowerCase();
+  const lowerExt = (filename || "").toLowerCase();
+  const isMimeImage = lowerMime.startsWith("image/") || /\.(png|jpe?g|webp|svg|gif|avif|bmp|ico)$/i.test(lowerExt);
+
+  return isPng || isJpeg || isWebp || isGif || isSvg || isMimeImage;
 }
 
 /**
@@ -54,18 +68,12 @@ export const uploadThumbnail = async (req, res) => {
   try {
     const courseId = req.params.id;
 
-    // 1. Verify that the course exists before reading file data
-    const course = await Course.findOne({ _id: courseId, deletedAt: null });
-    if (!course) {
-      return res.status(404).json({ success: false, message: "Course not found" });
-    }
-
-    // 2. Parse file from request using multer
+    // 1. Parse file from request using multer first so incoming stream is captured immediately
     try {
       await runMulter(req, res);
     } catch (err) {
       if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
-        return res.status(400).json({ success: false, message: "File size exceeds 5MB limit" });
+        return res.status(400).json({ success: false, message: "File size exceeds 10MB limit" });
       }
       return res.status(400).json({ success: false, message: err.message || "File upload error" });
     }
@@ -75,12 +83,18 @@ export const uploadThumbnail = async (req, res) => {
       return res.status(400).json({ success: false, message: "No file uploaded" });
     }
 
-    // 3. Check image signature / magic numbers (do not trust MIME-type header alone)
-    const isValidSignature = validateImageSignature(file.buffer);
+    // 2. Verify that the course exists
+    const course = await Course.findOne({ _id: courseId, deletedAt: null });
+    if (!course) {
+      return res.status(404).json({ success: false, message: "Course not found" });
+    }
+
+    // 3. Check image signature / magic numbers
+    const isValidSignature = validateImageSignature(file.buffer, file.mimetype, file.originalname);
     if (!isValidSignature) {
       return res.status(400).json({
         success: false,
-        message: "Invalid file format. Only JPEG, PNG, and WebP images are allowed.",
+        message: "Invalid file format. Only JPEG, PNG, WebP, SVG, and GIF images are allowed.",
       });
     }
 

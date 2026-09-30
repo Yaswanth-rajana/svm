@@ -36,6 +36,7 @@ const CourseWizard = () => {
   const [lastSaved, setLastSaved] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState('');
+  const thumbnailFileRef = useRef(null);
 
   const [selectedPdfFile, setSelectedPdfFile] = useState(null);
   const [resourceTitle, setResourceTitle] = useState('');
@@ -161,28 +162,7 @@ const CourseWizard = () => {
   const updateMutation = useMutation({
     mutationFn: async (data) => {
       const res = await courseService.updateCourse(courseId, data);
-      if (thumbnailFile) {
-        try {
-          const uploadRes = await courseService.uploadThumbnail(courseId, thumbnailFile);
-          if (uploadRes.data?.success) {
-            const uploadedUrl = uploadRes.data.thumbnail;
-            setThumbnailFile(null);
-            setThumbnailPreview('');
-            if (uploadedUrl) {
-              setFormData(prev => ({
-                ...prev,
-                media: {
-                  ...prev.media,
-                  thumbnail: uploadedUrl
-                }
-              }));
-            }
-          }
-        } catch (err) {
-          toast.error('Course details saved, but thumbnail upload failed. Please try again.');
-          throw err;
-        }
-      } else if (res.data?.course?.media?.thumbnail) {
+      if (res.data?.course?.media?.thumbnail) {
         setFormData(prev => ({
           ...prev,
           media: {
@@ -203,7 +183,9 @@ const CourseWizard = () => {
       pendingSaveRef.current = false;
       queryClient.invalidateQueries(['course', courseId]);
     },
-    onError: () => {
+    onError: (err) => {
+      console.error('❌ Course update failed:', err?.response?.data || err.message);
+      toast.error(err?.response?.data?.message || 'Failed to save course changes');
       setSaveStatus('Error');
       pendingSaveRef.current = false;
     }
@@ -446,17 +428,31 @@ const CourseWizard = () => {
                       <p className="text-xs text-gray-500 mb-3">Appears on course cards and catalog. 1280x720px recommended.</p>
                       <MediaUploader 
                         value={thumbnailPreview || formData.media?.thumbnail || ""}
-                        onFileSelect={(file) => {
-                          setThumbnailFile(file);
+                        onFileSelect={async (file) => {
+                          if (!file) return;
                           const previewUrl = URL.createObjectURL(file);
                           setThumbnailPreview(previewUrl);
                           if (courseId) {
-                            updateMutation.mutate(formData);
+                            try {
+                              setSaveStatus('Saving...');
+                              const res = await courseService.uploadThumbnail(courseId, file);
+                              if (res.data?.success && res.data?.thumbnail) {
+                                handleNestedChange('media', 'thumbnail', res.data.thumbnail);
+                                setThumbnailPreview('');
+                                toast.success('Thumbnail uploaded successfully');
+                                setSaveStatus('Saved');
+                                setLastSaved(new Date());
+                              }
+                            } catch (err) {
+                              console.error('❌ Thumbnail upload error:', err);
+                              toast.error(err?.response?.data?.message || 'Failed to upload thumbnail');
+                              setThumbnailPreview('');
+                              setSaveStatus('Error');
+                            }
                           }
                         }}
                         onChange={(url) => {
                           if (url === "") {
-                            setThumbnailFile(null);
                             setThumbnailPreview("");
                             handleNestedChange('media', 'thumbnail', null);
                           }
