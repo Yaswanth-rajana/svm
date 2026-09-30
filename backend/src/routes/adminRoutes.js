@@ -10,7 +10,7 @@ import {
   duplicateCourse
 } from "../controllers/course/index.js";
 import { requireAdminAuth } from "../middleware/adminAuth.js";
-import { uploadThumbnail } from "../controllers/course/course.thumbnail.js";
+import { uploadThumbnail, uploadThumbnailMiddleware } from "../controllers/course/course.thumbnail.js";
 import { uploadPDF, deletePDF, uploadLessonPDF, updatePDFResource } from "../controllers/course/course.resources.js";
 import {
   getModulesByCourseId,
@@ -71,7 +71,7 @@ router.delete("/courses/:id", deleteCourse);
 router.post("/courses/:id/restore", restoreCourse);
 router.patch("/courses/:id/status", updateCourseStatus);
 router.post("/courses/:id/duplicate", duplicateCourse);
-router.post("/courses/:id/thumbnail", requireAdminAuth, uploadThumbnail);
+router.post("/courses/:id/thumbnail", requireAdminAuth, uploadThumbnailMiddleware, uploadThumbnail);
 router.post("/courses/:id/resources/pdf", requireAdminAuth, uploadPDF);
 router.post("/courses/:id/lessons/upload-pdf", requireAdminAuth, uploadLessonPDF);
 router.delete("/courses/:id/resources/:resourceId", requireAdminAuth, deletePDF);

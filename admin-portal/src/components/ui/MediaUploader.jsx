@@ -34,14 +34,16 @@ const MediaUploader = ({ value, onChange, onFileSelect, accept = "image/*", labe
     if (!file) return;
 
     if (onFileSelect) {
-      // Validate size (max 10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error('File size exceeds 10MB limit');
+      // Validate size (max 5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size exceeds 5MB limit');
         return;
       }
-      // Validate file type is image
-      if (!file.type.startsWith('image/') && !/\.(png|jpe?g|webp|svg|gif|avif|bmp)$/i.test(file.name)) {
-        toast.error('Invalid file type. Please select an image file.');
+      // Validate file type (JPEG, PNG, WebP only)
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      const isAllowedExt = /\.(png|jpe?g|webp)$/i.test(file.name);
+      if (!allowedTypes.includes(file.type?.toLowerCase()) && !isAllowedExt) {
+        toast.error('Invalid file format. Only JPEG, PNG, and WebP images are allowed.');
         return;
       }
       onFileSelect(file);

@@ -8,14 +8,15 @@ const baseURL = rawApiUrl.replace(/\/+$/, '').endsWith('/api')
 // Create a configured axios instance
 const api = axios.create({
   baseURL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and normalize URLs
 api.interceptors.request.use(
   (config) => {
+    // Truncate duplicate /api prefix if url starts with /api/
+    if (config.url && config.url.startsWith('/api/')) {
+      config.url = config.url.replace(/^\/api/, '');
+    }
     // 1. Try smven_admin_token key from LocalStorage
     const token = localStorage.getItem('smven_admin_token');
     if (token) {

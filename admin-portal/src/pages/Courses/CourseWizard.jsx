@@ -444,7 +444,9 @@ const CourseWizard = () => {
                                 setLastSaved(new Date());
                               }
                             } catch (err) {
-                              console.error('❌ Thumbnail upload error:', err);
+                              console.error("❌ Thumbnail upload error:", err);
+                              console.error("❌ Status:", err.response?.status);
+                              console.error("❌ Backend response:", err.response?.data);
                               toast.error(err?.response?.data?.message || 'Failed to upload thumbnail');
                               setThumbnailPreview('');
                               setSaveStatus('Error');

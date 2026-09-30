@@ -42,10 +42,15 @@ export const courseService = {
   },
 
   // Upload course thumbnail
-  uploadThumbnail: async (id, file) => {
+  uploadThumbnail: async (courseId, file) => {
     const formData = new FormData();
-    formData.append('thumbnail', file);
-    return await api.post(`/admin/courses/${id}/thumbnail`, formData);
+    formData.append("thumbnail", file);
+
+    return await api.post(`/admin/courses/${courseId}/thumbnail`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   // Upload course PDF resource
@@ -55,7 +60,11 @@ export const courseService = {
     if (title) {
       formData.append('title', title);
     }
-    return await api.post(`/admin/courses/${id}/resources/pdf`, formData);
+    return await api.post(`/admin/courses/${id}/resources/pdf`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   },
 
   // Delete course PDF resource
@@ -72,6 +81,10 @@ export const courseService = {
   uploadLessonPDF: async (courseId, file) => {
     const formData = new FormData();
     formData.append('pdf', file);
-    return await api.post(`/admin/courses/${courseId}/lessons/upload-pdf`, formData);
+    return await api.post(`/admin/courses/${courseId}/lessons/upload-pdf`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
   }
 };
