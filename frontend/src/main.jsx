@@ -6,10 +6,12 @@ import LandingPage from './pages/LandingPage.jsx'
 import PaymentSuccess from './pages/PaymentSuccess.jsx'
 import PaymentFailed from './pages/PaymentFailed.jsx'
 import ClaimCertificate from './pages/ClaimCertificate.jsx'
+import MetaPixelRouteTracker from './components/MetaPixelRouteTracker'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
+      <MetaPixelRouteTracker />
       <Routes>
         <Route path="/" element={<LandingPage program="it-infrastructure" />} />
         <Route path="/cloud-computing" element={<LandingPage program="cloud-computing" />} />
