@@ -62,7 +62,7 @@ const LeadModal = ({ program }) => {
     experience: ''
   });
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
-  const [isResetKey, setIsResetKey] = useState(0);
+  const [resetKey, setResetKey] = useState(0);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
 
@@ -73,7 +73,7 @@ const LeadModal = ({ program }) => {
       setIsSubmitted(e.detail.isSuccess || false);
       setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
       setIsPhoneVerified(false);
-      setIsResetKey(prev => prev + 1);
+      setResetKey(prev => prev + 1);
 
       // Request animation frame to ensure the DOM is updated before applying transitions
       requestAnimationFrame(() => {
@@ -488,7 +488,7 @@ const LeadModal = ({ program }) => {
                   <div className="space-y-1.5 text-left">
                     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
                     <OtpVerification 
-                      key={`otp-modal-simple-${isResetKey}`}
+                      key={`otp-modal-simple-${resetKey}`}
                       phone={formData.phone} 
                       email={formData.email} 
                       fullName={formData.fullName}
