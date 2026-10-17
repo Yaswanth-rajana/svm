@@ -422,7 +422,20 @@ export const verifyPayment = async (req, res) => {
       }
 
       logger.info("Payment verification successful");
-      return res.status(200).json({ success: true, message: "Payment verified successfully", data: lead });
+      return res.status(200).json({
+        success: true,
+        message: "Payment verified successfully",
+        data: lead,
+        alreadyProcessed: Boolean(alreadyProcessed),
+        purchase: {
+          paymentId: razorpay_payment_id,
+          value:
+            typeof paymentDetails.amount === "number"
+              ? paymentDetails.amount / 100
+              : Number(lead.amountPaid || 0),
+          currency: paymentDetails.currency || "INR"
+        }
+      });
     } else {
       console.error("Razorpay signature verification failed");
       logger.error("Payment verification failed: Invalid signature");

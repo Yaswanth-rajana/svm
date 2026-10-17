@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { logger } from './logger';
+import { trackMetaEvent } from './metaPixel';
 
 // Temporary global error listener
 if (typeof window !== 'undefined') {
@@ -107,6 +108,49 @@ export const handleRazorpayPayment = async ({
           const verifyData = verifyRes.data;
           if (verifyData.success) {
             logger.info("Payment verification successful");
+
+            const purchase = verifyData.purchase;
+            const paymentId =
+              purchase?.paymentId || response.razorpay_payment_id;
+
+            const value = Number(purchase?.value);
+            const currency = purchase?.currency || "INR";
+
+            const storageKey = paymentId
+              ? `smven_meta_purchase_${paymentId}`
+              : null;
+
+            let alreadyTracked = false;
+
+            try {
+              alreadyTracked = Boolean(
+                storageKey && window.localStorage.getItem(storageKey)
+              );
+            } catch (error) {
+              console.warn("Could not check Purchase event deduplication:", error);
+            }
+
+            if (
+              typeof window.fbq === "function" &&
+              paymentId &&
+              Number.isFinite(value) &&
+              value > 0 &&
+              !alreadyTracked
+            ) {
+              trackMetaEvent("Purchase", {
+                content_name: leadData?.program || "it-infrastructure",
+                content_category: "program_registration",
+                value,
+                currency,
+              });
+
+              try {
+                window.localStorage.setItem(storageKey, "1");
+              } catch (error) {
+                console.warn("Could not save Purchase event deduplication:", error);
+              }
+            }
+
             onSuccess && onSuccess(verifyData.data);
           } else {
             logger.error("Payment verification failed");
@@ -160,6 +204,14 @@ export const handleRazorpayPayment = async ({
 
     console.log("Razorpay options:", options);
     console.log("Handler exists:", typeof options.handler);
+
+    const amountInRupees = amount || (orderData?.order?.amount ? orderData.order.amount / 100 : 99);
+    trackMetaEvent("InitiateCheckout", {
+      content_name: leadData?.program || "it-infrastructure",
+      currency: "INR",
+      value: amountInRupees,
+    });
+
     paymentObject.open();
   } catch (error) {
     console.error("Payment initialization error:", error);
