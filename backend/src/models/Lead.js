@@ -1,5 +1,20 @@
 import mongoose from "mongoose";
 
+const attributionSchema = new mongoose.Schema(
+  {
+    utm_source: { type: String, trim: true, maxlength: 200 },
+    utm_medium: { type: String, trim: true, maxlength: 200 },
+    utm_campaign: { type: String, trim: true, maxlength: 500 },
+    utm_content: { type: String, trim: true, maxlength: 500 },
+    utm_term: { type: String, trim: true, maxlength: 500 },
+    fbclid: { type: String, trim: true, maxlength: 1000 },
+    landingPage: { type: String, trim: true, maxlength: 2000 },
+    referrer: { type: String, trim: true, maxlength: 2000 },
+    capturedAt: { type: Date },
+  },
+  { _id: false }
+);
+
 const leadSchema = new mongoose.Schema(
   {
     name: {
@@ -157,6 +172,11 @@ const leadSchema = new mongoose.Schema(
     claimedAt: {
       type: Date,
       default: null
+    },
+
+    attribution: {
+      type: attributionSchema,
+      default: undefined,
     },
 
     leadType: {

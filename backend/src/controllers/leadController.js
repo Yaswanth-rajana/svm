@@ -8,6 +8,43 @@ import { maskEmail, maskPhone } from "../utils/logger.js";
 import { createRegistrationInBigin } from "../services/biginService.js";
 import { PAYMENT_CONFIG } from "../config/paymentConfig.js";
 
+const ATTRIBUTION_STRING_LIMITS = {
+  utm_source: 200,
+  utm_medium: 200,
+  utm_campaign: 500,
+  utm_content: 500,
+  utm_term: 500,
+  fbclid: 1000,
+  landingPage: 2000,
+  referrer: 2000,
+};
+
+function sanitizeAttribution(input) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return undefined;
+  }
+
+  const result = {};
+
+  for (const [key, maxLength] of Object.entries(ATTRIBUTION_STRING_LIMITS)) {
+    const value = input[key];
+
+    if (typeof value === "string" && value.trim()) {
+      result[key] = value.trim().slice(0, maxLength);
+    }
+  }
+
+  if (typeof input.capturedAt === "string" || input.capturedAt instanceof Date) {
+    const capturedAt = new Date(input.capturedAt);
+
+    if (!Number.isNaN(capturedAt.getTime())) {
+      result.capturedAt = capturedAt;
+    }
+  }
+
+  return Object.keys(result).length ? result : undefined;
+}
+
 const ALLOWED_PROGRAMS = [
   "it-infrastructure",
   "cloud-computing",
@@ -28,7 +65,16 @@ const ALLOWED_PROGRAMS = [
 export const createLead = async (req, res) => {
   console.log(`📥 API Request received (createLead): Source=${req.body.source}, Phone=${req.body.phone ? maskPhone(normalizePhone(req.body.phone)) : 'N/A'}, Email=${req.body.email ? maskEmail(req.body.email) : 'N/A'}`);
   try {
-    const { name, email, workingProfile, experience, program: reqProgram, paymentPlan } = req.body;
+    const {
+      name,
+      email,
+      workingProfile,
+      experience,
+      program: reqProgram,
+      paymentPlan,
+    } = req.body;
+
+    const incomingAttribution = sanitizeAttribution(req.body.attribution);
     const program = reqProgram || "it-infrastructure";
     console.log("Received lead payload (createLead):", req.body);
     console.log("Program:", program);
@@ -109,6 +155,11 @@ export const createLead = async (req, res) => {
       if (workingProfile) lead.workingProfile = workingProfile;
       if (experience) lead.experience = experience;
 
+      // Preserve the original attribution when a lead already has it.
+      if (!lead.attribution && incomingAttribution) {
+        lead.attribution = incomingAttribution;
+      }
+
       // Lock payment details once a payment is successfully registered (hasPaid === true)
       if (!hasPaid) {
         lead.paymentPlan = paymentPlan || "FULL";
@@ -187,6 +238,9 @@ export const createLead = async (req, res) => {
       balanceAmount: PAYMENT_CONFIG.totalAmount,
       firstInstallmentAmount: (paymentPlan === "TWO_INSTALLMENTS") ? PAYMENT_CONFIG.firstInstallmentAmount : PAYMENT_CONFIG.totalAmount,
       secondInstallmentAmount: (paymentPlan === "TWO_INSTALLMENTS") ? PAYMENT_CONFIG.secondInstallmentAmount : 0,
+      ...(incomingAttribution
+        ? { attribution: incomingAttribution }
+        : {}),
     });
 
     // 🔄 Sync lead to Zoho Bigin (Non-blocking & Fail-safe)
@@ -243,7 +297,15 @@ export const createLead = async (req, res) => {
  */
 export const requestCall = async (req, res) => {
   try {
-    const { name, email, preferredTime, message, program: reqProgram } = req.body;
+    const {
+      name,
+      email,
+      preferredTime,
+      message,
+      program: reqProgram,
+    } = req.body;
+
+    const incomingAttribution = sanitizeAttribution(req.body.attribution);
     const program = reqProgram || "it-infrastructure";
     console.log("Received lead payload (requestCall):", req.body);
     console.log("Program:", program);
@@ -306,6 +368,10 @@ export const requestCall = async (req, res) => {
       lead.email = email.toLowerCase();
       lead.phone = phone;
       lead.leadType = leadType;
+
+      if (!lead.attribution && incomingAttribution) {
+        lead.attribution = incomingAttribution;
+      }
       
       console.log("Lead before save (existing requestCall):", lead);
       await lead.save();
@@ -329,6 +395,9 @@ export const requestCall = async (req, res) => {
         isVerified: true,
         program,
         leadType,
+        ...(incomingAttribution
+          ? { attribution: incomingAttribution }
+          : {}),
       });
     }
 

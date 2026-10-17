@@ -7,6 +7,9 @@ import PaymentSuccess from './pages/PaymentSuccess.jsx'
 import PaymentFailed from './pages/PaymentFailed.jsx'
 import ClaimCertificate from './pages/ClaimCertificate.jsx'
 import MetaPixelRouteTracker from './components/MetaPixelRouteTracker'
+import { captureAdAttribution } from './utils/adAttribution'
+
+captureAdAttribution()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

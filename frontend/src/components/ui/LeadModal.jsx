@@ -7,6 +7,8 @@ import { normalizePhone } from '../../utils/phone';
 import BenefitsLink from './BenefitsLink';
 import { programsContent } from '../../data/content';
 import PaymentPlanModal from './PaymentPlanModal';
+import { getAdAttribution } from '../../utils/adAttribution';
+import { trackMetaEvent } from '../../utils/metaPixel';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -162,12 +164,17 @@ const LeadModal = ({ program }) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
+      const payloadWithAttribution = {
+        ...payload,
+        attribution: getAdAttribution(),
+      };
+
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payloadWithAttribution),
         signal: controller.signal,
       });
       clearTimeout(timeoutId);
@@ -188,6 +195,18 @@ const LeadModal = ({ program }) => {
       }
 
       if (data.success) {
+        if (type === "webinar") {
+          trackMetaEvent("CompleteRegistration", {
+            content_name: program,
+            content_category: "webinar",
+          });
+        } else {
+          trackMetaEvent("Lead", {
+            content_name: program,
+            content_category: type === "call" ? "callback" : "brochure",
+          });
+        }
+
         const lead = data.data;
 
         // 💳 Razorpay Integration for Webinar
