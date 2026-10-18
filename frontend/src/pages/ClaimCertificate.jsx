@@ -30,6 +30,9 @@ const ClaimCertificate = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [claimedCertId, setClaimedCertId] = useState('');
+  const [downloadUrl, setDownloadUrl] = useState('');
+
 
   // Timer cooldown logic for OTP resend
   useEffect(() => {
@@ -84,6 +87,9 @@ const ClaimCertificate = () => {
           program
         });
 
+        if (response.data.certificateId) setClaimedCertId(response.data.certificateId);
+        if (response.data.downloadUrl) setDownloadUrl(`${API_URL}${response.data.downloadUrl}`);
+
         showToast(response.data.message || 'Certificate generated and emailed!');
         setStep(3);
         return;
@@ -127,6 +133,9 @@ const ClaimCertificate = () => {
         otp: otp.trim(),
         program
       });
+
+      if (response.data.certificateId) setClaimedCertId(response.data.certificateId);
+      if (response.data.downloadUrl) setDownloadUrl(`${API_URL}${response.data.downloadUrl}`);
 
       showToast(response.data.message || 'Certificate generated and emailed!');
       setStep(3);
@@ -233,37 +242,6 @@ const ClaimCertificate = () => {
               </div>
             </div>
 
-            {/* Webinar Program */}
-            <div>
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
-                Program
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gray-500">
-                  <Award className="w-4 h-4" />
-                </span>
-                <select
-                  required
-                  value={program}
-                  onChange={(e) => setProgram(e.target.value)}
-                  className="w-full py-3.5 pl-10 pr-10 bg-[#0b0f14]/80 border border-white/10 text-white rounded-xl focus:outline-none focus:border-pink-500/50 transition-all text-sm appearance-none cursor-pointer"
-                >
-                  <option value="it-infrastructure">IT Infrastructure Engineering</option>
-                  <option value="cloud-computing">Cloud Computing Engineering</option>
-                  <option value="devops-engineering">DevOps Engineering</option>
-                  <option value="virtualization-engineering">Virtualization Engineering</option>
-                  <option value="server-engineering">Server Engineering</option>
-                  <option value="storage-engineering">Storage Engineering</option>
-                  <option value="backup-engineering">Backup Engineering</option>
-                </select>
-                <span className="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-gray-500">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </span>
-              </div>
-            </div>
-
             {/* Secret Webinar Code */}
             <div>
               <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">
@@ -312,7 +290,6 @@ const ClaimCertificate = () => {
               <div className="text-xs text-gray-300 space-y-1 font-medium">
                 <div>Name: <span className="text-white font-semibold">{fullName}</span></div>
                 <div>Email: <span className="text-white font-semibold">{email}</span></div>
-                <div>Program: <span className="text-white font-semibold">{getProgramLabel(program)}</span></div>
                 <div>Program Code: <span className="text-white font-semibold">{webinarCode}</span></div>
               </div>
               <button 
@@ -392,18 +369,40 @@ const ClaimCertificate = () => {
             
             <h1 className="text-3xl font-extrabold text-white mb-3">Claim Successful!</h1>
             
-            <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-xl text-sm mb-6 max-w-sm mx-auto leading-relaxed">
-              🎓 Certificate successfully sent to your email. Please check your Inbox/Spam folder.
+            <div className="bg-green-500/10 border border-green-500/20 text-green-400 p-4 rounded-xl text-sm mb-5 max-w-sm mx-auto leading-relaxed">
+              🎓 Certificate successfully generated and sent to your email!
             </div>
 
-            <div className="text-xs text-gray-500 mb-8 border-t border-white/5 pt-4">
-              Issued to: <span className="text-gray-300 font-semibold">{fullName}</span><br />
-              Email: <span className="text-gray-300 font-semibold">{email}</span>
+            {claimedCertId && (
+              <div className="bg-white/5 border border-white/10 rounded-xl p-3 mb-5 max-w-sm mx-auto text-center">
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                  Unique Certificate ID
+                </div>
+                <div className="text-pink-400 font-mono font-bold text-sm tracking-wide">
+                  {claimedCertId}
+                </div>
+              </div>
+            )}
+
+            <div className="text-xs text-gray-400 mb-6 border-t border-white/5 pt-4 space-y-1">
+              <div>Candidate: <span className="text-white font-semibold">{fullName}</span></div>
+              <div>Email: <span className="text-white font-semibold">{email}</span></div>
             </div>
+
+            {downloadUrl && (
+              <a 
+                href={downloadUrl}
+                download
+                className="inline-flex items-center justify-center gap-2 w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3.5 rounded-xl font-bold shadow-xl shadow-teal-500/20 hover:scale-[1.01] active:scale-[0.99] transition-all text-sm mb-3 cursor-pointer"
+              >
+                <Award className="w-4 h-4" />
+                Download Certificate (PDF)
+              </a>
+            )}
 
             <a 
               href="/" 
-              className="inline-block w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-xl font-bold shadow-xl shadow-orange-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm"
+              className="inline-block w-full bg-white/10 hover:bg-white/15 text-white py-3.5 rounded-xl font-bold transition-all text-sm"
             >
               Return to Home
             </a>

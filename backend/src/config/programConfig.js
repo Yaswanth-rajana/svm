@@ -35,7 +35,7 @@ export const PROGRAM_CONFIG = {
   },
 
   "virtualization-engineering": {
-    title: "Virtualization Engineering",
+    title: "VMware vSphere Foundation - Build, Manage and Operate",
     shortTitle: "Virtualization Engineering",
     emailSubject: "🎉 Registration Confirmed - Virtualization Engineering Course",
     learningPoints: [

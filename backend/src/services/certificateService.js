@@ -61,11 +61,25 @@ export const generateCertificatePDF = async (data) => {
     height: pageHeight,
   });
 
-  // Embed the HelveticaBold font
+  // Embed fonts
   const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
+  // 1. Draw Certificate No. at top left if present
+  if (data.certificateId) {
+    const certNoText = `Certificate No.: ${data.certificateId}`;
+    page.drawText(certNoText, {
+      x: 215,
+      y: 546,
+      size: 9.5,
+      font: regularFont,
+      color: rgb(71 / 255, 85 / 255, 105 / 255), // Slate 600
+    });
+  }
+
+  // 2. Dynamic Full Name placed prominently in Candidate Name field
   const fullName = data.fullName.trim();
-  let fontSize = 38;
+  let fontSize = 35;
   let textWidth = font.widthOfTextAtSize(fullName, fontSize);
 
   // Auto-scale font size if name is extremely long
@@ -75,7 +89,7 @@ export const generateCertificatePDF = async (data) => {
   }
 
   const x = (pageWidth - textWidth) / 2;
-  const y = 268; // 54% from top (46% from bottom) of 595.28 is 273.8. Baseline adjustment to 268.
+  const y = 335; // Centered vertically in candidate name area
 
   // Draw the text
   page.drawText(fullName, {
@@ -88,6 +102,20 @@ export const generateCertificatePDF = async (data) => {
 
   // Save the PDF
   const pdfBytes = await pdfDoc.save();
+
+  // Clean up any old PDF files for this certificateId to avoid serving stale names
+  if (data.certificateId) {
+    try {
+      const files = fs.readdirSync(tempDir);
+      for (const file of files) {
+        if (file.includes(data.certificateId) && file.endsWith('.pdf')) {
+          fs.unlinkSync(path.join(tempDir, file));
+        }
+      }
+    } catch (cleanErr) {
+      console.warn("⚠️ Error cleaning up older certificate PDFs:", cleanErr.message);
+    }
+  }
 
   // Format safe file name for participant
   const safeName = fullName.replace(/[^a-zA-Z0-9]/g, '_');
@@ -192,15 +220,9 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
   try {
     await transporter.sendMail(mailOptions);
     console.log(`✅ Certificate email sent successfully to ${email}`);
-  } finally {
-    // Ensure temporary PDF is always deleted from server
-    try {
-      if (fs.existsSync(pdfPath)) {
-        fs.unlinkSync(pdfPath);
-        console.log(`🗑️ Temporary PDF deleted: ${pdfPath}`);
-      }
-    } catch (cleanupErr) {
-      console.error(`⚠️ Failed to delete temp PDF at ${pdfPath}:`, cleanupErr.message);
-    }
+  } catch (sendErr) {
+    console.error(`⚠️ Failed to send certificate email to ${email}:`, sendErr.message);
+    throw sendErr;
   }
 };
+
