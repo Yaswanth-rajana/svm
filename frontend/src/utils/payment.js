@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { logger } from './logger';
 import { trackMetaEvent } from './metaPixel';
+import { getApiUrl } from '../config/apiConfig';
 
 // Temporary global error listener
 if (typeof window !== 'undefined') {
@@ -28,7 +29,7 @@ export const handleRazorpayPayment = async ({
   onFailure,
   onModalClose
 }) => {
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = getApiUrl();
   const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
   try {

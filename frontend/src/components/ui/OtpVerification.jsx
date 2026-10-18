@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail, Info } from 'lucide-react';
 import { normalizePhone } from '../../utils/phone';
+import { getApiUrl } from '../../config/apiConfig';
 
 const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset }) => {
   const isBypass = import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true';
@@ -84,7 +85,7 @@ const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset 
     setLoading(true);
     
     try {
-      const API_URL = import.meta.env.VITE_API_URL;
+      const API_URL = getApiUrl();
       const res = await axios.post(`${API_URL}/api/send-otp`, {
         phone: normalizePhone(phone),
         email,
@@ -131,7 +132,7 @@ const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset 
     setLoading(true);
     
     try {
-      const API_URL = import.meta.env.VITE_API_URL;
+      const API_URL = getApiUrl();
       await axios.post(`${API_URL}/api/verify-otp`, {
         contact,
         otp,

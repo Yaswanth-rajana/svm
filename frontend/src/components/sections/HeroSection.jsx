@@ -9,6 +9,7 @@ import { handleRazorpayPayment } from '../../utils/payment'
 import { normalizePhone } from '../../utils/phone'
 import BenefitsLink from '../ui/BenefitsLink'
 import PaymentPlanModal from '../ui/PaymentPlanModal'
+import { getApiUrl } from '../../config/apiConfig'
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -109,7 +110,7 @@ function HeroSection({ program }) {
 
   const executeLeadSubmission = async (paymentPlan = "FULL") => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL;
+      const API_URL = getApiUrl();
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 

@@ -9,6 +9,7 @@ import { programsContent } from '../../data/content';
 import PaymentPlanModal from './PaymentPlanModal';
 import { getAdAttribution } from '../../utils/adAttribution';
 import { trackMetaEvent } from '../../utils/metaPixel';
+import { getApiUrl } from '../../config/apiConfig';
 
 const EXPERIENCE_OPTIONS = ['Fresher', '1–3 years', '3–5 years', '5+ years'];
 
@@ -160,7 +161,7 @@ const LeadModal = ({ program }) => {
 
       console.log("Submitting lead:", payload);
 
-      const API_URL = import.meta.env.VITE_API_URL;
+      const API_URL = getApiUrl();
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 

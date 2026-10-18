@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams } from 'react-router-dom';
 import { Award, Mail, Lock, CheckCircle, AlertCircle, RefreshCw, ArrowLeft, User, Key, Info } from 'lucide-react';
+import { getApiUrl } from '../config/apiConfig';
 
 const getProgramLabel = (prog) => {
   const labels = {
@@ -73,7 +74,7 @@ const ClaimCertificate = () => {
     setLoading(true);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
+      const API_URL = getApiUrl();
 
       if (import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true') {
         const response = await axios.post(`${API_URL}/api/certificate/verify-and-generate`, {
@@ -118,7 +119,7 @@ const ClaimCertificate = () => {
     setLoading(true);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
+      const API_URL = getApiUrl();
       const response = await axios.post(`${API_URL}/api/certificate/verify-and-generate`, {
         fullName: fullName.trim(),
         email: email.trim(),
