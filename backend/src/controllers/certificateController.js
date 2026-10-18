@@ -341,10 +341,10 @@ export const verifyAndGenerateCertificate = async (req, res) => {
     // 6. Generate and send PDF in a safe block, with rollback on failure
     let pdfPath = "";
     try {
-      const programConfig = getProgramConfig(lead.program || webinarConfig.program || 'virtualization-engineering');
+      const programTitle = webinarConfig.webinarTitle || "VMware vSphere Foundation - Build, Manage and Operate";
       pdfPath = await generateCertificatePDF({
         fullName: fullName.trim(),
-        webinarTitle: programConfig.title,
+        webinarTitle: programTitle,
         webinarDate: webinarConfig.webinarDate,
         mentorName: webinarConfig.mentorName,
         organizationName: webinarConfig.organizationName,
@@ -353,7 +353,7 @@ export const verifyAndGenerateCertificate = async (req, res) => {
 
       // Email PDF to recipient (Non-fatal if email service is in test mode)
       try {
-        await sendCertificateEmail(emailLower, fullName.trim(), pdfPath, programConfig.title, lead.program);
+        await sendCertificateEmail(emailLower, fullName.trim(), pdfPath, programTitle, webinarConfig.program);
       } catch (mailErr) {
         console.warn(`⚠️ Warning: Certificate email delivery skipped or failed (${mailErr.message}), but certificate was generated.`);
       }
@@ -477,10 +477,10 @@ export const downloadCertificatePdf = async (req, res) => {
       return res.status(404).json({ success: false, message: "Certificate not found." });
     }
 
-    const programConfig = getProgramConfig(lead.program || webinarConfig.program || 'virtualization-engineering');
+    const programTitle = webinarConfig.webinarTitle || "VMware vSphere Foundation - Build, Manage and Operate";
     const pdfPath = await generateCertificatePDF({
       fullName: lead.name || "Candidate Name",
-      webinarTitle: programConfig.title,
+      webinarTitle: programTitle,
       webinarDate: webinarConfig.webinarDate,
       mentorName: webinarConfig.mentorName,
       organizationName: webinarConfig.organizationName,

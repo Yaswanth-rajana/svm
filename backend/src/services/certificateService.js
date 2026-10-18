@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import nodemailer from 'nodemailer';
 import { getProgramConfig } from '../config/programConfig.js';
+import { webinarConfig } from '../config/webinarConfig.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -155,12 +156,13 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
     }
   });
 
+  const courseTitle = webinarTitle || webinarConfig.webinarTitle || "VMware vSphere Foundation - Build, Manage and Operate";
   const safeNameForAttachment = `SMVEN-Certificate-${fullName.trim().replace(/\s+/g, '-')}.pdf`;
 
   const mailOptions = {
     from: `"Smart Mate Ventures" <${fromEmail}>`,
     to: email,
-    subject: `Your SMVEN Program Certificate 🎓`,
+    subject: `Your Certificate of Completion - ${courseTitle} 🎓`,
     html: `
       <div style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff; color: #1f2937;">
         
@@ -173,11 +175,11 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
         <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">Congratulations, ${fullName}! 🎉</h2>
         
         <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-          Thank you for attending the <strong>${webinarTitle}</strong>. We hope the session provided you with valuable insights and clear actionable steps for your career development.
+          Thank you for successfully completing our 50 Hours of Training Program on <strong>${courseTitle}</strong>. We hope the session provided you with valuable insights, practical experience, and clear actionable steps for your career development.
         </p>
 
         <p style="font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-          As promised, your official <strong>Certificate of Participation</strong> has been successfully generated and is attached to this email.
+          As promised, your official <strong>Certificate of Completion</strong> has been successfully generated and is attached to this email.
         </p>
 
         <!-- Dynamic Card -->
@@ -187,7 +189,7 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
         </div>
 
         <p style="font-size: 15px; color: #4b5563; line-height: 1.6; margin-bottom: 32px;">
-          We look forward to seeing you in our upcoming cohorts and helping you advance in your ${programConfig.shortTitle} career.
+          We look forward to seeing you in our upcoming cohorts and helping you advance in your IT Engineering career.
         </p>
 
         <!-- Support Info -->
@@ -202,7 +204,7 @@ export const sendCertificateEmail = async (email, fullName, pdfPath, webinarTitl
         <!-- Footer -->
         <div style="text-align: center;">
           <p style="margin: 0; font-size: 16px; color: #111827; font-weight: 700;">Smart Mate Ventures</p>
-          <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in ${programConfig.shortTitle}</p>
+          <p style="margin: 4px 0 0; font-size: 14px; color: #6b7280;">Helping you build a high-growth career in IT Engineering</p>
           <p style="margin: 16px 0 0; font-size: 12px; color: #9ca3af;">
             &copy; 2026 Smart Mate Ventures. All rights reserved.
           </p>
