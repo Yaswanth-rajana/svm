@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Navbar from '../components/layout/Navbar'
 import HeroSection from '../components/sections/HeroSection'
 import DemandSection from '../components/sections/DemandSection'
@@ -17,8 +17,11 @@ import LeadModal from '../components/ui/LeadModal'
 import BenefitsModal from '../components/ui/BenefitsModal'
 import WhatsAppFloat from '../components/ui/WhatsAppFloat'
 import AnnouncementBar from '../components/layout/AnnouncementBar'
+import { trackCourseViewContent } from '../utils/metaPixel'
 
 function LandingPage({ program = 'it-infrastructure' }) {
+  const lastTrackedProgram = useRef(null);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     const programKey = program === 'it-infrastructure' ? 'infrastructure' : program;
@@ -35,6 +38,12 @@ function LandingPage({ program = 'it-infrastructure' }) {
       document.head.appendChild(metaDescription);
     }
     metaDescription.content = description;
+
+    // Track Meta Pixel ViewContent event for the 6 course detail pages
+    if (lastTrackedProgram.current !== program) {
+      lastTrackedProgram.current = program;
+      trackCourseViewContent(program);
+    }
   }, [program]);
 
   return (

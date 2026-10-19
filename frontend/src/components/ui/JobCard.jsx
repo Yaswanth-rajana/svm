@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
+import { trackCourseButtonClick } from '../../utils/metaPixel';
 
 function JobCard({ title, description, salary, route }) {
+  const handleClick = () => {
+    trackCourseButtonClick(route, title);
+  };
+
   const CardContent = (
     <>
       <div className="h-1 w-full bg-gradient-to-r from-pink-500 to-orange-400"></div>
@@ -30,6 +35,7 @@ function JobCard({ title, description, salary, route }) {
     return (
       <Link 
         to={route}
+        onClick={handleClick}
         className={`${cardClasses} cursor-pointer`}
         style={{ boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}
       >
