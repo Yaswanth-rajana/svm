@@ -76,7 +76,7 @@ function WebinarSection({ program = 'infrastructure' }) {
                 </div>
 
                 <h3 className="text-2xl font-bold text-white mb-1 mt-3">
-                  Reserve Your Spot
+                  Book Your Slot for Webinar
                 </h3>
                 <p className="text-gray-500 text-[13px] mb-6 font-medium">
                   Takes less than 30 seconds
@@ -91,7 +91,7 @@ function WebinarSection({ program = 'infrastructure' }) {
 
                 {/* Primary Button */}
                 <button 
-                  onClick={() => openLeadModal('webinar')}
+                  onClick={() => openLeadModal('call')}
                   className="w-full mx-auto group/btn relative bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600 text-white font-bold py-5 px-6 md:px-8 rounded-2xl 
                                    shadow-[0_0_20px_rgba(255,77,141,0.4)] 
                                    hover:shadow-[0_0_35px_rgba(255,100,50,0.6)] 

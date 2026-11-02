@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { AlertCircle } from 'lucide-react'
 import Container from '../layout/Container'
 import Input from '../ui/Input'
 import AnimatedText from '../ui/AnimatedText'
@@ -71,11 +72,12 @@ function HeroSection({ program }) {
   })
 
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [verificationData, setVerificationData] = useState(null);
+  const [verificationError, setVerificationError] = useState('');
   const [loadingAction, setLoadingAction] = useState(""); // "submit"
   const [resetKey, setResetKey] = useState(0);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
-
-
+  const [selectedPlanState, setSelectedPlanState] = useState("FULL");
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -84,7 +86,11 @@ function HeroSection({ program }) {
       if (/[^0-9]/.test(value)) return;
       // Limit to 10 chars
       if (value.length > 10) return;
-      if (isPhoneVerified) setIsPhoneVerified(false);
+      if (isPhoneVerified) {
+        setIsPhoneVerified(false);
+        setVerificationData(null);
+        setVerificationError('');
+      }
     }
     setFormData(prev => ({ ...prev, [name]: value }))
   }
@@ -96,13 +102,20 @@ function HeroSection({ program }) {
       return;
     }
     if (!isPhoneVerified) {
-      alert("Please verify your phone number first.");
+      setVerificationError("Please verify your phone number first.");
+      return;
+    }
+    if (verificationData?.expiresAt && new Date(verificationData.expiresAt).getTime() < Date.now()) {
+      setIsPhoneVerified(false);
+      setVerificationData(null);
+      setVerificationError("Your phone verification has expired. Please verify your number again.");
       return;
     }
     setIsPlanModalOpen(true);
   };
 
   const handlePlanConfirm = async (selectedPlan) => {
+    setSelectedPlanState(selectedPlan);
     setIsPlanModalOpen(false);
     setLoadingAction("submit");
     await executeLeadSubmission(selectedPlan);
@@ -110,6 +123,7 @@ function HeroSection({ program }) {
 
   const executeLeadSubmission = async (paymentPlan = "FULL") => {
     try {
+      setVerificationError('');
       const API_URL = getApiUrl();
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
@@ -122,7 +136,8 @@ function HeroSection({ program }) {
         workingProfile: formData.workingProfile,
         experience: formData.experience,
         program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure'),
-        paymentPlan
+        paymentPlan,
+        verificationToken: verificationData?.verificationToken
       };
 
       console.log("Submitting lead from HeroSection:", payload);
@@ -146,6 +161,22 @@ function HeroSection({ program }) {
       }
 
       if (!response.ok) {
+        if (resJson?.code === 'OTP_EXPIRED' || (resJson?.message && resJson.message.toLowerCase().includes('otp') && resJson.message.toLowerCase().includes('expired'))) {
+          setIsPhoneVerified(false);
+          setVerificationData(null);
+          setLoadingAction("");
+          setIsPlanModalOpen(false);
+          setVerificationError(resJson.message || "Your phone verification has expired. Please verify your number again to complete registration.");
+          return;
+        }
+        if (resJson?.code === 'OTP_REQUIRED' || resJson?.code === 'OTP_MISMATCH' || (resJson?.message && resJson.message.toLowerCase().includes('verify otp'))) {
+          setIsPhoneVerified(false);
+          setVerificationData(null);
+          setLoadingAction("");
+          setIsPlanModalOpen(false);
+          setVerificationError(resJson.message || "Please verify your phone number first.");
+          return;
+        }
         if (response.status === 409) {
           throw new Error(resJson.message || "You have already registered for this program.");
         }
@@ -156,21 +187,21 @@ function HeroSection({ program }) {
         const lead = resJson.data;
 
         // Local display amount based on selected plan
-        const displayAmount = paymentPlan === "TWO_INSTALLMENTS" ? 6500 : 13000;
+        const displayAmount = paymentPlan === "TWO_INSTALLMENTS" ? 8260 : 11798.82;
 
         // 💳 Razorpay Integration for Webinar
         handleRazorpayPayment({
           leadData: lead,
           formData: formData,
           amount: displayAmount,
-          onSuccess: () => {
-            // Open the success popup
-            openLeadModal('webinar', true);
-            // Clear the hero form
+          onSuccess: (updatedLead, paymentId) => {
             setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
             setIsPhoneVerified(false);
+            setVerificationData(null);
             setResetKey(prev => prev + 1);
             setLoadingAction("");
+            const targetLeadId = updatedLead?._id || lead._id;
+            window.location.href = `/payment-success?leadId=${targetLeadId}&paymentId=${paymentId || ''}`;
           },
           onFailure: () => {
             setLoadingAction("");
@@ -297,6 +328,15 @@ function HeroSection({ program }) {
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-8 space-y-5">
+                  {verificationError && (
+                    <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-start gap-2.5">
+                      <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="font-semibold text-amber-200">{verificationError}</p>
+                        <p className="text-[11px] text-amber-300/80 mt-0.5">Your registration details have been preserved. Please verify OTP again to continue with your payment.</p>
+                      </div>
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="flex flex-col gap-2">
                       <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Full Name</label>
@@ -347,8 +387,16 @@ function HeroSection({ program }) {
                       email={formData.email}
                       fullName={formData.fullName}
                       program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
-                      onVerified={() => setIsPhoneVerified(true)}
-                      onReset={() => setIsPhoneVerified(false)}
+                      onVerified={(data) => {
+                        setIsPhoneVerified(true);
+                        setVerificationData(data);
+                        setVerificationError('');
+                      }}
+                      onReset={() => {
+                        setIsPhoneVerified(false);
+                        setVerificationData(null);
+                      }}
+                      isExpired={Boolean(verificationError && !isPhoneVerified)}
                     />
                   </div>
 
@@ -421,6 +469,7 @@ function HeroSection({ program }) {
         isOpen={isPlanModalOpen} 
         onClose={() => setIsPlanModalOpen(false)} 
         onConfirm={handlePlanConfirm} 
+        initialPlan={selectedPlanState}
       />
     </div>
   )

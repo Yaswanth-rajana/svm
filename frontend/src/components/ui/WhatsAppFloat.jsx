@@ -8,11 +8,13 @@ const WhatsAppFloat = () => {
 
   useEffect(() => {
     const handleStatus = (e) => {
-      setIsModalOpen(e.detail?.isOpen || false);
+      setIsModalOpen(Boolean(e.detail?.isOpen ?? e.detail?.isActive));
     };
     window.addEventListener('benefits-modal-status', handleStatus);
+    window.addEventListener('payment-modal-status', handleStatus);
     return () => {
       window.removeEventListener('benefits-modal-status', handleStatus);
+      window.removeEventListener('payment-modal-status', handleStatus);
     };
   }, []);
 

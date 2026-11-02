@@ -4,12 +4,12 @@ import { CheckCircle, AlertCircle, RefreshCw, MessageCircle, Mail, Info } from '
 import { normalizePhone } from '../../utils/phone';
 import { getApiUrl } from '../../config/apiConfig';
 
-const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset }) => {
+const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset, isExpired }) => {
   const isBypass = import.meta.env.VITE_DISABLE_OTP_VALIDATION === 'true';
 
   useEffect(() => {
     if (isBypass) {
-      onVerified && onVerified();
+      onVerified && onVerified({ bypass: true, verified: true });
     }
   }, [isBypass, onVerified]);
 
@@ -34,12 +34,30 @@ const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset 
   
   const [channel, setChannel] = useState('whatsapp');
   const [contact, setContact] = useState('');
+  const [verifiedContact, setVerifiedContact] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   
   const [timer, setTimer] = useState(0);
+
+  // Invalidate verification if phone number changes
+  useEffect(() => {
+    if (step === 3 && verifiedContact && phone) {
+      const normalizedCurrent = normalizePhone(phone);
+      const normalizedVerified = normalizePhone(verifiedContact);
+      if (normalizedCurrent !== normalizedVerified) {
+        setStep(1);
+        setOtp('');
+        setTimer(0);
+        setError('');
+        setSuccess('');
+        setVerifiedContact('');
+        if (onReset) onReset();
+      }
+    }
+  }, [phone, step, verifiedContact, onReset]);
 
   // Timer countdown
   useEffect(() => {
@@ -133,7 +151,7 @@ const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset 
     
     try {
       const API_URL = getApiUrl();
-      await axios.post(`${API_URL}/api/verify-otp`, {
+      const res = await axios.post(`${API_URL}/api/verify-otp`, {
         contact,
         otp,
         program
@@ -141,7 +159,8 @@ const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset 
       
       showToast('Verified successfully!');
       setStep(3);
-      if (onVerified) onVerified();
+      setVerifiedContact(contact);
+      if (onVerified) onVerified(res.data);
     } catch (err) {
       showToast(err.response?.data?.message || 'Invalid OTP', true);
     } finally {
@@ -155,8 +174,36 @@ const OtpVerification = ({ phone, email, fullName, program, onVerified, onReset 
     setTimer(0);
     setError('');
     setSuccess('');
+    setVerifiedContact('');
     if (onReset) onReset();
   };
+
+  if (isExpired) {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300">
+          <div className="flex items-center gap-2.5">
+            <AlertCircle size={18} className="text-amber-400 shrink-0" />
+            <div>
+              <p className="text-xs font-bold text-amber-200">Phone Verification Expired</p>
+              <p className="text-[11px] text-amber-300/80">Please refresh verification to continue</p>
+            </div>
+          </div>
+          <button 
+            type="button" 
+            onClick={() => {
+              handleReset();
+              handleSendOtp('whatsapp');
+            }} 
+            className="text-xs text-white font-bold px-3 py-1.5 bg-amber-500 hover:bg-amber-400 rounded-lg transition-all shadow-md active:scale-95 flex items-center gap-1.5"
+          >
+            <RefreshCw size={12} />
+            Verify Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (step === 3) {
     return (

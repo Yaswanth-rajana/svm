@@ -2,7 +2,7 @@ export const programsContent = {
   // IT Infrastructure Program Data
   infrastructure: {
     shortTitle: "IT Infrastructure",
-    price: 13000,
+    price: 9999,
     meta: {
       title: "IT Infrastructure Training | Start Your Career | SMVEN",
       description: "Master IT Infrastructure fundamentals, servers, virtualization, storage, and cloud systems to start a successful IT career."
@@ -211,15 +211,15 @@ export const programsContent = {
           name: "Saurabh Singh",
           role: "Senior IT Engineer",
           credibility: "10+ Years Experience in Enterprise Systems",
-          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
-          photo: "Saurabh singh.jpg"
+          linkedin: "https://www.linkedin.com/in/sk-singh-0a354323a/",
+          photo: "linkedIn.png"
         }
       ]
     },
     webinar: {
       title: "🚀 Join Our Live Program",
       subtitle: "Learn IT Infrastructure from Industry Experts",
-      dateTime: "📅 July 4  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 Every Saturday  |  ⏰ 08:00 AM IST  |  ⏳ 60 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",
@@ -305,7 +305,7 @@ export const programsContent = {
   // Cloud Computing Program Data
   'cloud-computing': {
     shortTitle: "Cloud Computing",
-    price: 13000,
+    price: 9999,
     meta: {
       title: "Cloud Computing Training | Become a Cloud Engineer | SMVEN",
       description: "Become a Cloud Engineer and build the future of IT. Learn cloud technologies, industry best practices, and start your cloud career with SMVEN."
@@ -588,8 +588,8 @@ export const programsContent = {
           name: "Saurabh Singh",
           role: "Senior IT & Cloud Architect",
           credibility: "10+ Years Experience in Enterprise Systems",
-          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
-          photo: "Saurabh singh.jpg"
+          linkedin: "https://www.linkedin.com/in/sk-singh-0a354323a/",
+          photo: "linkedIn.png"
         }
       ]
     },
@@ -643,7 +643,7 @@ export const programsContent = {
 
   'devops-engineering': {
     shortTitle: "DevOps Engineering",
-    price: 13000,
+    price: 9999,
     meta: {
       title: "DevOps Engineering Training | Become a DevOps Engineer | SMVEN",
       description: "Become a DevOps Engineer and automate software delivery at scale. Learn Docker, Kubernetes, CI/CD, Terraform, and start your DevOps career with SMVEN."
@@ -913,8 +913,8 @@ export const programsContent = {
           name: "Saurabh Singh",
           role: "Senior DevOps & Cloud Architect",
           credibility: "10+ Years Experience in Enterprise Systems",
-          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
-          photo: "Saurabh singh.jpg"
+          linkedin: "https://www.linkedin.com/in/sk-singh-0a354323a/",
+          photo: "linkedIn.png"
         }
       ]
     },
@@ -968,7 +968,7 @@ export const programsContent = {
   //virtualization
   'virtualization-engineering': {
     shortTitle: "Virtualization Engineering",
-    price: 13000,
+    price: 9999,
     brochure: "/virtualization-brochure.pdf",
     meta: {
       title: "Virtualization Engineering Training | Become a Virtualization Engineer | SMVEN",
@@ -1205,8 +1205,8 @@ export const programsContent = {
           name: "Saurabh Singh",
           role: "Senior Virtualization & Cloud Architect",
           credibility: "10+ Years Experience in Enterprise Systems",
-          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
-          photo: "Saurabh singh.jpg"
+          linkedin: "https://www.linkedin.com/in/sk-singh-0a354323a/",
+          photo: "linkedIn.png"
         }
       ]
     },
@@ -1260,7 +1260,7 @@ export const programsContent = {
   // Server Engineering Program Data
   'server-engineering': {
     shortTitle: "Server Engineering",
-    price: 13000,
+    price: 9999,
     brochure: "/virtualization-brochure.pdf",
     meta: {
       title: "Server Engineering Training | Become a Server Engineer | SMVEN",
@@ -1518,8 +1518,8 @@ export const programsContent = {
           name: "Saurabh Singh",
           role: "Senior Systems & Cloud Architect",
           credibility: "10+ Years Experience in Enterprise Systems",
-          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
-          photo: "Saurabh singh.jpg"
+          linkedin: "https://www.linkedin.com/in/sk-singh-0a354323a/",
+          photo: "linkedIn.png"
         }
       ]
     },
@@ -1573,7 +1573,7 @@ export const programsContent = {
   // Storage Engineering Program Data
   'storage-engineering': {
     shortTitle: "Storage Engineering",
-    price: 13000,
+    price: 9999,
     brochure: "/virtualization-brochure.pdf",
     meta: {
       title: "Storage Engineering Training | Become a Storage Engineer | SMVEN",
@@ -1871,8 +1871,8 @@ export const programsContent = {
           name: "Saurabh Singh",
           role: "Senior Storage & Cloud Architect",
           credibility: "10+ Years Experience in Enterprise Systems",
-          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
-          photo: "Saurabh singh.jpg"
+          linkedin: "https://www.linkedin.com/in/sk-singh-0a354323a/",
+          photo: "linkedIn.png"
         }
       ]
     },
@@ -1926,7 +1926,7 @@ export const programsContent = {
   // Backup Engineering Program Data
   'backup-engineering': {
     shortTitle: "Backup Engineering",
-    price: 13000,
+    price: 9999,
     brochure: "/Backup-Engineer-SMV.pdf",
     meta: {
       title: "Backup Engineering Training | Become a Backup Engineer | SMVEN",
@@ -2214,8 +2214,8 @@ export const programsContent = {
           name: "Saurabh Singh",
           role: "Senior Systems & Backup Architect",
           credibility: "10+ Years Experience in Enterprise Systems",
-          linkedin: "https://www.linkedin.com/in/saurabh-singh-storage-admin/",
-          photo: "Saurabh singh.jpg"
+          linkedin: "https://www.linkedin.com/in/sk-singh-0a354323a/",
+          photo: "linkedIn.png"
         }
       ]
     },

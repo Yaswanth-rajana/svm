@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, AlertCircle } from 'lucide-react';
 import Input from './Input';
 import OtpVerification from './OtpVerification';
 import { handleRazorpayPayment } from '../../utils/payment';
@@ -65,6 +65,9 @@ const LeadModal = ({ program }) => {
     experience: ''
   });
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [verificationData, setVerificationData] = useState(null);
+  const [verificationError, setVerificationError] = useState('');
+  const [selectedPlanState, setSelectedPlanState] = useState('FULL');
   const [resetKey, setResetKey] = useState(0);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
@@ -76,6 +79,9 @@ const LeadModal = ({ program }) => {
       setIsSubmitted(e.detail.isSuccess || false);
       setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
       setIsPhoneVerified(false);
+      setVerificationData(null);
+      setVerificationError('');
+      setSelectedPlanState('FULL');
       setResetKey(prev => prev + 1);
 
       // Request animation frame to ensure the DOM is updated before applying transitions
@@ -118,8 +124,15 @@ const LeadModal = ({ program }) => {
       return;
     }
     
-    if (type === 'webinar' && !isPhoneVerified) {
-      alert("Please verify your contact before submitting.");
+    if ((type === 'webinar' || type === 'call') && !isPhoneVerified) {
+      setVerificationError("Please verify your contact before submitting.");
+      return;
+    }
+
+    if ((type === 'webinar' || type === 'call') && verificationData?.expiresAt && new Date(verificationData.expiresAt).getTime() < Date.now()) {
+      setIsPhoneVerified(false);
+      setVerificationData(null);
+      setVerificationError("Your phone verification has expired. Please verify your number again.");
       return;
     }
 
@@ -132,12 +145,14 @@ const LeadModal = ({ program }) => {
   };
 
   const handlePlanConfirm = async (selectedPlan) => {
+    setSelectedPlanState(selectedPlan);
     setIsPlanModalOpen(false);
     await executeLeadSubmission(selectedPlan);
   };
 
   const executeLeadSubmission = async (paymentPlan = "FULL") => {
     try {
+      setVerificationError('');
       const isCallRequest = type === 'call';
       const endpoint = isCallRequest ? '/api/request-call' : '/api/leads';
       
@@ -146,7 +161,8 @@ const LeadModal = ({ program }) => {
             name: formData.fullName,
             email: formData.email,
             phone: normalizePhone(formData.phone),
-            program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')
+            program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure'),
+            verificationToken: verificationData?.verificationToken
           }
         : {
             name: formData.fullName,
@@ -156,7 +172,8 @@ const LeadModal = ({ program }) => {
             workingProfile: formData.workingProfile,
             experience: formData.experience,
             program: program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure'),
-            paymentPlan
+            paymentPlan,
+            verificationToken: verificationData?.verificationToken
           };
 
       console.log("Submitting lead:", payload);
@@ -189,6 +206,20 @@ const LeadModal = ({ program }) => {
       }
 
       if (!response.ok) {
+        if (data?.code === 'OTP_EXPIRED' || (data?.message && data.message.toLowerCase().includes('otp') && data.message.toLowerCase().includes('expired'))) {
+          setIsPhoneVerified(false);
+          setVerificationData(null);
+          setIsPlanModalOpen(false);
+          setVerificationError(data.message || "Your phone verification has expired. Please verify your number again to complete registration.");
+          return;
+        }
+        if (data?.code === 'OTP_REQUIRED' || data?.code === 'OTP_MISMATCH' || (data?.message && data.message.toLowerCase().includes('verify otp'))) {
+          setIsPhoneVerified(false);
+          setVerificationData(null);
+          setIsPlanModalOpen(false);
+          setVerificationError(data.message || "Please verify your phone number first.");
+          return;
+        }
         if (response.status === 409) {
           throw new Error(data.message || "You have already registered for this program.");
         }
@@ -215,16 +246,16 @@ const LeadModal = ({ program }) => {
           setIsPaymentLoading(true);
           
           // Local display amount based on selected plan
-          const displayAmount = paymentPlan === "TWO_INSTALLMENTS" ? 6500 : 13000;
+          const displayAmount = paymentPlan === "TWO_INSTALLMENTS" ? 8260 : 11798.82;
 
           handleRazorpayPayment({
             leadData: lead,
             formData: formData,
             amount: displayAmount,
-            onSuccess: () => {
-              setIsSubmitted(true);
+            onSuccess: (updatedLead, paymentId) => {
               setIsPaymentLoading(false);
-              setTimeout(() => closeModal(), 4000);
+              const targetLeadId = updatedLead?._id || lead._id;
+              window.location.href = `/payment-success?leadId=${targetLeadId}&paymentId=${paymentId || ''}`;
             },
             onFailure: () => {
               setIsPaymentLoading(false);
@@ -271,7 +302,11 @@ const LeadModal = ({ program }) => {
       if (/[^0-9]/.test(value)) return;
       // Limit to 10 chars
       if (value.length > 10) return;
-      if (isPhoneVerified) setIsPhoneVerified(false);
+      if (isPhoneVerified) {
+        setIsPhoneVerified(false);
+        setVerificationData(null);
+        setVerificationError('');
+      }
     }
 
     // Validation for full name (optional, but good for consistency)
@@ -349,6 +384,15 @@ const LeadModal = ({ program }) => {
             </div>
           ) : type === 'webinar' ? (
             <>
+              {verificationError && (
+                <div className="p-3 mb-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-amber-200">{verificationError}</p>
+                    <p className="text-[11px] text-amber-300/80 mt-0.5">Your registration details have been preserved. Please verify OTP again to proceed.</p>
+                  </div>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5 text-left">
@@ -404,8 +448,16 @@ const LeadModal = ({ program }) => {
                     email={formData.email} 
                     fullName={formData.fullName}
                     program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
-                    onVerified={() => setIsPhoneVerified(true)}
-                    onReset={() => setIsPhoneVerified(false)}
+                    onVerified={(data) => {
+                      setIsPhoneVerified(true);
+                      setVerificationData(data);
+                      setVerificationError('');
+                    }}
+                    onReset={() => {
+                      setIsPhoneVerified(false);
+                      setVerificationData(null);
+                    }}
+                    isExpired={Boolean(verificationError && !isPhoneVerified)}
                   />
                 </div>
 
@@ -465,6 +517,15 @@ const LeadModal = ({ program }) => {
               <p className="text-gray-400 text-sm mb-6">
                 {microcopy}
               </p>
+              {verificationError && (
+                <div className="p-3 mb-4 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-amber-200">{verificationError}</p>
+                    <p className="text-[11px] text-amber-300/80 mt-0.5">Your details have been preserved. Please verify OTP to proceed.</p>
+                  </div>
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5 text-left">
                   <label className="text-xs font-semibold text-gray-400 ml-1">Full Name</label>
@@ -513,8 +574,16 @@ const LeadModal = ({ program }) => {
                       email={formData.email} 
                       fullName={formData.fullName}
                       program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
-                      onVerified={() => setIsPhoneVerified(true)}
-                      onReset={() => setIsPhoneVerified(false)}
+                      onVerified={(data) => {
+                        setIsPhoneVerified(true);
+                        setVerificationData(data);
+                        setVerificationError('');
+                      }}
+                      onReset={() => {
+                        setIsPhoneVerified(false);
+                        setVerificationData(null);
+                      }}
+                      isExpired={Boolean(verificationError && !isPhoneVerified)}
                     />
                   </div>
                 )}
@@ -535,6 +604,7 @@ const LeadModal = ({ program }) => {
         isOpen={isPlanModalOpen} 
         onClose={() => setIsPlanModalOpen(false)} 
         onConfirm={handlePlanConfirm} 
+        initialPlan={selectedPlanState}
       />
     </div>
   );
