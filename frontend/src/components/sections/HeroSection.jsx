@@ -72,12 +72,25 @@ function HeroSection({ program }) {
   })
 
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [verifiedPhone, setVerifiedPhone] = useState('');
   const [verificationData, setVerificationData] = useState(null);
   const [verificationError, setVerificationError] = useState('');
   const [loadingAction, setLoadingAction] = useState(""); // "submit"
-  const [resetKey, setResetKey] = useState(0);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
   const [selectedPlanState, setSelectedPlanState] = useState("FULL");
+
+  const handleOtpVerified = (vData) => {
+    setIsPhoneVerified(true);
+    setVerifiedPhone(vData?.phone || normalizePhone(formData.phone));
+    setVerificationData(vData);
+    setVerificationError('');
+  };
+
+  const handleResetVerification = () => {
+    setIsPhoneVerified(false);
+    setVerifiedPhone('');
+    setVerificationData(null);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -86,8 +99,9 @@ function HeroSection({ program }) {
       if (/[^0-9]/.test(value)) return;
       // Limit to 10 chars
       if (value.length > 10) return;
-      if (isPhoneVerified) {
+      if (isPhoneVerified && normalizePhone(value) !== verifiedPhone) {
         setIsPhoneVerified(false);
+        setVerifiedPhone('');
         setVerificationData(null);
         setVerificationError('');
       }
@@ -197,8 +211,8 @@ function HeroSection({ program }) {
           onSuccess: (updatedLead, paymentId) => {
             setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
             setIsPhoneVerified(false);
+            setVerifiedPhone('');
             setVerificationData(null);
-            setResetKey(prev => prev + 1);
             setLoadingAction("");
             const targetLeadId = updatedLead?._id || lead._id;
             window.location.href = `/payment-success?leadId=${targetLeadId}&paymentId=${paymentId || ''}`;
@@ -382,20 +396,14 @@ function HeroSection({ program }) {
                   <div className="flex flex-col gap-2">
                     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
                     <OtpVerification
-                      key={`otp-hero-${resetKey}`}
                       phone={formData.phone}
                       email={formData.email}
                       fullName={formData.fullName}
                       program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
-                      onVerified={(data) => {
-                        setIsPhoneVerified(true);
-                        setVerificationData(data);
-                        setVerificationError('');
-                      }}
-                      onReset={() => {
-                        setIsPhoneVerified(false);
-                        setVerificationData(null);
-                      }}
+                      isVerified={isPhoneVerified}
+                      verifiedPhone={verifiedPhone || normalizePhone(formData.phone)}
+                      onVerified={handleOtpVerified}
+                      onReset={handleResetVerification}
                       isExpired={Boolean(verificationError && !isPhoneVerified)}
                     />
                   </div>

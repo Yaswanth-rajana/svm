@@ -65,12 +65,25 @@ const LeadModal = ({ program }) => {
     experience: ''
   });
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [verifiedPhone, setVerifiedPhone] = useState('');
   const [verificationData, setVerificationData] = useState(null);
   const [verificationError, setVerificationError] = useState('');
   const [selectedPlanState, setSelectedPlanState] = useState('FULL');
-  const [resetKey, setResetKey] = useState(0);
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
   const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+
+  const handleOtpVerified = (vData) => {
+    setIsPhoneVerified(true);
+    setVerifiedPhone(vData?.phone || normalizePhone(formData.phone));
+    setVerificationData(vData);
+    setVerificationError('');
+  };
+
+  const handleResetVerification = () => {
+    setIsPhoneVerified(false);
+    setVerifiedPhone('');
+    setVerificationData(null);
+  };
 
   useEffect(() => {
     const handleOpen = (e) => {
@@ -79,10 +92,10 @@ const LeadModal = ({ program }) => {
       setIsSubmitted(e.detail.isSuccess || false);
       setFormData({ fullName: '', email: '', phone: '', workingProfile: '', experience: '' });
       setIsPhoneVerified(false);
+      setVerifiedPhone('');
       setVerificationData(null);
       setVerificationError('');
       setSelectedPlanState('FULL');
-      setResetKey(prev => prev + 1);
 
       // Request animation frame to ensure the DOM is updated before applying transitions
       requestAnimationFrame(() => {
@@ -208,6 +221,7 @@ const LeadModal = ({ program }) => {
       if (!response.ok) {
         if (data?.code === 'OTP_EXPIRED' || (data?.message && data.message.toLowerCase().includes('otp') && data.message.toLowerCase().includes('expired'))) {
           setIsPhoneVerified(false);
+          setVerifiedPhone('');
           setVerificationData(null);
           setIsPlanModalOpen(false);
           setVerificationError(data.message || "Your phone verification has expired. Please verify your number again to complete registration.");
@@ -215,6 +229,7 @@ const LeadModal = ({ program }) => {
         }
         if (data?.code === 'OTP_REQUIRED' || data?.code === 'OTP_MISMATCH' || (data?.message && data.message.toLowerCase().includes('verify otp'))) {
           setIsPhoneVerified(false);
+          setVerifiedPhone('');
           setVerificationData(null);
           setIsPlanModalOpen(false);
           setVerificationError(data.message || "Please verify your phone number first.");
@@ -302,8 +317,9 @@ const LeadModal = ({ program }) => {
       if (/[^0-9]/.test(value)) return;
       // Limit to 10 chars
       if (value.length > 10) return;
-      if (isPhoneVerified) {
+      if (isPhoneVerified && normalizePhone(value) !== verifiedPhone) {
         setIsPhoneVerified(false);
+        setVerifiedPhone('');
         setVerificationData(null);
         setVerificationError('');
       }
@@ -443,20 +459,14 @@ const LeadModal = ({ program }) => {
                 <div className="space-y-1.5 text-left">
                   <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
                   <OtpVerification 
-                    key={`otp-modal-${resetKey}`}
                     phone={formData.phone} 
                     email={formData.email} 
                     fullName={formData.fullName}
                     program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
-                    onVerified={(data) => {
-                      setIsPhoneVerified(true);
-                      setVerificationData(data);
-                      setVerificationError('');
-                    }}
-                    onReset={() => {
-                      setIsPhoneVerified(false);
-                      setVerificationData(null);
-                    }}
+                    isVerified={isPhoneVerified}
+                    verifiedPhone={verifiedPhone || normalizePhone(formData.phone)}
+                    onVerified={handleOtpVerified}
+                    onReset={handleResetVerification}
                     isExpired={Boolean(verificationError && !isPhoneVerified)}
                   />
                 </div>
@@ -569,20 +579,14 @@ const LeadModal = ({ program }) => {
                   <div className="space-y-1.5 text-left">
                     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest ml-1">Verification</label>
                     <OtpVerification 
-                      key={`otp-modal-simple-${resetKey}`}
                       phone={formData.phone} 
                       email={formData.email} 
                       fullName={formData.fullName}
                       program={program === 'infrastructure' ? 'it-infrastructure' : (program || 'it-infrastructure')}
-                      onVerified={(data) => {
-                        setIsPhoneVerified(true);
-                        setVerificationData(data);
-                        setVerificationError('');
-                      }}
-                      onReset={() => {
-                        setIsPhoneVerified(false);
-                        setVerificationData(null);
-                      }}
+                      isVerified={isPhoneVerified}
+                      verifiedPhone={verifiedPhone || normalizePhone(formData.phone)}
+                      onVerified={handleOtpVerified}
+                      onReset={handleResetVerification}
                       isExpired={Boolean(verificationError && !isPhoneVerified)}
                     />
                   </div>
