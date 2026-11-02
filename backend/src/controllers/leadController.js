@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import getLeadModel from "../utils/getLeadModel.js";
 import OTP from "../models/OTP.js";
 import { env } from "../config/env.js";
@@ -6,7 +7,7 @@ import { sendLeadToZohoCRM } from "../services/zohoService.js";
 import { normalizePhone } from "../utils/phone.js";
 import { maskEmail, maskPhone } from "../utils/logger.js";
 import { createRegistrationInBigin } from "../services/biginService.js";
-import { PAYMENT_CONFIG } from "../config/paymentConfig.js";
+import { PAYMENT_CONFIG, getPlanPricing } from "../config/paymentConfig.js";
 
 const ATTRIBUTION_STRING_LIMITS = {
   utm_source: 200,
@@ -105,11 +106,48 @@ export const createLead = async (req, res) => {
       if (source !== 'brochure') {
         const verifiedOtp = await OTP.findOne({ 
           contact: { $in: [phone, email].filter(Boolean) }, 
-          isVerified: true 
-        });
-        if (!verifiedOtp) {
+          isVerified: true,
+          expiresAt: { $gt: new Date() }
+        }).sort({ updatedAt: -1 });
+
+        // Also validate cryptographic verification token if provided
+        let tokenVerified = false;
+        const verificationToken = req.body.verificationToken;
+        if (verificationToken) {
+          try {
+            const decoded = jwt.verify(verificationToken, process.env.JWT_SECRET || "smven-secret-key-12345");
+            if (decoded.contact && (normalizePhone(decoded.contact) === phone || decoded.contact.trim().toLowerCase() === email.trim().toLowerCase())) {
+              tokenVerified = true;
+            } else {
+              return res.status(400).json({
+                success: false,
+                code: "OTP_MISMATCH",
+                message: "Verification token does not match the provided phone number.",
+              });
+            }
+          } catch (tokenErr) {
+            console.warn("⚠️ Provided verification token is expired or invalid:", tokenErr.message);
+          }
+        }
+
+        if (!verifiedOtp && !tokenVerified) {
+          // Check if there is an expired verification record to provide explicit feedback
+          const expiredOtp = await OTP.findOne({ 
+            contact: { $in: [phone, email].filter(Boolean) }, 
+            isVerified: true 
+          }).sort({ updatedAt: -1 });
+
+          if (expiredOtp) {
+            return res.status(400).json({
+              success: false,
+              code: "OTP_EXPIRED",
+              message: "Your phone verification has expired. Please verify your number again to complete registration.",
+            });
+          }
+
           return res.status(400).json({
             success: false,
+            code: "OTP_REQUIRED",
             message: "Please verify OTP first",
           });
         }
@@ -162,15 +200,25 @@ export const createLead = async (req, res) => {
 
       // Lock payment details once a payment is successfully registered (hasPaid === true)
       if (!hasPaid) {
-        lead.paymentPlan = paymentPlan || "FULL";
-        lead.totalAmount = PAYMENT_CONFIG.totalAmount;
-        lead.balanceAmount = PAYMENT_CONFIG.totalAmount;
+        const plan = paymentPlan === "TWO_INSTALLMENTS" ? "TWO_INSTALLMENTS" : "FULL";
+        const pricing = getPlanPricing(plan);
+        lead.paymentPlan = plan;
+        lead.gstRate = PAYMENT_CONFIG.gstRate;
         lead.amountPaid = 0;
-        if (lead.paymentPlan === "TWO_INSTALLMENTS") {
-          lead.firstInstallmentAmount = PAYMENT_CONFIG.firstInstallmentAmount;
-          lead.secondInstallmentAmount = PAYMENT_CONFIG.secondInstallmentAmount;
+
+        if (plan === "TWO_INSTALLMENTS") {
+          lead.courseFee = pricing.totalCourseFee;
+          lead.gstAmount = pricing.totalGstAmount;
+          lead.totalAmount = pricing.totalPayable;
+          lead.balanceAmount = pricing.totalPayable;
+          lead.firstInstallmentAmount = pricing.firstInstallment.payableAmount;
+          lead.secondInstallmentAmount = pricing.secondInstallment.payableAmount;
         } else {
-          lead.firstInstallmentAmount = PAYMENT_CONFIG.totalAmount;
+          lead.courseFee = pricing.courseFee;
+          lead.gstAmount = pricing.gstAmount;
+          lead.totalAmount = pricing.totalPayable;
+          lead.balanceAmount = pricing.totalPayable;
+          lead.firstInstallmentAmount = pricing.totalPayable;
           lead.secondInstallmentAmount = 0;
         }
       }
@@ -223,6 +271,9 @@ export const createLead = async (req, res) => {
       paymentPlan: paymentPlan || "FULL"
     });
     // 🆕 New user
+    const chosenPlan = paymentPlan === "TWO_INSTALLMENTS" ? "TWO_INSTALLMENTS" : "FULL";
+    const pricing = getPlanPricing(chosenPlan);
+
     lead = await LeadModel.create({
       name,
       email,
@@ -232,12 +283,15 @@ export const createLead = async (req, res) => {
       experience,
       program,
       leadType,
-      paymentPlan: paymentPlan || "FULL",
-      totalAmount: PAYMENT_CONFIG.totalAmount,
+      paymentPlan: chosenPlan,
+      courseFee: chosenPlan === "TWO_INSTALLMENTS" ? pricing.totalCourseFee : pricing.courseFee,
+      gstRate: PAYMENT_CONFIG.gstRate,
+      gstAmount: chosenPlan === "TWO_INSTALLMENTS" ? pricing.totalGstAmount : pricing.gstAmount,
+      totalAmount: pricing.totalPayable,
       amountPaid: 0,
-      balanceAmount: PAYMENT_CONFIG.totalAmount,
-      firstInstallmentAmount: (paymentPlan === "TWO_INSTALLMENTS") ? PAYMENT_CONFIG.firstInstallmentAmount : PAYMENT_CONFIG.totalAmount,
-      secondInstallmentAmount: (paymentPlan === "TWO_INSTALLMENTS") ? PAYMENT_CONFIG.secondInstallmentAmount : 0,
+      balanceAmount: pricing.totalPayable,
+      firstInstallmentAmount: chosenPlan === "TWO_INSTALLMENTS" ? pricing.firstInstallment.payableAmount : pricing.totalPayable,
+      secondInstallmentAmount: chosenPlan === "TWO_INSTALLMENTS" ? pricing.secondInstallment.payableAmount : 0,
       ...(incomingAttribution
         ? { attribution: incomingAttribution }
         : {}),
@@ -336,11 +390,46 @@ export const requestCall = async (req, res) => {
     if (env.DISABLE_OTP_VALIDATION !== "true") {
       const verifiedOtp = await OTP.findOne({ 
         contact: { $in: [phone, email].filter(Boolean) }, 
-        isVerified: true 
-      });
-      if (!verifiedOtp) {
+        isVerified: true,
+        expiresAt: { $gt: new Date() }
+      }).sort({ updatedAt: -1 });
+
+      let tokenVerified = false;
+      const verificationToken = req.body.verificationToken;
+      if (verificationToken) {
+        try {
+          const decoded = jwt.verify(verificationToken, process.env.JWT_SECRET || "smven-secret-key-12345");
+          if (decoded.contact && (normalizePhone(decoded.contact) === phone || decoded.contact.trim().toLowerCase() === email.trim().toLowerCase())) {
+            tokenVerified = true;
+          } else {
+            return res.status(400).json({
+              success: false,
+              code: "OTP_MISMATCH",
+              message: "Verification token does not match the provided phone number.",
+            });
+          }
+        } catch (tokenErr) {
+          console.warn("⚠️ Provided verification token is expired or invalid:", tokenErr.message);
+        }
+      }
+
+      if (!verifiedOtp && !tokenVerified) {
+        const expiredOtp = await OTP.findOne({ 
+          contact: { $in: [phone, email].filter(Boolean) }, 
+          isVerified: true 
+        }).sort({ updatedAt: -1 });
+
+        if (expiredOtp) {
+          return res.status(400).json({
+            success: false,
+            code: "OTP_EXPIRED",
+            message: "Your phone verification has expired. Please verify your number again to request a call.",
+          });
+        }
+
         return res.status(400).json({
           success: false,
+          code: "OTP_REQUIRED",
           message: "Please verify OTP first",
         });
       }

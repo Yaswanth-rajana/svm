@@ -622,7 +622,7 @@ export const sendSecondInstallmentLinkEmail = ({ name, email, program, paymentLi
                 <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">Hello ${safeName},</h2>
                 
                 <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
-                    Thank you for choosing the <strong>${programConfig.shortTitle}</strong> program! We have received your registration and your first installment payment of ₹6,500.
+                    Thank you for choosing the <strong>${programConfig.shortTitle}</strong> program! We have received your registration and your first installment payment of ₹8,260 (Course Fee: ₹7,000 + 18% GST: ₹1,260).
                 </p>
 
                 <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
@@ -634,11 +634,11 @@ export const sendSecondInstallmentLinkEmail = ({ name, email, program, paymentLi
                         </tr>
                         <tr>
                             <td style="padding: 6px 0; color: #6b7280;">First Installment Paid:</td>
-                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #10b981;">₹6,500 (Paid)</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #10b981;">₹8,260 (Course Fee: ₹7,000 + GST: ₹1,260)</td>
                         </tr>
                         <tr>
                             <td style="padding: 6px 0; color: #6b7280;">Second Installment Due:</td>
-                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #f59e0b;">₹6,500</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #f59e0b;">₹4,720 (Course Fee: ₹4,000 + GST: ₹720)</td>
                         </tr>
                         <tr>
                             <td style="padding: 6px 0; color: #6b7280;">Due Date:</td>
@@ -653,7 +653,7 @@ export const sendSecondInstallmentLinkEmail = ({ name, email, program, paymentLi
 
                 <div style="text-align: center; margin-bottom: 32px;">
                     <a href="${paymentLinkUrl}" target="_blank" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);">
-                        Pay Second Installment (₹6,500)
+                        Pay Second Installment (₹4,720)
                     </a>
                 </div>
 
@@ -720,7 +720,7 @@ export const sendSecondInstallmentPaidEmail = ({ name, email, program }) => {
                 <h2 style="color: #111827; font-size: 22px; font-weight: 700; margin-bottom: 16px;">Fee Payment Completed! 🎓</h2>
                 
                 <p style="font-size: 16px; line-height: 1.6; color: #374151; margin-bottom: 24px;">
-                    Hello ${safeName}, we are pleased to inform you that we have received your second installment payment of ₹6,500. Your program fees are now <strong>fully paid</strong>!
+                    Hello ${safeName}, we are pleased to inform you that we have received your second installment payment of ₹4,720. Your program fees are now <strong>fully paid</strong>!
                 </p>
 
                 <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
@@ -731,8 +731,16 @@ export const sendSecondInstallmentPaidEmail = ({ name, email, program }) => {
                             <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">${programConfig.shortTitle}</td>
                         </tr>
                         <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Total Course Fee (excl. GST):</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">₹11,000</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">GST (18%):</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">₹1,980</td>
+                        </tr>
+                        <tr>
                             <td style="padding: 6px 0; color: #6b7280;">Total Amount Paid:</td>
-                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #10b981;">₹13,000</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #10b981;">₹12,980</td>
                         </tr>
                         <tr>
                             <td style="padding: 6px 0; color: #6b7280;">Outstanding Balance:</td>
@@ -795,8 +803,8 @@ export const sendSecondInstallmentReminderEmail = ({ name, email, program, payme
         : `Reminder: Second Installment Due in ${daysLeft} days for ${programConfig.shortTitle}`;
 
     const reminderMessage = isOverdue
-        ? `This is an urgent notice that your second installment payment of ₹6,500 is overdue. It was due on <strong>${formattedDate}</strong>.`
-        : `This is a friendly reminder that your second installment payment of ₹6,500 is due in <strong>${daysLeft} days</strong> (on or before <strong>${formattedDate}</strong>).`;
+        ? `This is an urgent notice that your second installment payment of ₹4,720 is overdue. It was due on <strong>${formattedDate}</strong>.`
+        : `This is a friendly reminder that your second installment payment of ₹4,720 is due in <strong>${daysLeft} days</strong> (on or before <strong>${formattedDate}</strong>).`;
 
     const data = {
         from: {
@@ -835,8 +843,16 @@ export const sendSecondInstallmentReminderEmail = ({ name, email, program, payme
                             <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">${programConfig.shortTitle}</td>
                         </tr>
                         <tr>
-                            <td style="padding: 6px 0; color: #6b7280;">Due Amount:</td>
-                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #ef4444;">₹6,500</td>
+                            <td style="padding: 6px 0; color: #6b7280;">Course Fee Due:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">₹4,000</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">GST (18%):</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #111827;">₹720</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px 0; color: #6b7280;">Total Due Amount:</td>
+                            <td style="padding: 6px 0; font-weight: 600; text-align: right; color: #ef4444;">₹4,720</td>
                         </tr>
                         <tr>
                             <td style="padding: 6px 0; color: #6b7280;">Due Date:</td>
@@ -851,7 +867,7 @@ export const sendSecondInstallmentReminderEmail = ({ name, email, program, payme
 
                 <div style="text-align: center; margin-bottom: 32px;">
                     <a href="${paymentLinkUrl}" target="_blank" style="background: linear-gradient(135deg, ${isOverdue ? '#ef4444, #dc2626' : '#2563eb, #1d4ed8'}); color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);">
-                        Pay Installment (₹6,500)
+                        Pay Installment (₹4,720)
                     </a>
                 </div>
 

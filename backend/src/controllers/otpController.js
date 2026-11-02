@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 import OTP from "../models/OTP.js";
 import { sendWhatsAppOTP } from "../services/whatsappService.js";
 import { sendEmailOTP } from "../services/emailService.js";
@@ -64,8 +65,8 @@ export const sendOtp = async (req, res) => {
     // Generate 6-digit OTP using cryptographically secure random numbers
     const otp = crypto.randomInt(100000, 999999).toString();
 
-    // Expiry: 5 minutes from now
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+    // Expiry: 10 minutes from now
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
     let sentChannel = primaryChannel;
     let usedContact = primaryContact;
@@ -198,6 +199,23 @@ export const verifyOtp = async (req, res) => {
 
     // OTP is valid
     otpRecord.isVerified = true;
+    otpRecord.verifiedAt = new Date();
+    // Extend expiration to 30 minutes for checkout / payment plan selection session
+    const verifiedExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
+    otpRecord.expiresAt = verifiedExpiresAt;
+
+    // Issue cryptographic verification token bound to contact and timestamp
+    const jwtSecret = process.env.JWT_SECRET || "smven-secret-key-12345";
+    const verificationToken = jwt.sign(
+      {
+        contact: formattedContact,
+        verifiedAt: otpRecord.verifiedAt.getTime(),
+        purpose: "otp_verification"
+      },
+      jwtSecret,
+      { expiresIn: "30m" }
+    );
+    otpRecord.verificationToken = verificationToken;
     await otpRecord.save();
 
     // Optionally delete older unverified OTPs for the same contact
@@ -216,6 +234,7 @@ export const verifyOtp = async (req, res) => {
     // Auth Integration: Find or create student, then generate JWT
     const email = isPhone ? null : formattedContact.trim().toLowerCase();
     let student = null;
+    let studentToken = null;
     
     if (email) {
       student = await Student.findOne({ email });
@@ -230,33 +249,108 @@ export const verifyOtp = async (req, res) => {
         });
       }
     } else {
-      // Find by phone
+      // Find by phone if existing student
       student = await Student.findOne({ phone: formattedContact });
-      // If phone login and no student exists, we might need them to register first
-      // But for now, since this is a fallback, let's assume they exist or error out
-      if (!student) {
-         return res.status(404).json({ success: false, message: "No account found with this phone number. Please use your email." });
-      }
+      // Note: If no student account exists for this phone, we do not reject with 404!
+      // This is a normal registration verification where candidate creates student record upon purchase.
     }
 
-    // Update login tracking
-    student.lastLoginMethod = "otp";
-    student.lastLoginAt = new Date();
-    
-    const sessionId = await registerSession(student, req);
-    const token = generateToken(student._id, true, sessionId);
+    if (student) {
+      try {
+        // Update login tracking
+        student.lastLoginMethod = "otp";
+        student.lastLoginAt = new Date();
+        await student.save();
+        const sessionId = await registerSession(student, req);
+        studentToken = generateToken(student._id, true, sessionId);
+      } catch (authErr) {
+        console.warn("⚠️ Non-critical student session creation error:", authErr.message);
+      }
+    }
 
     return res.status(200).json({
       success: true,
       message: "OTP verified successfully",
-      token,
-      studentId: student.studentId,
-      passwordCreated: student.passwordCreated ?? student.passwordSet ?? false,
-      passwordSet: student.passwordSet ?? student.passwordCreated ?? false
+      verificationToken,
+      verifiedContact: formattedContact,
+      expiresAt: verifiedExpiresAt,
+      token: studentToken,
+      studentId: student?.studentId || null,
+      passwordCreated: student?.passwordCreated ?? student?.passwordSet ?? false,
+      passwordSet: student?.passwordSet ?? student?.passwordCreated ?? false
     });
 
   } catch (error) {
     console.error("❌ Error verifying OTP:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    });
+  }
+};
+
+/**
+ * @desc    Check OTP verification status
+ * @route   POST /api/check-otp-status
+ * @access  Public
+ */
+export const checkOtpStatus = async (req, res) => {
+  try {
+    if (env.DISABLE_OTP_VALIDATION === "true") {
+      return res.status(200).json({
+        success: true,
+        isVerified: true,
+        bypass: true
+      });
+    }
+
+    const { contact, verificationToken } = req.body;
+    if (!contact) {
+      return res.status(400).json({ success: false, message: "Contact is required" });
+    }
+
+    const isPhone = !contact.includes('@');
+    const formattedContact = isPhone ? normalizePhone(contact) : contact.trim().toLowerCase();
+
+    // Check token if provided
+    let tokenValid = false;
+    if (verificationToken) {
+      try {
+        const decoded = jwt.verify(verificationToken, process.env.JWT_SECRET || "smven-secret-key-12345");
+        if (decoded.contact && (decoded.contact === formattedContact || normalizePhone(decoded.contact) === formattedContact)) {
+          tokenValid = true;
+        }
+      } catch (err) {
+        tokenValid = false;
+      }
+    }
+
+    const otpRecord = await OTP.findOne({
+      contact: formattedContact,
+      isVerified: true,
+      expiresAt: { $gt: new Date() }
+    }).sort({ updatedAt: -1 });
+
+    if (!otpRecord && !tokenValid) {
+      return res.status(200).json({
+        success: false,
+        isVerified: false,
+        message: "Verification has expired or not completed"
+      });
+    }
+
+    const expiresAt = otpRecord?.expiresAt || new Date(Date.now() + 15 * 60 * 1000);
+    const remainingSeconds = Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+
+    return res.status(200).json({
+      success: true,
+      isVerified: true,
+      contact: formattedContact,
+      expiresAt,
+      remainingSeconds
+    });
+  } catch (error) {
+    console.error("❌ Error checking OTP status:", error);
     return res.status(500).json({
       success: false,
       message: "Internal Server Error"

@@ -15,6 +15,28 @@ const attributionSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const paymentRecordSchema = new mongoose.Schema(
+  {
+    installmentNumber: { type: Number, required: true },
+    paymentType: {
+      type: String,
+      enum: ["FULL", "INSTALLMENT_1", "INSTALLMENT_2"],
+      required: true,
+    },
+    amount: { type: Number, required: true }, // GST-inclusive amount in INR
+    courseFee: { type: Number, required: true }, // GST-exclusive course fee in INR
+    gstRate: { type: Number, default: 0.18 },
+    gstAmount: { type: Number, required: true }, // GST in INR
+    orderId: { type: String },
+    paymentId: { type: String, required: true },
+    signature: { type: String },
+    method: { type: String },
+    receiptNumber: { type: String },
+    paidAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
 const leadSchema = new mongoose.Schema(
   {
     name: {
@@ -78,6 +100,19 @@ const leadSchema = new mongoose.Schema(
       default: "FULL"
     },
 
+    courseFee: {
+      type: Number,
+    },
+
+    gstRate: {
+      type: Number,
+      default: 0.18,
+    },
+
+    gstAmount: {
+      type: Number,
+    },
+
     totalAmount: {
       type: Number,
     },
@@ -100,8 +135,25 @@ const leadSchema = new mongoose.Schema(
       type: Number,
     },
 
+    firstInstallment: {
+      amount: { type: Number },
+      courseFee: { type: Number },
+      gstAmount: { type: Number },
+      status: {
+        type: String,
+        enum: ["PENDING", "PAID"],
+        default: "PENDING",
+      },
+      paymentId: { type: String },
+      orderId: { type: String },
+      paidAt: { type: Date },
+      receiptNumber: { type: String },
+    },
+
     secondInstallment: {
       amount: { type: Number },
+      courseFee: { type: Number },
+      gstAmount: { type: Number },
       status: {
         type: String,
         enum: ["PENDING", "PAID", "OVERDUE"],
@@ -109,9 +161,16 @@ const leadSchema = new mongoose.Schema(
       },
       paymentLinkId: { type: String },
       paymentLinkUrl: { type: String },
+      razorpayOrderId: { type: String },
       dueDate: { type: Date },
       paidAt: { type: Date },
-      paymentId: { type: String }
+      paymentId: { type: String },
+      receiptNumber: { type: String },
+    },
+
+    payments: {
+      type: [paymentRecordSchema],
+      default: [],
     },
 
     razorpayOrderId: {
