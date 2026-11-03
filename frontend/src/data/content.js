@@ -596,7 +596,7 @@ export const programsContent = {
     webinar: {
       title: "🚀 Join Our Live Cloud Masterclass",
       subtitle: "Learn Cloud Engineering from Industry Experts",
-      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 Every Saturday  |  ⏰ 08:00 AM IST  |  ⏳ 60 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",
@@ -921,7 +921,7 @@ export const programsContent = {
     webinar: {
       title: "🚀 Join Our Live DevOps Masterclass",
       subtitle: "Learn DevOps Engineering from Industry Experts",
-      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 Every Saturday  |  ⏰ 08:00 AM IST  |  ⏳ 60 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",
@@ -1213,7 +1213,7 @@ export const programsContent = {
     webinar: {
       title: "🚀 Join Our Live Virtualization Masterclass",
       subtitle: "Learn Virtualization Engineering from Industry Experts",
-      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 Every Saturday  |  ⏰ 08:00 AM IST  |  ⏳ 60 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",
@@ -1526,7 +1526,7 @@ export const programsContent = {
     webinar: {
       title: "🚀 Join Our Live Server Engineering Masterclass",
       subtitle: "Learn Server Engineering from Industry Experts",
-      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 Every Saturday  |  ⏰ 08:00 AM IST  |  ⏳ 60 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",
@@ -1879,7 +1879,7 @@ export const programsContent = {
     webinar: {
       title: "🚀 Join Our Live Storage Engineering Masterclass",
       subtitle: "Learn Storage Engineering from Industry Experts",
-      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 Every Saturday  |  ⏰ 08:00 AM IST  |  ⏳ 60 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",
@@ -2222,7 +2222,7 @@ export const programsContent = {
     webinar: {
       title: "🚀 Join Our Live Backup Engineering Masterclass",
       subtitle: "Learn Backup Engineering from Industry Experts",
-      dateTime: "📅 June 20  |  ⏰ 10:00 AM IST  |  ⏳ 90 mins",
+      dateTime: "📅 Every Saturday  |  ⏰ 08:00 AM IST  |  ⏳ 60 mins",
       cta: "Claim Your Spot",
       trustLine: "Hurry Up, Seats are limited",
       urgencyLine: "Limited seats available – Filling fast!",
