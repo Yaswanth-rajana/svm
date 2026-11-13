@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import Navbar from '../components/layout/Navbar'
 import HeroSection from '../components/sections/HeroSection'
 import DemandSection from '../components/sections/DemandSection'
@@ -20,6 +21,7 @@ import AnnouncementBar from '../components/layout/AnnouncementBar'
 import { trackCourseViewContent } from '../utils/metaPixel'
 
 function LandingPage({ program = 'it-infrastructure' }) {
+  const location = useLocation();
   const lastTrackedProgram = useRef(null);
 
   useEffect(() => {
@@ -44,7 +46,58 @@ function LandingPage({ program = 'it-infrastructure' }) {
       lastTrackedProgram.current = program;
       trackCourseViewContent(program);
     }
-  }, [program]);
+
+    // Canonical URL configuration for the 7 public routes
+    const canonicalMap = {
+      '/': 'https://smven.com/',
+      '/cloud-computing': 'https://smven.com/cloud-computing',
+      '/devops-engineering': 'https://smven.com/devops-engineering',
+      '/virtualization-engineering': 'https://smven.com/virtualization-engineering',
+      '/server-engineering': 'https://smven.com/server-engineering',
+      '/storage-engineering': 'https://smven.com/storage-engineering',
+      '/backup-engineering': 'https://smven.com/backup-engineering',
+    };
+
+    const programToSlug = {
+      'it-infrastructure': '/',
+      'infrastructure': '/',
+      'cloud-computing': '/cloud-computing',
+      'devops-engineering': '/devops-engineering',
+      'virtualization-engineering': '/virtualization-engineering',
+      'server-engineering': '/server-engineering',
+      'storage-engineering': '/storage-engineering',
+      'backup-engineering': '/backup-engineering',
+    };
+
+    const rawPath = location.pathname || '/';
+    const normalizedPath = rawPath.length > 1 && rawPath.endsWith('/') ? rawPath.slice(0, -1) : rawPath;
+    const targetPath = canonicalMap[normalizedPath] ? normalizedPath : (programToSlug[program] || '/');
+    const canonicalUrl = canonicalMap[targetPath] || 'https://smven.com/';
+
+    // Update or create exactly one self-referencing canonical tag in <head>
+    const existingCanonicals = document.querySelectorAll('link[rel="canonical"]');
+    let canonicalTag = null;
+    if (existingCanonicals.length > 0) {
+      canonicalTag = existingCanonicals[0];
+      // Remove any duplicate canonical tags if present
+      for (let i = 1; i < existingCanonicals.length; i++) {
+        existingCanonicals[i].remove();
+      }
+    } else {
+      canonicalTag = document.createElement('link');
+      canonicalTag.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalTag);
+    }
+    canonicalTag.setAttribute('href', canonicalUrl);
+
+    return () => {
+      // Clean up canonical tag when navigating away from LandingPage
+      const tag = document.querySelector('link[rel="canonical"]');
+      if (tag) {
+        tag.remove();
+      }
+    };
+  }, [program, location.pathname]);
 
   return (
     <div className="min-h-screen" key={program}>
