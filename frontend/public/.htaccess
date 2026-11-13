@@ -2,6 +2,9 @@
   RewriteEngine On
   RewriteBase /
 
+  # Serve sitemap.xml and robots.txt directly
+  RewriteRule ^(sitemap\.xml|robots\.txt)$ - [L]
+
   # Permanently redirect obsolete services URL
   RewriteRule ^services/?$ / [R=301,L]
 
@@ -10,4 +13,10 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
+</IfModule>
+
+# Ensure correct MIME types
+<IfModule mod_mime.c>
+  AddType application/xml .xml
+  AddType text/plain .txt
 </IfModule>

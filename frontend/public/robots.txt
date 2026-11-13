@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Disallow private transactional pages
+Disallow: /payment-success
+Disallow: /payment-failed
+Disallow: /claim-certificate
+
+Sitemap: https://smven.com/sitemap.xml
+
