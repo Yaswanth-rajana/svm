@@ -1,6 +1,11 @@
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
+
+  # Force WWW to non-WWW HTTPS
+  RewriteCond %{HTTP_HOST} ^www\.smven\.com$ [NC]
+  RewriteRule ^(.*)$ https://smven.com/$1 [R=301,L]
 
   # Serve sitemap.xml and robots.txt directly
   RewriteRule ^(sitemap\.xml|robots\.txt)$ - [L]
