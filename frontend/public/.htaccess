@@ -1,27 +1,36 @@
+DirectoryIndex index.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Force WWW to non-WWW HTTPS
+  # 1. Force WWW to non-WWW HTTPS
   RewriteCond %{HTTP_HOST} ^www\.smven\.com$ [NC]
   RewriteRule ^(.*)$ https://smven.com/$1 [R=301,L]
 
-  # Serve sitemap.xml and robots.txt directly
+  # 2. Serve sitemap.xml and robots.txt directly
   RewriteRule ^(sitemap\.xml|robots\.txt)$ - [L]
 
-  # Permanently redirect obsolete services URL
+  # 3. Permanently redirect obsolete services URL
   RewriteRule ^services/?$ / [R=301,L]
 
-  # Standard React SPA routing
+  # 4. Route-specific pre-rendered HTML for public course routes
+  RewriteRule ^(cloud-computing|devops-engineering|virtualization-engineering|server-engineering|storage-engineering|backup-engineering)/?$ $1.html [L]
+
+  # 5. Fallback for private transactional routes and general SPA routing
+  RewriteRule ^(payment-success|payment-failed|claim-certificate)/?$ fallback.html [L]
+
+  # 6. Standard React SPA routing for root and any remaining routes
   RewriteRule ^index\.html$ - [L]
+  RewriteRule ^fallback\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  RewriteRule . /fallback.html [L]
 </IfModule>
 
 # Ensure correct MIME types
 <IfModule mod_mime.c>
   AddType application/xml .xml
   AddType text/plain .txt
+  AddType text/html .html
 </IfModule>
